@@ -1521,7 +1521,7 @@ function planParseMatrix(aoa,colorAt){
 // 合并写入（保留用户已有数据，仅追加）
 function planMergeDone(subjectId,list,canon){
   var sb=subjById(subjectId);
-  if(!sb)return {added:0,canon:0};
+  if(!sb)return {added:0,canon:0,removed:0};
   if(!S[sb.stateKey])S[sb.stateKey]=[];
   var arr=S[sb.stateKey],added=0,hit=0;
   list.forEach(function(x){
