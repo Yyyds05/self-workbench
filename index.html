@@ -1646,6 +1646,7 @@ function renderErrors(){
     var lbl=e.mastered?'':dueLabel(e);
     var sb=subjByName(e.subject);
     var subColor=sb?sb.color:'#8c7a72';
+    var subName=sb?sb.name:(e.subject||'?');
     var open=!!S.errExpand[e.id];
     var reveal=!!S.errReveal[e.id];
     var atts=e.attachments||[];
@@ -1654,16 +1655,24 @@ function renderErrors(){
     if(e.kp)chips+='<span class="chip chip-kp">'+esc(e.kp)+'</span>';
     if(e.qtype)chips+='<span class="chip chip-qt">'+esc(e.qtype)+'</span>';
     if(e.cause)chips+='<span class="chip chip-cause">'+esc(chenhanCauseLabel(e.cause))+'</span>';
+    // R7.1: 题目（content）作为主标题；topic（错因/分析摘要）降级到 meta 行
+    var qtext=e.content||e.topic||'（未填写题目）';
+    if(qtext.length>140)qtext=qtext.slice(0,140)+'…';
+    var topicBrief=(e.content && e.topic)?(e.topic.length>50?e.topic.slice(0,50)+'…':e.topic):'';
     var html='<div class="err-card'+(e.mastered?' mastered':'')+'" onclick="toggleErrExpand('+e.id+')" style="cursor:pointer">'
-      +'<div class="err-title" style="color:'+subColor+'">'+esc((e.subject||'?')+' · '+(e.topic||'未分类'))
+      +'<div class="err-title" style="color:var(--text)">'+esc(qtext)
       +(lbl?' <span style="font-size:10px;color:var(--red);font-weight:400">'+esc(lbl)+'</span>':'')
       +(atts.length?' <span style="font-size:10px;color:var(--blue);font-weight:400">📎'+atts.length+'</span>':'')
       +' <span style="font-size:10px;color:var(--text3);font-weight:400;float:right">'+(open?'▲ 收起':'▼ 展开')+'</span></div>'
-      +(chips?'<div style="margin-top:4px">'+chips+'</div>':'')
-      +'<div class="err-meta"><span>'+esc(e.date||'-')+'</span><span>掌握度</span><div class="dot-row">'+[1,2,3,4,5].map(function(n){return'<span class="mdot'+(n<=(e.mastery||1)?' filled':'')+'"></span>'}).join('')+'</div></div>';
+      +'<div class="err-meta"><span style="color:'+subColor+';font-weight:600">'+esc(subName)+'</span>'
+      +(topicBrief?'<span style="color:var(--text2)">📝 '+esc(topicBrief)+'</span>':'')
+      +'<span>'+esc(e.date||'-')+'</span>'
+      +'<span>掌握度</span><div class="dot-row">'+[1,2,3,4,5].map(function(n){return'<span class="mdot'+(n<=(e.mastery||1)?' filled':'')+'"></span>'}).join('')+'</div></div>'
+      +(chips?'<div style="margin-top:4px">'+chips+'</div>':'');
     if(open){
       html+='<div class="err-detail" onclick="event.stopPropagation()">';
       if(e.content)html+='<div><b>题目：</b>'+esc(e.content)+'</div>';
+      if(e.topic)html+='<div><b>分析：</b>'+esc(e.topic)+'</div>';
       if(e.source)html+='<div><b>来源：</b>'+esc(e.source)+'</div>';
       if(e.chapter)html+='<div><b>章节：</b>'+esc(e.chapter)+'</div>';
       if(e.kp)html+='<div><b>薄弱点：</b>'+esc(e.kp)+'</div>';
