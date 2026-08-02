@@ -1,0 +1,35 @@
+{
+  "updatedAt": 1785642681107,
+  "device": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36",
+  "data": {
+    "w5_cl": {
+      "v": 2,
+      "items": [
+        {
+          "text": "手机",
+          "done": false
+        },
+        {
+          "text": "钥匙",
+          "done": false
+        },
+        {
+          "text": "校园卡/身份证",
+          "done": false
+        },
+        {
+          "text": "充电宝+数据线",
+          "done": false
+        },
+        {
+          "text": "水杯",
+          "done": false
+        },
+        {
+          "text": "耳机",
+          "done": false
+        }
+      ]
+    }
+  }
+}
