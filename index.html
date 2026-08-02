@@ -161,6 +161,10 @@ body{
 .info-text.major{color:var(--gold);font-weight:600}
 .info-date.major{color:var(--gold);font-weight:600}
 .info-empty{color:var(--text3);font-size:12px;text-align:center;padding:16px 0}
+.rss-src-row{display:flex;align-items:center;gap:6px;padding:4px 8px;background:var(--bg);border-radius:8px;margin-bottom:3px;font-size:11px}
+.rss-src-name{flex:1;color:var(--text)}
+.rss-src-st{color:var(--text3);font-size:10px}
+.rss-src-del{color:var(--red);cursor:pointer;font-size:14px;padding:0 4px}
 .res-row{display:flex;align-items:center;gap:8px;padding:6px 0;border-bottom:1px solid var(--border)}
 .res-row a{color:var(--blue);text-decoration:none;font-size:12px;flex:1}
 .res-del{color:var(--text3);cursor:pointer;opacity:0;transition:opacity .15s;font-size:16px}
@@ -536,8 +540,9 @@ body{
     <div class="info-list" id="eventsList"></div>
   </div>
   <div class="card">
-    <div class="card-hd"><div class="card-dot dot-green"></div><div class="card-title">考研资讯</div></div>
-    <div class="info-list" id="newsList"><div class="info-empty">Marvis 每日更新</div></div>
+    <div class="card-hd"><div class="card-dot dot-green"></div><div class="card-title">考研资讯（RSS）</div><button class="add-btn" style="margin-left:auto" onclick="rssRefresh(true)" title="立即刷新全部源">↻</button><button class="add-btn" onclick="rssAddPrompt()" title="添加 RSS 源">＋</button></div>
+    <div id="rssSources" style="margin-bottom:6px"></div>
+    <div class="info-list" id="newsList"><div class="info-empty">首次使用请点击 ＋ 添加 RSS 源，或<a href="#" onclick="event.preventDefault();rssAddPreset()" style="color:var(--blue);text-decoration:underline"> 加载推荐源 </a>后点 ↻ 拉取</div></div>
   </div>
   <div class="card">
     <div class="card-hd"><div class="card-dot dot-blue"></div><div class="card-title">资源收藏</div></div>
@@ -803,7 +808,7 @@ function switchPage(name){
   if(name==='errors')renderErrors();
   if(name==='cards')renderCards();
   if(name==='checklist')renderChecklist();
-  if(name==='info'){renderEvents();renderNews();renderResources()}
+  if(name==='info'){renderEvents();renderNews();renderResources();if((S.rssSources||[]).length)rssRefresh(false);}
 }
 
 // ============ 倒计时 + 统计（F3: 主数据源 = 复盘手填时长 reviews[].time） ============
@@ -2519,12 +2524,95 @@ function renderEvents(){
   document.getElementById('eventsList').innerHTML=S.events.map(function(e){return'<div class="info-row"><span class="info-date'+(e.major?' major':'')+'">'+esc(e.date)+'</span><span class="info-text'+(e.major?' major':'')+'">'+esc(e.text)+'</span></div>'}).join('')
 }
 function renderNews(){
-  var d=document.getElementById('newsList');if(!S.news.length){d.innerHTML='<div class="info-empty">Marvis 每日更新</div>';return}
-  d.innerHTML=S.news.map(function(n){return'<div class="info-row"><span class="info-date">'+esc(n.date)+'</span><span class="info-text">'+(n.url?'<a href="'+esc(n.url)+'" target="_blank">'+esc(n.text)+'</a>':esc(n.text))+'</span></div>'}).join('')
+  renderRssSources();
+  var items=S.rssItems||[],srcMap={};
+  (S.rssSources||[]).forEach(function(s){srcMap[s.id]=s.name});
+  var d=document.getElementById('newsList');
+  if(!items.length){d.innerHTML='<div class="info-empty">官方 RSS 源为空，点可 ＋ 或 ↻ 拉取</div>';return}
+  d.innerHTML=items.slice(0,80).map(function(n){var src=srcMap[n.src]||n.src||'';return'<div class="info-row"><span class="info-date">'+esc(n.date)+'</span><span class="info-text"><a href="'+esc(n.url)+'" target="_blank" rel="noopener">'+esc(n.title)+'</a>'+(src?' <span style="color:var(--text3);font-size:10px">['+esc(src)+']</span>':'')+'</div>'}).join('')
 }
+
 function renderResources(){
   document.getElementById('resList').innerHTML=S.resources.map(function(r,i){return'<div class="res-row"><a href="'+esc(r.url)+'" target="_blank">'+esc(r.title)+'</a><span class="res-del" onclick="delRes('+i+')">×</span></div>'}).join('')
 }
+// ================ RSS 抓取与源管理 ================
+var RSS_PROXY="https://api.allorigins.win/raw?url=";
+var RSS_PRESETS=[
+ {name:"知乎 - 考研最新热门",url:"https://www.zhihu.com/rss/topics/19559450"},
+ {name:"知乎 - 研究生入学考试",url:"https://www.zhihu.com/rss/topics/19559434"},
+ {name:"知乎 - 考研新闻",url:"https://www.zhihu.com/rss/topics/19571100"}
+];
+function rssGetId(){return "r"+Date.now().toString(36)+Math.random().toString(36).slice(2,6);}
+function rssAddPrompt(){
+ var name=prompt("源名称（显示在条目末尾）：","新 RSS");
+ if(!name)return;
+ var url=prompt("RSS 链接（http(s)://...xml）：");
+ if(!url)return;url=url.trim();if(!/^https?:\/\//.test(url)){toast("链接必须以 http(s):// 开头");return}
+ S.rssSources=S.rssSources||[];S.rssSources.push({id:rssGetId(),name:name.trim(),url:url});
+ sv('wb_rss_src',S.rssSources);renderRssSources();rssRefresh(false,url);
+}
+function rssAddPreset(){
+ S.rssSources=S.rssSources||[];
+ RSS_PRESETS.forEach(function(p){if(!S.rssSources.some(function(s){return s.url===p.url}))S.rssSources.push({id:rssGetId(),name:p.name,url:p.url});});
+ sv('wb_rss_src',S.rssSources);renderRssSources();rssRefresh(true);toast("已加载 "+(S.rssSources.length)+" 个推荐 RSS 源，正在拉取…");
+}
+function rssDel(id){
+ if(!confirm("确定删除这个 RSS 源？"))return;
+ S.rssSources=(S.rssSources||[]).filter(function(s){return s.id!==id});
+ S.rssItems=(S.rssItems||[]).filter(function(n){return n.src!==id});
+ sv('wb_rss_src',S.rssSources);sv('wb_rss_items',S.rssItems);renderRssSources();renderNews();
+}
+function renderRssSources(){
+ var el=document.getElementById('rssSources');if(!el)return;
+ var srcs=S.rssSources||[];
+ if(!srcs.length){el.innerHTML="";return}
+ el.innerHTML=srcs.map(function(s){var st=s.lastOk===undefined?"":(s.lastOk?"✓":("✗ "+(s.lastErr||"")));return'<div class="rss-src-row"><span class="rss-src-name">'+esc(s.name)+'</span><span class="rss-src-st">'+esc(st)+'</span><span class="rss-src-del" onclick="rssDel(\''+s.id+'\')">×</span></div>'}).join("");
+}
+function rssPullOne(src,cb){
+ var url=RSS_PROXY+encodeURIComponent(src.url);
+ fetch(url,{cache:"no-store"}).then(function(r){if(!r.ok)throw new Error("HTTP "+r.status);return r.text()}).then(function(xml){
+   var items=parseRSS(xml);cb(null,items);
+ }).catch(function(e){cb(e.message||"拉取失败",null)});
+}
+function parseRSS(xml){
+ var doc=new DOMParser().parseFromString(xml,"application/xml");
+ var items=[];
+ var chan=doc.querySelector("channel");if(!chan)return items;
+ var all=doc.querySelectorAll("item");
+ for(var i=0;i<all.length;i++){
+   var it=all[i];
+   var title=(it.querySelector("title")||{}).textContent||"";
+   var link=(it.querySelector("link")||{}).textContent||"";
+   var pub=(it.querySelector("pubDate")||{}).textContent||"";
+   var desc=(it.querySelector("description")||{}).textContent||"";
+   if(!title)continue;
+   var dt=new Date(pub);var date=isNaN(dt)?pub.slice(0,16):(dt.getMonth()+1)+"."+String(dt.getDate()).padStart(2,"0");
+   items.push({title:title,url:link,date:date,desc:desc.replace(/<[^>]+>/g,"").slice(0,200)});
+ }
+ return items;
+}
+function rssRefresh(manual,singleUrl){
+ var srcs=(S.rssSources||[]).slice();if(singleUrl)srcs=srcs.filter(function(s){return s.url===singleUrl});if(!srcs.length){if(manual)toast("请先添加 RSS 源");return}
+ var done=0,fail=0;S.rssItems=S.rssItems||[];
+ srcs.forEach(function(src){
+   rssPullOne(src,function(err,items){
+     if(err){fail++;src.lastOk=false;src.lastErr=err;}
+     else{
+       src.lastOk=true;src.lastErr="";src.lastTs=Date.now();
+       S.rssItems=S.rssItems.filter(function(n){return n.src!==src.id});
+       items.slice(0,30).forEach(function(it){S.rssItems.push({src:src.id,title:it.title,url:it.url,date:it.date,ts:src.lastTs});});
+     }
+     done++;
+     if(done===srcs.length){
+       S.rssItems.sort(function(a,b){return (b.ts||0)-(a.ts||0)});
+       sv('wb_rss_src',S.rssSources);sv('wb_rss_items',S.rssItems);
+       renderRssSources();renderNews();
+       if(manual)toast(fail?"拉取完成，"+fail+" 个源失败":"已刷新 "+(S.rssItems.length)+" 条 RSS");
+     }
+   });
+ });
+}
+
 function addResource(){
   var t=document.getElementById('resTitle').value.trim(),u=document.getElementById('resUrl').value.trim();if(!t||!u)return;
   S.resources.push({title:t,url:u});sv('w5_res',S.resources);document.getElementById('resTitle').value='';document.getElementById('resUrl').value='';renderResources()
