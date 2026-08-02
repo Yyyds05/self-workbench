@@ -1663,7 +1663,8 @@ function renderErrors(){
     // R7.1: 题目（content）作为主标题；topic（错因/分析摘要）降级到 meta 行
     var qtext=e.content||e.topic||'（未填写题目）';
     if(qtext.length>140)qtext=qtext.slice(0,140)+'…';
-    var topicBrief=(e.content && e.topic)?(e.topic.length>50?e.topic.slice(0,50)+'…':e.topic):'';
+    // R7.3: 折叠态错因摘要仅 ≤40 字时显示，否则折叠态不展示（错因完整内容在展开区）
+    var topicBrief=(e.content && e.topic && e.topic.length<=40)?e.topic:'';
     var html='<div class="err-card'+(e.mastered?' mastered':'')+'" onclick="toggleErrExpand('+e.id+')" style="cursor:pointer">'
       +'<div class="err-title" style="color:var(--text)">'+esc(qtext)
       +(lbl?' <span style="font-size:10px;color:var(--red);font-weight:400">'+esc(lbl)+'</span>':'')
@@ -2852,8 +2853,13 @@ function buildTodayQueue(){
   return items;
 }
 function queueQA(it){
-  if(it.kind==='err'){var e=S.errors.find(function(x){return x.id===it.id});return {q:(e.subject||'')+' · '+(e.topic||''),a:(e.answer||e.analysis||'（无答案，见错题详情）')}}
-  var c=cardFind(it.id);return {q:c.front,a:c.back};
+  if(it.kind==='err'){var e=S.errors.find(function(x){return x.id===it.id});
+    var sb=subjByName(e.subject);var subName=sb?sb.name:(e.subject||'');
+    var topicBrief=(e.content&&e.topic)?(e.topic.length>30?e.topic.slice(0,30)+'…':e.topic):'';
+    var q=e.content||e.topic||'（未填写题目）';
+    if(q.length>200)q=q.slice(0,200)+'…';
+    return {q:q,subjTopic:subName+(topicBrief?' · 📝 '+topicBrief:''),a:(e.answer||e.analysis||'（无答案，见错题详情）')};}
+  var c=cardFind(it.id);return {q:c.front,subjTopic:'',a:c.back};
 }
 function renderQueue(){
   var body=document.getElementById('queueBody');if(!body)return;
@@ -2865,6 +2871,7 @@ function renderQueue(){
     var qa=queueQA(it);
     var boxId='qa_'+it.kind+it.id;
     return '<div class="q-body"><div class="q-q">'+esc(qa.q)+'</div>'
+      +(qa.subjTopic?'<div class="q-meta" style="color:var(--text2);font-size:10px;margin-top:3px">'+esc(qa.subjTopic)+'</div>':'')
       +'<div class="q-acts"><button class="err-btn" onclick="queueReveal(\''+it.kind+'\','+it.id+')">👁 看答案</button>'
       +'<button class="err-btn" onclick="queueGrade(\''+it.kind+'\','+it.id+',\'good\')">👍</button>'
       +'<button class="err-btn" onclick="queueGrade(\''+it.kind+'\','+it.id+',\'hard\')">🤔</button>'
