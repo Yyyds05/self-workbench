@@ -304,6 +304,49 @@ body{
   </div>
 </div>
 
+<!-- ================ R7.6: 错题完整编辑 ================ -->
+<div class="ai-modal" id="errEditModal" style="display:none">
+  <div class="sync-card" style="max-width:480px;max-height:88vh;overflow-y:auto">
+    <span class="ai-close" onclick="errEditClose()">✕</span>
+    <div class="sync-hd">✏️ 编辑错题</div>
+    <div class="sync-sub" style="margin-bottom:8px">修改后保存，图片裁剪请在卡片上操作</div>
+    <div class="sync-field"><label>科目</label>
+      <select id="eeSubject">
+        <option value="">选择科目</option>
+        <option value="math">数学二</option>
+        <option value="408">408</option>
+        <option value="eng">英语</option>
+        <option value="pol">政治</option>
+      </select>
+    </div>
+    <div class="sync-field"><label>错因/分析</label><textarea id="eeTopic" style="min-height:48px"></textarea></div>
+    <div class="sync-field"><label>题目</label><textarea id="eeContent" style="min-height:56px"></textarea></div>
+    <div class="sync-field"><label>答案</label><input type="text" id="eeAnswer"></div>
+    <div class="sync-field"><label>解析</label><textarea id="eeAnalysis" style="min-height:48px"></textarea></div>
+    <div class="sync-field"><label>来源</label><input type="text" id="eeSource"></div>
+    <div class="sync-row2">
+      <div class="sync-field"><label>章节</label><input type="text" id="eeChapter"></div>
+      <div class="sync-field"><label>知识点</label><input type="text" id="eeKp"></div>
+    </div>
+    <div class="sync-row2">
+      <div class="sync-field"><label>题型</label><input type="text" id="eeQtype"></div>
+      <div class="sync-field"><label>错因分类</label><select id="eeCause">
+        <option value="">（不填）</option>
+        <option value="base">基础不扎实</option>
+        <option value="logic">思路不清</option>
+        <option value="method">方法不完善</option>
+        <option value="calc">计算差</option>
+        <option value="sloppy">书写习惯差/粗心</option>
+      </select></div>
+    </div>
+    <div class="sync-actions">
+      <button class="btn" onclick="errEditClose()">取消</button>
+      <button class="btn btn-gold" onclick="errEditSave()">保存</button>
+    </div>
+  </div>
+</div>
+
+<!-- ================ R7.5: 图片裁剪 ================ -->
 <!-- ================ R7.5: 图片裁剪 ================ -->
 <div class="crop-mask" id="imgCropModal" onclick="if(event.target===this)imgCropClose()">
   <div class="crop-box2">
@@ -515,9 +558,11 @@ body{
         <input type="text" id="errAnswer" placeholder="正确选项/答案（选填）">
         <input type="text" id="errSource" placeholder="来源（选填，如：王道 P123）">
         <textarea id="errAnalysis" placeholder="解析（选填）"></textarea>
-        <!-- R7.4: 图片字段下移到录入按钮上方，等同于「题目主体」；capture="environment" 移动端默认调用相机 -->
+        <!-- R7.4+R7.6: 题目图 + 解析图 两个文件框，capture="environment" 移动端默认调用相机 -->
         <label style="font-size:11px;color:var(--gold);font-weight:600;margin-top:6px;display:block">📸 题目图片（拍照或选图即可，不打字也能录）</label>
         <input type="file" id="errAtt" accept="image/*,.pdf" multiple capture="environment">
+        <label style="font-size:11px;color:var(--blue);font-weight:600;margin-top:6px;display:block">📝 解析/错因图片（可选，手写解析拍照上传）</label>
+        <input type="file" id="errAttAna" accept="image/*" multiple capture="environment">
         <button class="add-btn" onclick="addError()">录入</button>
       </div>
     </details>
@@ -1395,7 +1440,7 @@ function u8ToBase64(u8){
   return btoa(bin);
 }
 // 处理录入时选择的附件文件 → Promise<attachments[]>（含 GH 引用或 IDB 暂存引用）
-function processAttachments(errId,files){
+function processAttachments(errId,files,kind){
   ghLoad();
   var list=Array.prototype.slice.call(files||[]);
   if(!list.length)return Promise.resolve([]);
@@ -1409,7 +1454,7 @@ function processAttachments(errId,files){
         var path='attachments/'+errId+'_'+safe;
         var p=isPdf?fileToBase64(f):(f.size>300*1024?compressImage(f).then(function(r){return r.base64}):fileToBase64(f));
         return p.then(function(b64){return ghPutAttachment(path,b64)})
-          .then(function(){out.push({name:f.name,path:path})})
+          .then(function(){out.push({name:f.name,path:path,kind:kind||'q'})})
           .catch(function(e){toast('附件 '+f.name+' 上传失败：'+e.message)});
       }
       // 未配置同步：仅小图暂存 IndexedDB
@@ -1418,7 +1463,7 @@ function processAttachments(errId,files){
         if(r.base64.length*0.75>300*1024){toast(f.name+' 压缩后仍超 300KB，请先配置 GitHub 同步');return}
         var key=errId+'_'+safe;
         return idbPut(key,{base64:r.base64,mime:r.mime,name:f.name,errId:errId}).then(function(){
-          out.push({name:f.name,local:1,key:key});
+          out.push({name:f.name,local:1,key:key,kind:kind||'q'});
           toast(f.name+' 已本地暂存（配置同步后可上传）');
         });
       }).catch(function(e){toast('附件 '+f.name+' 处理失败：'+e.message)});
@@ -1465,9 +1510,11 @@ function errGuessChapter(subj,text){
 function addError(){
   var s=document.getElementById('errSubject').value,t=document.getElementById('errTopic').value.trim(),c=document.getElementById('errContent').value.trim();
   var attInput=document.getElementById('errAtt');
+  var anaInput=document.getElementById('errAttAna');
   var files=attInput?attInput.files:null;
+  var anaFiles=anaInput?anaInput.files:null;
   // R7.4: 题目（content）变可选，但 topic（错因）和附件至少一个，否则提示
-  if(!t && !c && !(files&&files.length)){toast('请填错因或上传题目图片（二选一）');return;}
+  if(!t && !c && !(files&&files.length) && !(anaFiles&&anaFiles.length)){toast('请填错因或上传题目图片（三选一）');return;}
   var chSel=document.getElementById('errChapter');
   var chapter=chSel?chSel.value:'';
   if(!chapter)chapter=errGuessChapter(s,c); // 自动推断章节
@@ -1491,17 +1538,21 @@ function addError(){
   if(document.getElementById('errSource'))document.getElementById('errSource').value='';
   if(document.getElementById('errAnalysis'))document.getElementById('errAnalysis').value='';
   if(document.getElementById('errCause'))document.getElementById('errCause').value='';
-  var imgCount=(files&&files.length)||0;
+  var imgCount=((files&&files.length)||0)+((anaFiles&&anaFiles.length)||0);
   renderErrors();updateTabDots();toast('错题已录入'+(imgCount?' （含 '+imgCount+' 张图）':''));
-  if(files&&files.length){
-    processAttachments(id,files).then(function(atts){
+  if((files&&files.length)||(anaFiles&&anaFiles.length)){
+    var pr1=processAttachments(id,files||[],'q');
+    var pr2=processAttachments(id,anaFiles||[],'a');
+    Promise.all([pr1,pr2]).then(function(res){
       if(attInput)attInput.value='';
-      if(!atts.length)return;
+      if(anaInput)anaInput.value='';
+      var all=res[0].concat(res[1]);
+      if(!all.length)return;
       var item=S.errors.find(function(e){return e.id===id});
       if(!item)return;
-      item.attachments=(item.attachments||[]).concat(atts);
+      item.attachments=(item.attachments||[]).concat(all);
       sv('w5_err',S.errors);renderErrors();updateAttPendingBar();
-      toast('附件已保存 '+atts.length+' 个');
+      toast('附件已保存 '+all.length+' 个');
     });
   }
 }
@@ -1512,7 +1563,7 @@ function attOpen(errId,idx){
   if(!item||!item.attachments||!item.attachments[idx])return;
   var att=item.attachments[idx];
   var cacheKey=errId+'#'+idx;
-  var view=document.getElementById('attView_'+errId);
+  var view=document.getElementById('attView_'+errId+'_'+idx)||document.getElementById('attView_'+errId);
   function show(blobUrl,isPdf){
     if(isPdf){
       var w=window.open(blobUrl,'_blank');
@@ -1728,13 +1779,28 @@ function renderErrors(){
         }
       }
       if(atts.length){
-        // R7.4: 展开态直接内联显示首图（data URL），无 data 则异步加载
-        var first=atts[0];var isImg=/\.(jpe?g|png|gif|webp|bmp)$/i.test(first.name||'') || /^data:image/.test(first.data||'');
-        var attHtml='';
-        if(first.data && isImg){attHtml='<img src="'+esc(first.data)+'" style="max-width:100%;max-height:600px;border-radius:6px;display:block">'+(e.attachments&&e.attachments[0].data?'<div style="margin-top:4px"><button class="err-btn" onclick="event.stopPropagation();imgCropOpen('+e.id+',0)">✂️ 裁剪</button></div>':'');}
-        else{setTimeout(function(){try{attOpen('+e.id+',0)}catch(_){}},0);}
-        html+='<div style="margin-top:8px"><div class="att-view" id="attView_'+e.id+'" onclick="event.stopPropagation()">'+attHtml+'</div></div>';
-        if(atts.length>1)html+='<div style="margin-top:4px;display:flex;gap:4px;flex-wrap:wrap">'+atts.slice(1).map(function(a,i){return'<span class="att-chip" onclick="event.stopPropagation();attOpen('+e.id+','+(i+1)+')">'+esc(a.name||('附件'+(i+2)))+'</span>'}).join('')+'</div>';
+        // R7.6: 按 kind 分组显示（题目图 kind=q / 解析图 kind=a），无 kind 视为题目图
+        var qAtts=atts.filter(function(a){return !a.kind||a.kind==='q'});
+        var aAtts=atts.filter(function(a){return a.kind==='a'});
+        function renderAttGroup(list,label,color){
+          if(!list.length)return '';
+          var out='<div style="margin-top:8px">';
+          if(label)out+='<div style="font-size:10px;color:'+color+';font-weight:600;margin-bottom:2px">'+label+'</div>';
+          out+='<div class="att-view" id="attView_'+e.id+'_'+list[0]._i+'" onclick="event.stopPropagation()">';
+          var first=list[0];
+          var isImg=/\.(jpe?g|png|gif|webp|bmp)$/i.test(first.name||'') || /^data:image/.test(first.data||'');
+          if(first.data && isImg){out+='<img src="'+esc(first.data)+'" style="max-width:100%;max-height:600px;border-radius:6px;display:block">'+(first.data?'<div style="margin-top:4px"><button class="err-btn" onclick="event.stopPropagation();imgCropOpen('+e.id+','+first._i+')">✂️ 裁剪</button></div>':'');}
+          else{setTimeout(function(){try{attOpen('+e.id+','+first._i+')}catch(_){}},0);}
+          out+='</div>';
+          if(list.length>1)out+='<div style="margin-top:4px;display:flex;gap:4px;flex-wrap:wrap">'+list.slice(1).map(function(a){return'<span class="att-chip" onclick="event.stopPropagation();attOpen('+e.id+','+a._i+')">'+esc(a.name||'附件')+'</span>'}).join('')+'</div>';
+          return out+'</div>';
+        }
+        // 给附件打上原始索引
+        atts.forEach(function(a,i){a._i=i});
+        html+=renderAttGroup(qAtts,'','');
+        html+=renderAttGroup(aAtts,'📝 解析/错因图','var(--blue)');
+        // 清理临时索引
+        atts.forEach(function(a){delete a._i});
       }
       // R18: 陈汉达标法（verbatim 文案）
       if(CHENHAN_STD)html+='<div style="margin-top:6px;font-size:10px;color:var(--text2)">💡 陈汉达标法：'+esc(CHENHAN_STD)+'</div>';
@@ -1748,10 +1814,50 @@ function renderErrors(){
           +'<button class="err-btn" onclick="errSettle('+e.id+',\'again\')">😣 忘了</button>';
     }
     html+='<button class="err-btn'+(e.mastered?' master':'')+'" onclick="toggleMastered('+e.id+')">'+(e.mastered?'已掌握 ✓':'标记已掌握')+'</button>'
-        +'<button class="err-btn" onclick="editErrMeta('+e.id+')">✏️ 编辑</button></div></div>';
+        +'<button class="err-btn" onclick="editErrFull('+e.id+')">✏️ 编辑全部</button>'
+        +'<button class="err-btn" onclick="delError('+e.id+')" style="color:var(--red)">🗑 删除</button></div></div>';
     return html;
   }).join('')||'<div style="text-align:center;color:var(--text3);padding:20px;font-size:12px">暂无错题</div>';
   updateAttPendingBar();
+}
+// R7.6: 完整编辑（所有字段可改）+ 删除
+var EE_ID=0;
+function editErrFull(id){
+  var item=S.errors.find(function(e){return e.id===id});if(!item)return;
+  EE_ID=id;
+  function set(id2,v){var el=document.getElementById(id2);if(el)el.value=v||''}
+  set('eeSubject',item.subject||'');
+  set('eeTopic',item.topic||'');
+  set('eeContent',item.content||'');
+  set('eeAnswer',item.answer||'');
+  set('eeAnalysis',item.analysis||'');
+  set('eeSource',item.source||'');
+  set('eeChapter',item.chapter||'');
+  set('eeKp',item.kp||'');
+  set('eeQtype',item.qtype||'');
+  set('eeCause',item.cause||'');
+  document.getElementById('errEditModal').style.display='flex';
+}
+function errEditSave(){
+  var item=S.errors.find(function(e){return e.id===EE_ID});if(!item)return;
+  function val(id2){var el=document.getElementById(id2);return el?el.value.trim():''}
+  item.subject=val('eeSubject')||item.subject;
+  item.topic=val('eeTopic')||'';
+  item.content=val('eeContent')||'';
+  item.answer=val('eeAnswer');
+  item.analysis=val('eeAnalysis');
+  item.source=val('eeSource');
+  item.chapter=val('eeChapter');
+  item.kp=val('eeKp')||val('eeTopic')||'';
+  item.qtype=val('eeQtype');
+  item.cause=val('eeCause');
+  sv('w5_err',S.errors);errEditClose();renderErrors();updateTabDots();toast('✓ 已保存');
+}
+function errEditClose(){document.getElementById('errEditModal').style.display='none'}
+function delError(id){
+  if(!confirm('确定删除这条错题？删除后不可恢复'))return;
+  S.errors=S.errors.filter(function(e){return e.id!==id});
+  sv('w5_err',S.errors);renderErrors();updateTabDots();toast('已删除错题');
 }
 // R1: 行内编辑错题的章节/知识点/题型（只填空缺、不覆盖已有值）
 function editErrMeta(id){
