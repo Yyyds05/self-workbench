@@ -477,14 +477,14 @@ body{
         <select id="errCause" title="错因（陈汉五类，选填）">
           <option value="">错因（选填）</option>
         </select>
-        <input type="text" id="errTopic" placeholder="知识点（如：中值定理）">
-        <textarea id="errContent" placeholder="题目简述..."></textarea>
+        <input type="text" id="errTopic" placeholder="错因/分析（如：概念不清；可只拍照不填）">
+        <textarea id="errContent" placeholder="题目文字（可选；拍照后不必再打字）"></textarea>
         <input type="text" id="errAnswer" placeholder="正确选项/答案（选填）">
         <input type="text" id="errSource" placeholder="来源（选填，如：王道 P123）">
         <textarea id="errAnalysis" placeholder="解析（选填）"></textarea>
-        <!-- F13-3: 附件（图片/PDF，可多选） -->
-        <label style="font-size:10px;color:var(--text2)">附件（图片/PDF，可多选；存入你的 GitHub 私有仓库）</label>
-        <input type="file" id="errAtt" accept="image/*,.pdf" multiple>
+        <!-- R7.4: 图片字段下移到录入按钮上方，等同于「题目主体」；capture="environment" 移动端默认调用相机 -->
+        <label style="font-size:11px;color:var(--gold);font-weight:600;margin-top:6px;display:block">📸 题目图片（拍照或选图即可，不打字也能录）</label>
+        <input type="file" id="errAtt" accept="image/*,.pdf" multiple capture="environment">
         <button class="add-btn" onclick="addError()">录入</button>
       </div>
     </details>
@@ -1433,7 +1433,8 @@ function addError(){
   var s=document.getElementById('errSubject').value,t=document.getElementById('errTopic').value.trim(),c=document.getElementById('errContent').value.trim();
   var attInput=document.getElementById('errAtt');
   var files=attInput?attInput.files:null;
-  if(!t&&!c)return;
+  // R7.4: 题目（content）变可选，但 topic（错因）和附件至少一个，否则提示
+  if(!t && !c && !(files&&files.length)){toast('请填错因或上传题目图片（二选一）');return;}
   var chSel=document.getElementById('errChapter');
   var chapter=chSel?chSel.value:'';
   if(!chapter)chapter=errGuessChapter(s,c); // 自动推断章节
@@ -1457,7 +1458,8 @@ function addError(){
   if(document.getElementById('errSource'))document.getElementById('errSource').value='';
   if(document.getElementById('errAnalysis'))document.getElementById('errAnalysis').value='';
   if(document.getElementById('errCause'))document.getElementById('errCause').value='';
-  renderErrors();updateTabDots();toast('错题已录入');
+  var imgCount=(files&&files.length)||0;
+  renderErrors();updateTabDots();toast('错题已录入'+(imgCount?' （含 '+imgCount+' 张图）':''));
   if(files&&files.length){
     processAttachments(id,files).then(function(atts){
       if(attInput)attInput.value='';
@@ -1665,10 +1667,11 @@ function renderErrors(){
     if(qtext.length>140)qtext=qtext.slice(0,140)+'…';
     // R7.3: 折叠态错因摘要仅 ≤40 字时显示，否则折叠态不展示（错因完整内容在展开区）
     var topicBrief=(e.content && e.topic && e.topic.length<=40)?e.topic:'';
+    // R7.4: 附件存在时优先显示图片（图片就是题目），文字题目退居补充
     var html='<div class="err-card'+(e.mastered?' mastered':'')+'" onclick="toggleErrExpand('+e.id+')" style="cursor:pointer">'
-      +'<div class="err-title" style="color:var(--text)">'+esc(qtext)
+      +'<div class="err-title" style="color:var(--text)">'+(atts.length?'📎 ':'')+esc(qtext)
       +(lbl?' <span style="font-size:10px;color:var(--red);font-weight:400">'+esc(lbl)+'</span>':'')
-      +(atts.length?' <span style="font-size:10px;color:var(--blue);font-weight:400">📎'+atts.length+'</span>':'')
+      +(atts.length>1?' <span style="font-size:10px;color:var(--blue);font-weight:400">'+atts.length+'张</span>':'')
       +' <span style="font-size:10px;color:var(--text3);font-weight:400;float:right">'+(open?'▲ 收起':'▼ 展开')+'</span></div>'
       +'<div class="err-meta"><span style="color:'+subColor+';font-weight:600">'+esc(subName)+'</span>'
       +(topicBrief?'<span style="color:var(--text2)">📝 '+esc(topicBrief)+'</span>':'')
@@ -1692,9 +1695,13 @@ function renderErrors(){
         }
       }
       if(atts.length){
-        html+='<div style="margin-top:6px"><b>附件：</b>'+atts.map(function(a,i){
-          return '<span class="att-chip" onclick="event.stopPropagation();attOpen('+e.id+','+i+')">'+esc(a.name||('附件'+(i+1)))+(a.local?'（本地暂存）':'')+'</span>';
-        }).join('')+'</div><div class="att-view" id="attView_'+e.id+'" onclick="event.stopPropagation()"></div>';
+        // R7.4: 展开态直接内联显示首图（data URL），无 data 则异步加载
+        var first=atts[0];var isImg=/\.(jpe?g|png|gif|webp|bmp)$/i.test(first.name||'') || /^data:image/.test(first.data||'');
+        var attHtml='';
+        if(first.data && isImg){attHtml='<img src="'+esc(first.data)+'" style="max-width:100%;max-height:600px;border-radius:6px;display:block">';}
+        else{setTimeout(function(){try{attOpen('+e.id+',0)}catch(_){}},0);}
+        html+='<div style="margin-top:8px"><div class="att-view" id="attView_'+e.id+'" onclick="event.stopPropagation()">'+attHtml+'</div></div>';
+        if(atts.length>1)html+='<div style="margin-top:4px;display:flex;gap:4px;flex-wrap:wrap">'+atts.slice(1).map(function(a,i){return'<span class="att-chip" onclick="event.stopPropagation();attOpen('+e.id+','+(i+1)+')">'+esc(a.name||('附件'+(i+2)))+'</span>'}).join('')+'</div>';
       }
       // R18: 陈汉达标法（verbatim 文案）
       if(CHENHAN_STD)html+='<div style="margin-top:6px;font-size:10px;color:var(--text2)">💡 陈汉达标法：'+esc(CHENHAN_STD)+'</div>';
