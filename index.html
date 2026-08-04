@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no">
-<title>考研工作台 · 小羊 · v3.3</title>
+<title>考研工作台 · 小羊 · v3.4</title>
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="apple-touch-icon" href="apple-touch-icon.png">
 <meta name="theme-color" content="#d4a017">
@@ -2824,10 +2824,15 @@ function renderNews(){
  var items=S.rssItems||[],srcMap={};
  (S.rssSources||[]).forEach(function(s){srcMap[s.id]=s.name});
  var d=document.getElementById('newsList');
- if(!items.length){d.innerHTML='<div class="info-empty">官方 RSS 源为空，点可 ＋ 或 ↻ 拉取</div>';return}
+ if(!items.length){d.innerHTML='<div class="info-empty">暂无资讯。已自动加载推荐源，点右上角 ↻ 刷新拉取<br><span style="color:var(--text3);font-size:11px">微信公众号源需先在 <a href="https://wechat2rss.xlab.app" target="_blank" style="color:var(--blue)">Wechat2RSS</a> 订阅对应公众号</span></div>';return}
+ // R12: 时间过滤 —— 隐藏超过 90 天的旧条目（避免显示多年前的历史数据）
+ var cutoff=Date.now()-90*86400000;
+ var fresh=items.filter(function(n){return!n.ts||n.ts>cutoff});
+ var stale=items.length-fresh.length;
  var lastTs=0;(S.rssSources||[]).forEach(function(s){if(s.lastTs&&s.lastTs>lastTs)lastTs=s.lastTs});
  var meta=lastTs?('最后更新 '+new Date(lastTs).toLocaleString('zh-CN',{hour12:false}).slice(5)):'尚未更新';
- d.innerHTML='<div class="info-meta">'+esc(meta)+' · 共 '+items.length+' 条</div>'+items.slice(0,80).map(function(n){var src=srcMap[n.src]||n.src||'';return'<div class="info-row"><span class="info-date">'+esc(n.date)+'</span><span class="info-text"><a href="'+esc(n.url)+'" target="_blank" rel="noopener">'+esc(n.title)+'</a>'+(src?' <span style="color:var(--text3);font-size:10px">['+esc(src)+']</span>':'')+'</div>'}).join('')
+ if(stale>0)meta+=' · 已隐藏 '+stale+' 条过期内容';
+ d.innerHTML='<div class="info-meta">'+esc(meta)+' · 显示 '+fresh.length+' 条</div>'+fresh.slice(0,80).map(function(n){var src=srcMap[n.src]||n.src||'';return'<div class="info-row"><span class="info-date">'+esc(n.date)+'</span><span class="info-text"><a href="'+esc(n.url)+'" target="_blank" rel="noopener">'+esc(n.title)+'</a>'+(src?' <span style="color:var(--text3);font-size:10px">['+esc(src)+']</span>':'')+'</div>'}).join('')
 }
 
 function renderResources(){
@@ -2945,12 +2950,15 @@ var RSS_PROXIES=[
   function(u){return "https://thingproxy.freeboard.io/fetch/"+u},
   function(u){return "https://api.codetabs.com/v1/proxy/?quest="+encodeURIComponent(u)}
 ];
-// R11: 考研资讯推荐源 —— 知乎话题 RSS 早已停服，改用新浪教育/考研频道（国内少数仍稳定维护 RSS 的源）
-// 注：RSS 实际在你的浏览器经 CORS 代理拉取，源是否有效以 ↻ 后的 ✓/✗ 状态为准
+// R12: 考研资讯推荐源 —— 新浪 RSS 已停更(全是2019年历史)，改用微信公众号(Wechat2RSS)+ 少数仍活跃源
+// 注：RSS 在你的浏览器经 CORS 代理拉取，源是否有效以 ↻ 后的 ✓/✗ 为准
+//       微信公众号需先在 wechat2rss.xlab.app 订阅对应公众号才能拉到内容
 var RSS_PRESETS=[
- {name:"新浪 · 考研",url:"http://rss.sina.com.cn/edu/kaoyan.xml"},
- {name:"新浪 · 教育新闻",url:"http://rss.sina.com.cn/edu/news.xml"},
- {name:"新浪 · 国内要闻",url:"http://rss.sina.com.cn/news/china.xml"}
+ {name:"苦瓜学长",url:"https://wechat2rss.xlab.app/feed/苦瓜学长"},
+ {name:"灰灰考研",url:"https://wechat2rss.xlab.app/feed/灰灰考研"},
+ {name:"全全考研抄底",url:"https://wechat2rss.xlab.app/feed/全全考研抄底"},
+ {name:"研招网 · 最新资讯",url:"https://yz.chsi.com.cn/rss/kyzx.xml"},
+ {name:"教育部 · 新闻",url:"http://www.moe.gov.cn/jyb_xwfb/rss.xml"}
 ];
 // 首次打开资讯页自动播种推荐源（仅当从未配置过；用户手动清空后不会重复塞回）
 function rssSeedDefaults(){
