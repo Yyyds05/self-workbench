@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no">
-<title>考研工作台 · 小羊 · v3.1</title>
+<title>考研工作台 · 小羊 · v3.3</title>
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="apple-touch-icon" href="apple-touch-icon.png">
 <meta name="theme-color" content="#d4a017">
@@ -666,7 +666,7 @@ body{
   <div class="card">
     <div class="card-hd"><div class="card-dot dot-green"></div><div class="card-title">考研资讯（RSS）</div><button class="add-btn" style="margin-left:auto" onclick="rssRefresh(true)" title="立即刷新全部源">↻</button><button class="add-btn" onclick="rssAddPrompt()" title="添加 RSS 源">＋</button></div>
     <div id="rssSources" style="margin-bottom:6px"></div>
-    <div class="info-list" id="newsList"><div class="info-empty">首次使用请点击 ＋ 添加 RSS 源，或<a href="#" onclick="event.preventDefault();rssAddPreset()" style="color:var(--blue);text-decoration:underline"> 加载推荐源 </a>后点 ↻ 拉取</div></div>
+    <div class="info-list" id="newsList"><div class="info-empty">已自动加载考研资讯推荐源，点 <b>↻</b> 刷新；如需关注公众号，点 <b>＋</b> 粘贴 Wechat2RSS 链接</div></div>
   </div>
   <div class="card">
     <div class="card-hd"><div class="card-dot dot-blue"></div><div class="card-title">资源收藏</div></div>
@@ -939,7 +939,7 @@ function switchPage(name){
   if(name==='errors')renderErrors();
   if(name==='cards')renderCards();
   if(name==='checklist')renderChecklist();
-  if(name==='info'){renderEvents();renderNews();renderResources();if((S.rssSources||[]).length)rssRefresh(false);}
+  if(name==='info'){renderEvents();if(S.rssSources===undefined)rssSeedDefaults();renderNews();renderResources();if((S.rssSources||[]).length)rssRefresh(false);}
 }
 
 // ============ 倒计时 + 统计（F3: 主数据源 = 复盘手填时长 reviews[].time） ============
@@ -2945,11 +2945,20 @@ var RSS_PROXIES=[
   function(u){return "https://thingproxy.freeboard.io/fetch/"+u},
   function(u){return "https://api.codetabs.com/v1/proxy/?quest="+encodeURIComponent(u)}
 ];
+// R11: 考研资讯推荐源 —— 知乎话题 RSS 早已停服，改用新浪教育/考研频道（国内少数仍稳定维护 RSS 的源）
+// 注：RSS 实际在你的浏览器经 CORS 代理拉取，源是否有效以 ↻ 后的 ✓/✗ 状态为准
 var RSS_PRESETS=[
- {name:"知乎 - 考研最新热门",url:"https://www.zhihu.com/rss/topics/19559450"},
- {name:"知乎 - 研究生入学考试",url:"https://www.zhihu.com/rss/topics/19559434"},
- {name:"知乎 - 考研新闻",url:"https://www.zhihu.com/rss/topics/19571100"}
+ {name:"新浪 · 考研",url:"http://rss.sina.com.cn/edu/kaoyan.xml"},
+ {name:"新浪 · 教育新闻",url:"http://rss.sina.com.cn/edu/news.xml"},
+ {name:"新浪 · 国内要闻",url:"http://rss.sina.com.cn/news/china.xml"}
 ];
+// 首次打开资讯页自动播种推荐源（仅当从未配置过；用户手动清空后不会重复塞回）
+function rssSeedDefaults(){
+  if(S.rssSources!==undefined)return;
+  S.rssSources=[];
+  RSS_PRESETS.forEach(function(p){S.rssSources.push({id:rssGetId(),name:p.name,url:p.url});});
+  sv('wb_rss_src',S.rssSources);renderRssSources();
+}
 function rssGetId(){return "r"+Date.now().toString(36)+Math.random().toString(36).slice(2,6);}
 function rssAddPrompt(){
  var name=prompt("源名称（显示在条目末尾）：","新 RSS");
