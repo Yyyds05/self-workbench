@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no">
-<title>考研工作台 · 小羊 · v3.4</title>
+<title>考研工作台 · 小羊 · v3.5</title>
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="apple-touch-icon" href="apple-touch-icon.png">
 <meta name="theme-color" content="#d4a017">
@@ -664,9 +664,9 @@ body{
     <div class="info-list" id="eventsList"></div>
   </div>
   <div class="card">
-    <div class="card-hd"><div class="card-dot dot-green"></div><div class="card-title">考研资讯（RSS）</div><button class="add-btn" style="margin-left:auto" onclick="rssRefresh(true)" title="立即刷新全部源">↻</button><button class="add-btn" onclick="rssAddPrompt()" title="添加 RSS 源">＋</button></div>
+    <div class="card-hd"><div class="card-dot dot-green"></div><div class="card-title">考研资讯（官方站实时抓取）</div><button class="add-btn" style="margin-left:auto" onclick="rssRefresh(true)" title="立即刷新全部源">↻</button><button class="add-btn" onclick="rssAddPrompt()" title="添加 RSS 源">＋</button></div>
     <div id="rssSources" style="margin-bottom:6px"></div>
-    <div class="info-list" id="newsList"><div class="info-empty">已自动加载考研资讯推荐源，点 <b>↻</b> 刷新；如需关注公众号，点 <b>＋</b> 粘贴 Wechat2RSS 链接</div></div>
+    <div class="info-list" id="newsList"><div class="info-empty">已自动对接研招网、中国教育在线等官方站，点 <b>↻</b> 拉取最新考研资讯</div></div>
   </div>
   <div class="card">
     <div class="card-hd"><div class="card-dot dot-blue"></div><div class="card-title">资源收藏</div></div>
@@ -901,6 +901,10 @@ var S={
   cardDeck:'all',cardStatus:'all',cardStudy:null,cardFlip:false,
   queue:null,queueIdx:0,queueShow:false,queueDone:0,
   nlItems:[],
+  // R13: RSS 源/条目/种子版本（持久化，seedVer 控制预设迁移）
+  rssSources:lds('wb_rss_src',undefined),
+  rssItems:lds('wb_rss_items',[]),
+  rssSeedVer:lds('wb_rss_seed',0),
   // R12: 今日完成计数器（按天存 w5_dayops）
   dayOps:lds('w5_dayops',{})
 };
@@ -2824,7 +2828,7 @@ function renderNews(){
  var items=S.rssItems||[],srcMap={};
  (S.rssSources||[]).forEach(function(s){srcMap[s.id]=s.name});
  var d=document.getElementById('newsList');
- if(!items.length){d.innerHTML='<div class="info-empty">暂无资讯。已自动加载推荐源，点右上角 ↻ 刷新拉取<br><span style="color:var(--text3);font-size:11px">微信公众号源需先在 <a href="https://wechat2rss.xlab.app" target="_blank" style="color:var(--blue)">Wechat2RSS</a> 订阅对应公众号</span></div>';return}
+ if(!items.length){d.innerHTML='<div class="info-empty">暂无资讯。已自动对接研招网、中国教育在线等官方站<br>点右上角 <b>↻</b> 刷新拉取<br><span style="font-size:11px;color:var(--text3)">若所有源显示 ✗，可直达 <a href="https://yz.chsi.com.cn/kyzx/" target="_blank" style="color:var(--blue)">研招网考研资讯</a> 查看最新公告</span></div>';return}
  // R12: 时间过滤 —— 隐藏超过 90 天的旧条目（避免显示多年前的历史数据）
  var cutoff=Date.now()-90*86400000;
  var fresh=items.filter(function(n){return!n.ts||n.ts>cutoff});
@@ -2950,22 +2954,24 @@ var RSS_PROXIES=[
   function(u){return "https://thingproxy.freeboard.io/fetch/"+u},
   function(u){return "https://api.codetabs.com/v1/proxy/?quest="+encodeURIComponent(u)}
 ];
-// R12: 考研资讯推荐源 —— 新浪 RSS 已停更(全是2019年历史)，改用微信公众号(Wechat2RSS)+ 少数仍活跃源
-// 注：RSS 在你的浏览器经 CORS 代理拉取，源是否有效以 ↻ 后的 ✓/✗ 为准
-//       微信公众号需先在 wechat2rss.xlab.app 订阅对应公众号才能拉到内容
+// R13: 直接对接官方/主流考研站，自动抓取最新公告（不再依赖用户手动配公众号或停更 RSS）
+// 源 type: 'html' = 抓取官网资讯页提取新闻列表；'rss' = 解析 RSS XML
+// 抓取在你的浏览器经 CORS 代理完成，源是否有效以 ↻ 后的 ✓/✗ 状态为准
 var RSS_PRESETS=[
- {name:"苦瓜学长",url:"https://wechat2rss.xlab.app/feed/苦瓜学长"},
- {name:"灰灰考研",url:"https://wechat2rss.xlab.app/feed/灰灰考研"},
- {name:"全全考研抄底",url:"https://wechat2rss.xlab.app/feed/全全考研抄底"},
- {name:"研招网 · 最新资讯",url:"https://yz.chsi.com.cn/rss/kyzx.xml"},
- {name:"教育部 · 新闻",url:"http://www.moe.gov.cn/jyb_xwfb/rss.xml"}
+ {name:"研招网 · 考研资讯",url:"https://yz.chsi.com.cn/kyzx/",type:"html"},
+ {name:"中国教育在线 · 考研",url:"https://kaoyan.eol.cn/",type:"html"},
+ {name:"中国考研网",url:"https://www.chinakaoyan.com/",type:"html"},
+ {name:"考研帮 · 资讯",url:"https://kaoyan.com/",type:"html"}
 ];
-// 首次打开资讯页自动播种推荐源（仅当从未配置过；用户手动清空后不会重复塞回）
+// R13: 种子版本迁移 —— 预设改为官方站 HTML 源后，强制把旧失效源（新浪/公众号）重置为新源
+// 仅在 seedVer 变化时才重置，避免反复覆盖用户自定义源
+var RSS_SEED_VER=2;
 function rssSeedDefaults(){
-  if(S.rssSources!==undefined)return;
+  if(S.rssSeedVer===RSS_SEED_VER)return;
   S.rssSources=[];
-  RSS_PRESETS.forEach(function(p){S.rssSources.push({id:rssGetId(),name:p.name,url:p.url});});
-  sv('wb_rss_src',S.rssSources);renderRssSources();
+  RSS_PRESETS.forEach(function(p){S.rssSources.push({id:rssGetId(),name:p.name,url:p.url,type:p.type||'rss'});});
+  S.rssSeedVer=RSS_SEED_VER;
+  sv('wb_rss_src',S.rssSources);sv('wb_rss_seed',RSS_SEED_VER);renderRssSources();
 }
 function rssGetId(){return "r"+Date.now().toString(36)+Math.random().toString(36).slice(2,6);}
 function rssAddPrompt(){
@@ -2978,8 +2984,9 @@ function rssAddPrompt(){
 }
 function rssAddPreset(){
  S.rssSources=S.rssSources||[];
- RSS_PRESETS.forEach(function(p){if(!S.rssSources.some(function(s){return s.url===p.url}))S.rssSources.push({id:rssGetId(),name:p.name,url:p.url});});
- sv('wb_rss_src',S.rssSources);renderRssSources();rssRefresh(true);toast("已加载 "+(S.rssSources.length)+" 个推荐 RSS 源，正在拉取…");
+ RSS_PRESETS.forEach(function(p){if(!S.rssSources.some(function(s){return s.url===p.url}))S.rssSources.push({id:rssGetId(),name:p.name,url:p.url,type:p.type||'rss'});});
+ S.rssSeedVer=RSS_SEED_VER;sv('wb_rss_seed',RSS_SEED_VER);
+ sv('wb_rss_src',S.rssSources);renderRssSources();rssRefresh(true);toast("已加载 "+(S.rssSources.length)+" 个推荐源，正在拉取…");
 }
 function rssDel(id){
  if(!confirm("确定删除这个 RSS 源？"))return;
@@ -3005,14 +3012,37 @@ function rssPullOne(src,cb){
    var url=RSS_PROXIES[i](src.url);
    fetch(url,{cache:"no-store"})
      .then(function(r){if(!r.ok)throw new Error("HTTP "+r.status);return r.text()})
-     .then(function(xml){
-       var items=parseRSS(xml);
+     .then(function(txt){
+       var items=(src.type==='html')?parseNewsHtml(txt,src.url):parseRSS(txt);
        if(!items||!items.length)throw new Error("空内容");
        cb(null,items);
      })
      .catch(function(){attempt(i+1)});
  }
  attempt(0);
+}
+// R13: 通用 HTML 新闻列表提取器 —— 直接抓官网资讯页，提取 <a> 标题+链接，补全相对 URL，过滤导航/广告
+function parseNewsHtml(html,base){
+ var doc=new DOMParser().parseFromString(html,"text/html");
+ var out=[],seen={};
+ // 优先在常见新闻列表容器内查找，提升准确性
+ var scope=doc.querySelector(".news-list,.list-box,.list-con,.articleList,ul.list,div.list,.news_box")||doc.body;
+ var links=scope.querySelectorAll("a");
+ var host=(base.match(/^https?:\/\/[^\/]+/)||[""])[0];
+ for(var i=0;i<links.length;i++){
+   var a=links[i],t=(a.textContent||"").replace(/\s+/g,"").trim(),href=a.getAttribute("href")||"";
+   if(t.length<8||t.length>50)continue;
+   if(/登录|注册|首页|设为首页|收藏|更多»|更多>|详情|返回|版权|备案|联系我们|关于我们|隐私|网站地图|手机版|客户端|APP下载|官方微信|官方微博|无障碍/.test(t))continue;
+   if(!href||href.indexOf("javascript:")===0||href.charAt(0)==="#")continue;
+   var full;
+   if(/^https?:\/\//.test(href))full=href;
+   else if(href.charAt(0)==="/")full=host+href;
+   else full=host+"/"+href;
+   if(seen[t])continue;seen[t]=1;
+   var date="",m=t.match(/(\d{4}[-/.]\d{1,2}[-/.]\d{1,2})/);if(m)date=m[1].replace(/[/.]/g,"-");
+   out.push({title:t,url:full,date:date,desc:""});
+ }
+ return out.slice(0,30);
 }
 function parseRSS(xml){
  var doc=new DOMParser().parseFromString(xml,"application/xml");
