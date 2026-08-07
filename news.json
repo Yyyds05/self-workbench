@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-08-07T11:12:14.287848",
+  "updatedAt": "2026-08-07T11:24:48.136381",
   "sources": [
     {
       "name": "研招网 · 考研资讯",
@@ -370,9 +370,159 @@
     {
       "name": "考研帮 · 资讯",
       "url": "https://kaoyan.com/",
-      "ok": false,
-      "error": "<urlopen error [SSL: CERTIFICATE_VERIFY_FAILED] certificate verify failed: certificate has expired (_ssl.c:1032)>",
-      "items": []
+      "ok": true,
+      "items": [
+        {
+          "title": "这4个专业，难到破防！",
+          "url": "https://kaoyan.com/article/1/9370/b1e62fa61d2c467caeffce554046810f?bc=home-today",
+          "date": ""
+        },
+        {
+          "title": "择校指南|26考研，如何判断一所学校是否难考？",
+          "url": "https://kaoyan.com/article/1/9370/09823affe8384c3ea46729402ba911ce?bc=home-today",
+          "date": ""
+        },
+        {
+          "title": "83个硕博点撤销，学硕将成历史产物？",
+          "url": "https://kaoyan.com/article/1/9370/fd76e22c078447d4b0acedd6f88ce5d4?bc=home-today",
+          "date": ""
+        },
+        {
+          "title": "考研初试阅卷“潜规则”大揭秘！",
+          "url": "https://kaoyan.com/article/1/9370/cf06b61e51554497aee28b02628116d4?bc=home-today",
+          "date": ""
+        },
+        {
+          "title": "“踩坑”总结！26考研人记好这8点！",
+          "url": "https://kaoyan.com/article/1/9370/2a2e8182c7ef42758310a224d49fc68f?bc=home-today",
+          "date": ""
+        },
+        {
+          "title": "二战、三战是否要告知复试导师？",
+          "url": "https://kaoyan.com/article/1/9370/c96ce0448f524c619ae95a8f87dd4564?bc=home-today",
+          "date": ""
+        },
+        {
+          "title": "双非研究生真的不好吗？",
+          "url": "https://kaoyan.com/article/1/9370/694a0dd466624e8fb87f40f05f2a191d?bc=home-today",
+          "date": ""
+        },
+        {
+          "title": "考研加点钝感力，更容易上岸！",
+          "url": "https://kaoyan.com/article/1/9370/f8c953e34573453c8f89f62eca26d3d0?bc=home-today",
+          "date": ""
+        },
+        {
+          "title": "2025QS亚洲大学排名出炉，197所中国高校上榜！",
+          "url": "https://kaoyan.com/article/1/9370/a437fdff4b4c4524ae249a0b245d29f9?bc=home-today",
+          "date": ""
+        },
+        {
+          "title": "什么！专硕没有学硕含金量高？你要清醒一些！",
+          "url": "https://kaoyan.com/article/1/9370/80fafeafa6174ef380a40d61ca785bac?bc=home-today",
+          "date": ""
+        },
+        {
+          "title": "2026考研再战全线专项计划",
+          "url": "https://kaoyan.com/article/1/3946/da9fbf62442e4cfb83ec5a56f5715641?bc=home-wiki",
+          "date": ""
+        },
+        {
+          "title": "26考研风向标：这三大变化你要知道！",
+          "url": "https://kaoyan.com/article/1/3946/d6e2a9c7106a4487b1b6a49af6dfc9bd?bc=home-wiki",
+          "date": ""
+        },
+        {
+          "title": "考研10问，扫除你的迷茫！",
+          "url": "https://kaoyan.com/article/1/3946/6a1a9ccdae7c46b294db137a8e1175f9?bc=home-wiki",
+          "date": ""
+        },
+        {
+          "title": "《考研“后悔”行为大赏》",
+          "url": "https://kaoyan.com/article/1/3946/7a36d92c55c6415eb102ee2f8e70b43f?bc=home-wiki",
+          "date": ""
+        },
+        {
+          "title": "速看！26考研7月详尽规划！",
+          "url": "https://kaoyan.com/article/1/3946/bc1f7ea89a794198ba2d22709ebac357?bc=home-wiki",
+          "date": ""
+        },
+        {
+          "title": "今年考研时间又提前了？！",
+          "url": "https://kaoyan.com/article/1/3946/55245e99827c40d1bbcafdbe8541c25a?bc=home-wiki",
+          "date": ""
+        },
+        {
+          "title": "考研真的越来越“高考化”了吗？",
+          "url": "https://kaoyan.com/article/1/3946/562fcb93769a44cf88837626607d4555?bc=home-wiki",
+          "date": ""
+        },
+        {
+          "title": "26考研英语如何学~看过来！",
+          "url": "https://kaoyan.com/article/1/3946/b4fc12a7b6024480b5f6755cfeaa6b0d?bc=home-wiki",
+          "date": ""
+        },
+        {
+          "title": "26考研要注意的避坑秘籍",
+          "url": "https://kaoyan.com/article/1/3946/166aaf87f1ec489f9707bc3101abd99d?bc=home-wiki",
+          "date": ""
+        },
+        {
+          "title": "26考研如何选好专业和院校",
+          "url": "https://kaoyan.com/article/1/3946/8fd45abb7ecb43d1bfeb5054a24183a0?bc=home-wiki",
+          "date": ""
+        },
+        {
+          "title": "选专业、择校、复习，考研保姆级教程！",
+          "url": "https://kaoyan.com/article/1/3946/7ba9774c17cf4914a6bdd66a56092bb3?bc=home-wiki",
+          "date": ""
+        },
+        {
+          "title": "那些闷声赚大钱的小众专业",
+          "url": "https://kaoyan.com/article/1/3949/bfabefb205c445d5aa70d9ad7013d972?bc=home-guide",
+          "date": ""
+        },
+        {
+          "title": "考研热门城市前10名！这些院校就业前景好！",
+          "url": "https://kaoyan.com/article/1/3949/02a7e74babe441ae92022c32b8cf833c?bc=home-guide",
+          "date": ""
+        },
+        {
+          "title": "这6大专业，能跨考、就业好！",
+          "url": "https://kaoyan.com/article/1/3949/4743cd60a9034698a1763ac8a336adf6?bc=home-guide",
+          "date": ""
+        },
+        {
+          "title": "推荐！分数线较低，适合&quot;捡漏&quot;考研院校",
+          "url": "https://kaoyan.com/article/1/3949/d16c859fbaf74e5aa7dd1e23d2d2d04a?bc=home-guide",
+          "date": ""
+        },
+        {
+          "title": "背不完、根本背不完！这5大专业要背的太多了！",
+          "url": "https://kaoyan.com/article/1/3949/1214c7395daa4709ae0739484531fd4d?bc=home-guide",
+          "date": ""
+        },
+        {
+          "title": "最难调剂的5大专业，第一名卷哭了！",
+          "url": "https://kaoyan.com/article/1/3949/36977af94be04dca88a1c77887268004?bc=home-guide",
+          "date": ""
+        },
+        {
+          "title": "这些院校进面等于拟录取！！",
+          "url": "https://kaoyan.com/article/1/3949/aac56da0dfbe47c1b39993cd692db222?bc=home-guide",
+          "date": ""
+        },
+        {
+          "title": "暴跌70分！报考这所顶尖211的有福啦～",
+          "url": "https://kaoyan.com/article/1/3949/eef381bb418c48baab4856117c1b86d6?bc=home-guide",
+          "date": ""
+        },
+        {
+          "title": "91校25考研复试分数线汇总！",
+          "url": "https://kaoyan.com/article/1/3949/dbcb08a9dcae432f95c40a1c758d8c40?bc=home-guide",
+          "date": ""
+        }
+      ]
     },
     {
       "name": "百度新闻 · 考研",
