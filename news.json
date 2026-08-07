@@ -1,0 +1,384 @@
+{
+  "updatedAt": "2026-08-07T11:12:14.287848",
+  "sources": [
+    {
+      "name": "研招网 · 考研资讯",
+      "url": "https://yz.chsi.com.cn/kyzx/",
+      "ok": true,
+      "items": [
+        {
+          "title": "近五年研考分数线及趋势图（2022-2026）",
+          "url": "https://yz.chsi.com.cn/kyzx/zt/lnfsx2026.shtml",
+          "date": ""
+        },
+        {
+          "title": "退役大学生士兵报考硕士研究生有关招生政策解读",
+          "url": "https://yz.chsi.com.cn/kyzx/zt/tydxs.shtml",
+          "date": ""
+        },
+        {
+          "title": "2026年研考国家线发布",
+          "url": "https://yz.chsi.com.cn/kyzx/kydt/202602/20260228/2293449091.html",
+          "date": ""
+        },
+        {
+          "title": "2026年研考分数查询及复试分数线汇总",
+          "url": "https://yz.chsi.com.cn/kyzx/zt/kyfs.shtml",
+          "date": ""
+        },
+        {
+          "title": "2026年研招管理规定",
+          "url": "https://yz.chsi.com.cn/kyzx/jybzc/202509/20250924/2293432108.html",
+          "date": ""
+        },
+        {
+          "title": "2026研考日程表",
+          "url": "https://yz.chsi.com.cn/kyzx/kydt/202509/20250924/2293432116.html",
+          "date": ""
+        },
+        {
+          "title": "教育部学生服务与素质发展中心",
+          "url": "https://chesicc.chsi.com.cn/",
+          "date": ""
+        },
+        {
+          "title": "京ICP备19004913号-1",
+          "url": "https://beian.miit.gov.cn",
+          "date": ""
+        },
+        {
+          "title": "京公网安备11010202009747号",
+          "url": "http://www.beian.gov.cn/portal/registerSystemInfo?recordcode=11010202009747",
+          "date": ""
+        }
+      ]
+    },
+    {
+      "name": "中国教育在线 · 考研",
+      "url": "https://kaoyan.eol.cn/",
+      "ok": true,
+      "items": [
+        {
+          "title": "自命题专业课资料真题",
+          "url": "https://www.kaoyan.cn/tools-box/zhenti",
+          "date": ""
+        },
+        {
+          "title": "2026研考国家线发布",
+          "url": "https://kaoyan.eol.cn/nnews/202602/t20260228_2720029.shtml",
+          "date": ""
+        },
+        {
+          "title": "历年考研报考人数",
+          "url": "https://www.eol.cn/e_ky/zt/common/bmrs/",
+          "date": ""
+        },
+        {
+          "title": "2026考研全流程",
+          "url": "https://www.eol.cn/e_ky/zt/common/kylc/pc.shtml?",
+          "date": ""
+        },
+        {
+          "title": "考研报名时间及考点汇总",
+          "url": "https://www.eol.cn/e_ky/zt/common/baoming/index.shtml",
+          "date": ""
+        },
+        {
+          "title": "2025研究生招生调查报告",
+          "url": "https://kaoyan.eol.cn/e_ky/zt/report/2025/index.html",
+          "date": ""
+        },
+        {
+          "title": "考研调剂服务平台",
+          "url": "https://kaoyan.eol.cn/zsky/fstj/",
+          "date": ""
+        },
+        {
+          "title": "研招复试调剂服务系统将于4月30日关闭",
+          "url": "https://kaoyan.eol.cn/nnews/202304/t20230425_2384362.shtml",
+          "date": ""
+        },
+        {
+          "title": "硕士研究生近五年考研真题及答案汇总",
+          "url": "https://kaoyan.eol.cn/e_ky/zt/common/zhenti/",
+          "date": ""
+        },
+        {
+          "title": "各地区考研成绩查询时间及入口",
+          "url": "https://www.eol.cn/e_ky/zt/app/2020cjcx/index.html",
+          "date": ""
+        },
+        {
+          "title": "2026年考研交流群",
+          "url": "https://kaoyan.eol.cn/e_ky/zt/yanyouqun/index.html",
+          "date": ""
+        },
+        {
+          "title": "AI择校：大数据精准推荐",
+          "url": "https://www.kaoyan.cn/select-school-condition",
+          "date": ""
+        },
+        {
+          "title": "加入上岸自习室，一起沉浸学习",
+          "url": "https://kaoyan.eol.cn/e_ky/zt/download/appdownload.html",
+          "date": ""
+        },
+        {
+          "title": "免费领：27考研全程备考规划",
+          "url": "https://www.kaoyan.cn/course-detail/53",
+          "date": ""
+        },
+        {
+          "title": "硕士研究生查成绩",
+          "url": "https://chafen.kaoyan.eol.cn/index.shtml",
+          "date": ""
+        },
+        {
+          "title": "阜阳师范大学研招",
+          "url": "https://school.kaoyan.cn/HomePage/index_1347.html",
+          "date": ""
+        },
+        {
+          "title": "中国科学院长春光机所",
+          "url": "https://www.kaoyan.cn/school/371",
+          "date": ""
+        },
+        {
+          "title": "内蒙古科技大学包头医学院研招",
+          "url": "http://www.btmc.cn/yjsxy/index.htm",
+          "date": ""
+        },
+        {
+          "title": "河南科技大学研招",
+          "url": "https://school.kaoyan.cn/HomePage/index_496.html",
+          "date": ""
+        },
+        {
+          "title": "全国研究生报考常识",
+          "url": "https://www.eol.cn/e_ky/zt/common/kybk/",
+          "date": ""
+        },
+        {
+          "title": "考研报考须知：怎么选专业",
+          "url": "https://kaoyan.eol.cn//www.eol.cn/html/ky/xzy/kyxzy/index.shtml",
+          "date": ""
+        },
+        {
+          "title": "2020年江西优秀研招院校巡展",
+          "url": "http://www.eol.cn/e_df/jiangxi/html/yanzhaoxunzhan/index.shtml",
+          "date": ""
+        },
+        {
+          "title": "全国考研报考指南：专业选择",
+          "url": "https://kaoyan.eol.cn//kaoyan.eol.cn/html/ky/zhuanye/",
+          "date": ""
+        },
+        {
+          "title": "全国导师联系方式查询",
+          "url": "https://kaoyan.eol.cn//school.kaoyan.cn/tutor_sousuo.php",
+          "date": ""
+        },
+        {
+          "title": "研招院校联系方式查询",
+          "url": "https://kaoyan.eol.cn//school.kaoyan.cn/yanzhao_link.php",
+          "date": ""
+        },
+        {
+          "title": "历年考研分数线趋势图",
+          "url": "https://kaoyan.eol.cn//www.eol.cn/html/ky/fsx/index.shtml",
+          "date": ""
+        },
+        {
+          "title": "考研报考捷径特殊政策",
+          "url": "https://kaoyan.eol.cn//www.eol.cn/html/ky/bkzc/index.shtml",
+          "date": ""
+        },
+        {
+          "title": "研究生导师选择指南",
+          "url": "https://kaoyan.eol.cn//www.eol.cn/html/ky/tutor/",
+          "date": ""
+        },
+        {
+          "title": "保研手册：推荐免试申请攻略",
+          "url": "https://kaoyan.eol.cn//www.eol.cn/html/ky/2016yjstm/",
+          "date": ""
+        },
+        {
+          "title": "“在职”研究生：考研全攻略",
+          "url": "https://kaoyan.eol.cn//www.eol.cn/html/ky/mb2/zzky/index.shtml",
+          "date": ""
+        }
+      ]
+    },
+    {
+      "name": "中国考研网",
+      "url": "https://www.chinakaoyan.com/",
+      "ok": true,
+      "items": [
+        {
+          "title": "研究生招生信息网",
+          "url": "https://www.chinakaoyan.com/info/",
+          "date": ""
+        },
+        {
+          "title": "2027考研网课-全科规划上岸营",
+          "url": "https://tgc.orangevip.com/releasehtml/index1146.html?jt_site_id=45395&source=0",
+          "date": ""
+        },
+        {
+          "title": "应用数学筑未来，启无限可能",
+          "url": "https://www.polyu.edu.hk/ama/study/pg/msc_simp/",
+          "date": ""
+        },
+        {
+          "title": "如何搜集考研专业课资料",
+          "url": "https://www.chinakaoyan.com/info/article/id/144055.shtml",
+          "date": ""
+        },
+        {
+          "title": "专业学位与学术学位的区别",
+          "url": "https://www.chinakaoyan.com/topic/xszyss.html",
+          "date": ""
+        },
+        {
+          "title": "34所自划线院校考研分数线",
+          "url": "https://www.chinakaoyan.com/info/article/id/459767.shtml",
+          "date": ""
+        },
+        {
+          "title": "考研专业课复习资料在哪买",
+          "url": "https://www.chinakaoyan.com/info/article/id/388047.shtml",
+          "date": ""
+        },
+        {
+          "title": "考研公共课真题下载",
+          "url": "https://www.chinakaoyan.com/zhuanti/zhenti.shtml",
+          "date": ""
+        },
+        {
+          "title": "考研不考数学的专业有哪些",
+          "url": "https://www.chinakaoyan.com/info/article/id/500335.shtml",
+          "date": ""
+        },
+        {
+          "title": "【9月即入学】南方医科大学国际合作硕士项目补..",
+          "url": "https://www.chinakaoyan.com/info/article/id/674769.shtml",
+          "date": ""
+        },
+        {
+          "title": "新兴科技推动创新：理大推出免费课程",
+          "url": "https://www.chinakaoyan.com/info/article/id/675199.shtml",
+          "date": ""
+        },
+        {
+          "title": "香港院校2026-2027年度硕士招生课程汇总",
+          "url": "https://www.chinakaoyan.com/info/article/id/638865.shtml",
+          "date": ""
+        },
+        {
+          "title": "2026年考研国家线公布",
+          "url": "https://www.chinakaoyan.com/info/article/id/655907.shtml",
+          "date": ""
+        },
+        {
+          "title": "2026/2027考研公开课上线",
+          "url": "https://www.chinakaoyan.com/info/article/id/502585.shtml",
+          "date": ""
+        },
+        {
+          "title": "2027考研英语作文1对1定制高分模版",
+          "url": "https://www.chinakaoyan.com/info/article/id/674881.shtml",
+          "date": ""
+        },
+        {
+          "title": "2027老夏考研英语365天带背答疑伴学营",
+          "url": "https://www.chinakaoyan.com/info/article/id/666449.shtml",
+          "date": ""
+        },
+        {
+          "title": "2026年考研报名人数汇总_考研报名人数多少",
+          "url": "https://www.chinakaoyan.com/info/article/id/639329.shtml",
+          "date": ""
+        },
+        {
+          "title": "2026考研报名入口_研究生考试报名入口",
+          "url": "https://www.chinakaoyan.com/info/article/id/632847.shtml",
+          "date": ""
+        },
+        {
+          "title": "全国各省市2026年考研报考点网报公告及现场确认..",
+          "url": "https://www.chinakaoyan.com/info/article/id/632827.shtml",
+          "date": ""
+        },
+        {
+          "title": "全国各省市2026年硕士研究生网报公告及报考点设..",
+          "url": "https://www.chinakaoyan.com/info/article/id/632821.shtml",
+          "date": ""
+        },
+        {
+          "title": "2026年全国硕士研究生招生考试报名公告",
+          "url": "https://www.chinakaoyan.com/info/article/id/632515.shtml",
+          "date": ""
+        },
+        {
+          "title": "全国各省市2025年考研报考点网报公告及现场确认..",
+          "url": "https://www.chinakaoyan.com/info/article/id/576455.shtml",
+          "date": ""
+        },
+        {
+          "title": "2026-2027级香港理工大学科技、工程及健康学部..",
+          "url": "https://www.chinakaoyan.com/info/article/id/668727.shtml",
+          "date": ""
+        },
+        {
+          "title": "成都理工大学牛津布鲁克斯学院2026年研究生（外..",
+          "url": "https://www.chinakaoyan.com/info/article/id/668127.shtml",
+          "date": ""
+        },
+        {
+          "title": "宁夏师范大学（6405）报考点2026年考研网上确认..",
+          "url": "https://www.chinakaoyan.com/info/article/id/643635.shtml",
+          "date": ""
+        },
+        {
+          "title": "宁夏医科大学2026年接收推免生通知（第二批次）",
+          "url": "https://www.chinakaoyan.com/info/article/id/643617.shtml",
+          "date": ""
+        },
+        {
+          "title": "2027年成都医学院硕士考试部分专业初试科目及报..",
+          "url": "https://www.chinakaoyan.com/info/article/id/675197.shtml",
+          "date": ""
+        },
+        {
+          "title": "专业学位与学术学位的区别",
+          "url": "https://www.chinakaoyan.com/ask/questionShow/id/256308.shtml",
+          "date": ""
+        },
+        {
+          "title": "研究生学费多少？",
+          "url": "https://www.chinakaoyan.com/ask/questionShow/id/25472.shtml",
+          "date": ""
+        },
+        {
+          "title": "考研调剂是怎么回事？",
+          "url": "https://www.chinakaoyan.com/ask/questionShow/id/14513.shtml",
+          "date": ""
+        }
+      ]
+    },
+    {
+      "name": "考研帮 · 资讯",
+      "url": "https://kaoyan.com/",
+      "ok": false,
+      "error": "<urlopen error [SSL: CERTIFICATE_VERIFY_FAILED] certificate verify failed: certificate has expired (_ssl.c:1032)>",
+      "items": []
+    },
+    {
+      "name": "百度新闻 · 考研",
+      "url": "https://news.baidu.com/ns?word=%E8%80%83%E7%A0%94&tn=rss&rn=20&ie=utf-8",
+      "ok": true,
+      "items": []
+    }
+  ]
+}
