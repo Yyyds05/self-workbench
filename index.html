@@ -2947,8 +2947,12 @@ function imgCropClose(){
 }
 
 // ================ RSS 抓取与源管理 ================
+// R14: 优先走自建 EdgeOne 边缘代理（同域 /api/rss，国内边缘节点抓取官方站，快且稳、无 CORS）
+// 失败再回退海外公共代理；全部不可达则源显示 ✗ 并保留本地缓存
+function rssOwnProxy(u){return location.origin+"/api/rss?url="+encodeURIComponent(u);}
 // R10: 多 CORS 代理顺序回退 —— 任一可用即可拉取，避免单一代理挂掉导致全部源失效
 var RSS_PROXIES=[
+  rssOwnProxy,
   function(u){return "https://api.allorigins.win/raw?url="+encodeURIComponent(u)},
   function(u){return "https://corsproxy.io/?url="+encodeURIComponent(u)},
   function(u){return "https://thingproxy.freeboard.io/fetch/"+u},
@@ -3010,14 +3014,16 @@ function rssPullOne(src,cb){
  function attempt(i){
    if(i>=RSS_PROXIES.length){cb("所有代理均不可达（网络或源失效）",null);return}
    var url=RSS_PROXIES[i](src.url);
-   fetch(url,{cache:"no-store"})
+   var ac=new AbortController();var to=setTimeout(function(){ac.abort()},9000);
+   fetch(url,{cache:"no-store",signal:ac.signal})
      .then(function(r){if(!r.ok)throw new Error("HTTP "+r.status);return r.text()})
      .then(function(txt){
+       clearTimeout(to);
        var items=(src.type==='html')?parseNewsHtml(txt,src.url):parseRSS(txt);
        if(!items||!items.length)throw new Error("空内容");
        cb(null,items);
      })
-     .catch(function(){attempt(i+1)});
+     .catch(function(){clearTimeout(to);attempt(i+1)});
  }
  attempt(0);
 }
@@ -3061,7 +3067,31 @@ function parseRSS(xml){
  }
  return items;
 }
+// R14: 优先加载同域预生成的 news.json（由 gen_news.py / GitHub Actions 服务端抓取研招网等官方站生成，无 CORS、国内稳）
+// 失败再回退浏览器直连代理（rssRefreshProxy），尽力而为
 function rssRefresh(manual,singleUrl){
+ var base=location.pathname.replace(/index\.html$/,'');
+ fetch(base+'news.json',{cache:"no-store"})
+   .then(function(r){if(!r.ok)throw new Error("HTTP "+r.status);return r.json()})
+   .then(function(data){rssApplyNewsJson(data,manual);})
+   .catch(function(){rssRefreshProxy(manual,singleUrl);});
+}
+function rssApplyNewsJson(data,manual){
+ var presetUrls=(data.sources||[]).map(function(s){return s.url});
+ var custom=(S.rssSources||[]).filter(function(s){return s.url&&presetUrls.indexOf(s.url)<0}); // 保留用户自定义源
+ S.rssSources=custom.slice();S.rssItems=[];
+ (data.sources||[]).forEach(function(s){
+   var sid=rssGetId();
+   S.rssSources.push({id:sid,name:s.name,url:s.url,lastOk:!!s.ok,lastErr:s.error||"",lastTs:Date.now(),preset:true});
+   (s.items||[]).forEach(function(it){S.rssItems.push({src:sid,title:it.title,url:it.url,date:it.date||"",ts:Date.now()});});
+ });
+ S.rssItems.sort(function(a,b){return (b.ts||0)-(a.ts||0)});
+ sv('wb_rss_src',S.rssSources);sv('wb_rss_items',S.rssItems);
+ renderRssSources();renderNews();
+ if(manual)toast("已加载 "+S.rssItems.length+" 条资讯（更新于 "+(data.updatedAt||"")+"）");
+}
+// R14: 原代理抓取逻辑（news.json 不可用时的回退；走海外公共代理，国内可能慢/失败）
+function rssRefreshProxy(manual,singleUrl){
  var srcs=(S.rssSources||[]).slice();if(singleUrl)srcs=srcs.filter(function(s){return s.url===singleUrl});if(!srcs.length){if(manual)toast("请先添加 RSS 源");return}
  var done=0,fail=0,okAny=0;S.rssItems=S.rssItems||[];
  srcs.forEach(function(src){
