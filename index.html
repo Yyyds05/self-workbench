@@ -480,6 +480,30 @@ body{
   #lgRoot .gops .btn{flex:1;}
   #lgRoot .banner{font-size:12.5px;}
 }
+
+/* 学习目标进度卡（融入仪表盘主流程） */
+.dot-pink{background:#E86A9C}
+.gd-manage{flex:0 0 auto;border:1px solid var(--line2,#eee);background:#fff;color:#C94F80;font-size:12px;font-weight:600;padding:5px 10px;border-radius:9px;cursor:pointer;margin-left:8px}
+.gd-manage:active{opacity:.7}
+#goalsDashBody .gd-empty{font-size:13px;color:var(--text2,#9a8f88);padding:4px 2px;line-height:1.6}
+#goalsDashBody .gd-empty a{color:#E86A9C;font-weight:700;text-decoration:none}
+#goalsDashBody .gd-warn{font-size:12px;color:#b04a4a;background:#fdeaea;border:1px solid #f3cfcf;border-radius:10px;padding:8px 10px;margin-bottom:8px;line-height:1.5}
+#goalsDashBody .gd-rows{display:flex;flex-direction:column;gap:8px}
+#goalsDashBody .gd-row{display:flex;align-items:center;gap:10px;padding:9px 10px;border:1px solid var(--line2,#F1ECE6);border-radius:12px;background:#fff}
+#goalsDashBody .gd-row.alert{border-color:#f3cfcf;background:#fff6f6}
+#goalsDashBody .gd-dot{width:10px;height:10px;border-radius:50%;flex:0 0 auto}
+#goalsDashBody .gd-main{flex:1 1 auto;min-width:0}
+#goalsDashBody .gd-name{font-size:14px;font-weight:700;color:var(--ink,#3d2e2a);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+#goalsDashBody .gd-meta{font-size:12px;color:var(--text2,#9a8f88);margin-top:2px}
+#goalsDashBody .gd-meta b{color:#C94F80}
+#goalsDashBody .gd-pills{display:flex;flex-wrap:wrap;gap:4px;flex:0 0 auto;align-items:center}
+#goalsDashBody .pill{display:inline-block;font-size:10.5px;padding:2px 7px;border-radius:20px;font-weight:600;line-height:1.5;white-space:nowrap}
+#goalsDashBody .pill.red{background:#fdeaea;color:#b04a4a}
+#goalsDashBody .pill.green{background:#e7f3ec;color:#4a8a5e}
+#goalsDashBody .pill.amber{background:#fcf1dd;color:#c98a2a}
+#goalsDashBody .pill.gray{background:#f0ece6;color:#8c7a72}
+#goalsDashBody .gd-checkin{flex:0 0 auto;border:none;background:#5a9e6f;color:#fff;font-size:12.5px;font-weight:700;padding:7px 12px;border-radius:10px;cursor:pointer}
+#goalsDashBody .gd-checkin:active{opacity:.85}
 </style>
 </head>
 <body>
@@ -672,6 +696,13 @@ body{
     <div class="card-hd"><div class="card-dot dot-green"></div><div class="card-title">今日完成</div></div>
     <div class="td-grid" id="todayDoneGrid"></div>
     <div class="td-sub" id="todayDoneSub" style="font-size:10px;color:var(--text3);margin-top:6px"></div>
+  </div>
+  <!-- 目标进度：融入考研每日主流程 -->
+  <div class="card" id="goalsDashCard">
+    <div class="card-hd"><div class="card-dot dot-pink"></div><div class="card-title">学习目标进度</div>
+      <span id="goalsDashExam" style="margin-left:auto;font-size:11px;color:var(--text2)"></span>
+      <button class="gd-manage" onclick="switchPage('goals')">去管理 ›</button></div>
+    <div id="goalsDashBody"></div>
   </div>
   <div class="card">
     <div class="card-hd"><div class="card-dot dot-gold"></div><div class="card-title">科目进度</div></div>
@@ -1114,7 +1145,7 @@ function switchPage(name){
   document.querySelectorAll('.tab-item').forEach(function(t){t.classList.remove('active')});
   document.getElementById('page-'+name).classList.add('active');
   document.querySelector('.tab-item[data-page="'+name+'"]').classList.add('active');
-  if(name==='dashboard'){renderTasks();renderRing();renderChart();renderBar();udStats();renderQueue();renderTodayDone()}
+  if(name==='dashboard'){renderTasks();renderRing();renderChart();renderBar();udStats();renderQueue();renderTodayDone();renderGoalsDash()}
   if(name==='review'){renderChTags();renderRevHistory();renderPlanMeta()}
   if(name==='errors')renderErrors();
   if(name==='cards')renderCards();
@@ -4170,6 +4201,7 @@ renderPlanMeta();     // R7: 计划表写回元信息
 updateTabDots();      // R2/R4: 待复习角标
 renderNlUndoHint();   // R6: 撤销提示
 renderTodayDone();    // R12: 今日完成看板
+renderGoalsDash();   // 目标进度卡（融入每日主流程）
 // DEF-02: 刷新恢复计时（w5_tstart，3 小时内有效）
 var _ts=lds('w5_tstart',null);
 if(_ts&&Date.now()-_ts<3*3600000){S.tstart=_ts;S.trun=setInterval(tick,1000);tick();}
@@ -4572,9 +4604,51 @@ function lgDoCheckin(gid){
   lgSave();lgCloseMask();
   var after=lgPctOf(g);
   if(after>=100&&before<100)lgCelebrate();
-  lgRender();toast(backfill?"已补记":"打卡成功");
+  lgRender();renderGoalsDash();toast(backfill?"已补记":"打卡成功");
 }
 function lgDelRec(rid){LG.records=LG.records.filter(function(r){return r.id!==rid;});lgSave();lgRender();toast("已删除该记录");}
+
+/* ================= 仪表盘目标进度卡（融入考研每日主流程） ================= */
+function renderGoalsDash(){
+  var box=document.getElementById('goalsDashBody');if(!box)return;
+  lgLoad();
+  var examDays=Math.ceil((EXAM_DATE-new Date())/86400000);
+  var exEl=document.getElementById('goalsDashExam');if(exEl)exEl.textContent='考研初试还剩 '+examDays+' 天';
+  if(!LG.goals||!LG.goals.length){
+    box.innerHTML='<div class="gd-empty">还没有学习目标。把考研任务（背单词 / 刷题量 / 读书页数）拆成有终点的目标，每天在这里打卡 —— <a href="javascript:void(0)" onclick="switchPage(\'goals\')">去添加 ›</a></div>';
+    return;
+  }
+  var examStr=lgFmt(EXAM_DATE);
+  function row(g){
+    var p=lgPctOf(g),dg=lgDaysToDeadline(g),ovf=lgIsOverdue(g),ym=lgYesterdayMiss(g.id);
+    var sugg=lgSuggestedToday(g)+(ym?(ym.red?lgSuggestedOn(g,lgFmt(lgAddDays(lgToday(),-1))):0):0);
+    var color=g.color||"#E86A9C";
+    var pills='';
+    if(ovf)pills+='<span class="pill red">逾期'+Math.abs(dg)+'天</span>';
+    else if(ym&&ym.red)pills+='<span class="pill red">昨日中断</span>';
+    else if(ym&&ym.yellow)pills+='<span class="pill amber">补昨日</span>';
+    var est=lgEstCompletion(g);
+    if(est.status==='done')pills+='<span class="pill green">已达成</span>';
+    else if(est.status==='ok'){
+      var dte=lgDaysBetween(est.date,examStr);
+      if(dte<0)pills+='<span class="pill red">赶不上初试</span>';
+      else pills+='<span class="pill '+(est.early?'green':'amber')+'">'+(est.early?'提前':'拖后')+est.diff+'天</span>';
+    }
+    var meta=lgDoneOf(g)+'/'+lgNum(g.total)+' '+esc(g.unit)+' · '+p+'%';
+    if(sugg>0)meta+=' · 今日建议 <b>'+sugg+'</b> '+esc(g.unit);
+    return '<div class="gd-row'+(ovf||(ym&&ym.red)?' alert':'')+'">'+
+      '<span class="gd-dot" style="background:'+color+'"></span>'+
+      '<div class="gd-main"><div class="gd-name">'+esc(g.name)+'</div><div class="gd-meta">'+meta+'</div></div>'+
+      '<div class="gd-pills">'+pills+'</div>'+
+      '<button class="gd-checkin" onclick="lgOpenCheckin(\''+g.id+'\')">打卡</button>'+
+      '</div>';
+  }
+  var ov=LG.goals.filter(function(g){var m=lgYesterdayMiss(g.id);return lgIsOverdue(g)||(m&&m.red);});
+  var ok=LG.goals.filter(function(g){return ov.indexOf(g)<0;});
+  var warn='';
+  LG.goals.forEach(function(g){var est=lgEstCompletion(g);if(est.status==='ok'&&lgDaysBetween(est.date,examStr)<0&&lgRemainOf(g)>0){warn+='<div class="gd-warn">⚠ 「'+esc(g.name)+'」预计 '+est.date+' 完成，已晚于考研初试（'+examStr+'），需加快节奏</div>';}});
+  box.innerHTML=warn+'<div class="gd-rows">'+ov.map(row).join('')+ok.map(row).join('')+'</div>';
+}
 
 /* ================= 我的操作 ================= */
 function lgExportJSON(){
