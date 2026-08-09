@@ -160,13 +160,15 @@ body{
 .cl-text{font-size:13px}
 
 .info-list{font-size:12px}
-.info-row{display:flex;gap:8px;padding:7px 0;border-bottom:1px solid var(--border);align-items:baseline}
+.info-row{display:flex;flex-direction:column;gap:4px;padding:8px 0;border-bottom:1px solid var(--border)}
+.info-row .info-head{display:flex;gap:8px;align-items:baseline}
 .info-date{font-size:10px;color:var(--text3);white-space:nowrap;min-width:56px}
 .info-text{flex:1}.info-text a{color:var(--blue);text-decoration:none}
 .info-text.major{color:var(--gold);font-weight:600}
 .info-date.major{color:var(--gold);font-weight:600}
 .info-empty{color:var(--text3);font-size:12px;text-align:center;padding:16px 0}
 .info-meta{font-size:10px;color:var(--text3);margin-bottom:5px;padding-left:2px}
+.news-desc{font-size:12px;color:var(--ink2);line-height:1.55;padding:5px 8px;margin-top:2px;background:var(--surface2);border-radius:8px;border-left:3px solid var(--blue)}
 .rss-src-row{display:flex;align-items:center;gap:6px;padding:4px 8px;background:var(--bg);border-radius:8px;margin-bottom:3px;font-size:11px}
 .rss-src-name{flex:1;color:var(--text)}
 .rss-src-st{color:var(--text3);font-size:10px}
@@ -3051,7 +3053,11 @@ function renderNews(){
  var lastTs=0;(S.rssSources||[]).forEach(function(s){if(s.lastTs&&s.lastTs>lastTs)lastTs=s.lastTs});
  var meta=lastTs?('最后更新 '+new Date(lastTs).toLocaleString('zh-CN',{hour12:false}).slice(5)):'尚未更新';
  if(stale>0)meta+=' · 已隐藏 '+stale+' 条过期内容';
- d.innerHTML='<div class="info-meta">'+esc(meta)+' · 显示 '+fresh.length+' 条</div>'+fresh.slice(0,80).map(function(n){var src=srcMap[n.src]||n.src||'';return'<div class="info-row"><span class="info-date">'+esc(n.date)+'</span><span class="info-text"><a href="'+esc(n.url)+'" target="_blank" rel="noopener">'+esc(n.title)+'</a>'+(src?' <span style="color:var(--text3);font-size:10px">['+esc(src)+']</span>':'')+'</div>'}).join('')
+ d.innerHTML='<div class="info-meta">'+esc(meta)+' · 显示 '+fresh.length+' 条</div>'+fresh.slice(0,80).map(function(n){
+   var src=srcMap[n.src]||n.src||'';
+   var desc=n.desc?'<div class="news-desc" onclick="event.stopPropagation()">'+esc(n.desc)+'</div>':'';
+   return'<div class="info-row"><div class="info-head"><span class="info-date">'+esc(n.date)+'</span><span class="info-text"><a href="'+esc(n.url)+'" target="_blank" rel="noopener">'+esc(n.title)+'</a>'+(src?' <span style="color:var(--text3);font-size:10px">['+esc(src)+']</span>':'')+'</span></div>'+desc+'</div>';
+ }).join('')
 }
 
 function renderResources(){
@@ -3298,7 +3304,7 @@ function rssApplyNewsJson(data,manual){
  (data.sources||[]).forEach(function(s){
    var sid=rssGetId();
    S.rssSources.push({id:sid,name:s.name,url:s.url,lastOk:!!s.ok,lastErr:s.error||"",lastTs:Date.now(),preset:true});
-   (s.items||[]).forEach(function(it){S.rssItems.push({src:sid,title:it.title,url:it.url,date:it.date||"",ts:Date.now()});});
+   (s.items||[]).forEach(function(it){S.rssItems.push({src:sid,title:it.title,url:it.url,date:it.date||"",desc:it.desc||"",ts:Date.now()});});
  });
  S.rssItems.sort(function(a,b){return (b.ts||0)-(a.ts||0)});
  sv('wb_rss_src',S.rssSources);sv('wb_rss_items',S.rssItems);
@@ -3315,7 +3321,7 @@ function rssRefreshProxy(manual,singleUrl){
      else{
        okAny++;src.lastOk=true;src.lastErr="";src.lastTs=Date.now();
        S.rssItems=S.rssItems.filter(function(n){return n.src!==src.id});
-       items.slice(0,30).forEach(function(it){S.rssItems.push({src:src.id,title:it.title,url:it.url,date:it.date,ts:src.lastTs});});
+       items.slice(0,30).forEach(function(it){S.rssItems.push({src:src.id,title:it.title,url:it.url,date:it.date,desc:it.desc||"",ts:src.lastTs});});
      }
      done++;
      if(done===srcs.length){
