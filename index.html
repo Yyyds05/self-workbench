@@ -627,7 +627,6 @@ body{
   <div class="tab-item" data-page="review" onclick="switchPage('review')"><div class="tab-icon"><svg viewBox="0 0 24 24"><path d="M20 11a8 8 0 1 0-2.3 5.7"/><path d="M20 5v6h-6"/></svg></div><div class="tab-label">复盘</div></div>
   <div class="tab-item" data-page="errors" onclick="switchPage('errors')"><div class="tab-icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7.5v5.5"/><path d="M12 16.5v.4"/></svg></div><div class="tab-label">错题本</div><span class="badge-dot" id="tabDotErr"></span></div>
   <div class="tab-item" data-page="cards" onclick="switchPage('cards')"><div class="tab-icon"><svg viewBox="0 0 24 24"><rect x="4" y="8" width="13" height="11" rx="2"/><path d="M8 8V6a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2h-2"/></svg></div><div class="tab-label">背记卡</div><span class="badge-dot" id="tabDotCard"></span></div>
-  <div class="tab-item" data-page="checklist" onclick="switchPage('checklist')"><div class="tab-icon"><svg viewBox="0 0 24 24"><rect x="4" y="4" width="16" height="16" rx="3"/><path d="M8.5 12l2.5 2.5 4.5-5"/></svg></div><div class="tab-label">清单</div></div>
   <div class="tab-item" data-page="info" onclick="switchPage('info')"><div class="tab-icon"><svg viewBox="0 0 24 24"><rect x="5" y="3" width="14" height="18" rx="2"/><path d="M8.5 8h7M8.5 12h7M8.5 16h4"/></svg></div><div class="tab-label">资讯</div></div>
   <div class="tab-item" data-page="goals" onclick="switchPage('goals')"><div class="tab-icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg></div><div class="tab-label">目标</div></div>
 </div>
@@ -722,6 +721,17 @@ body{
       <select id="taskPriority"><option value="normal">普通</option><option value="important">重要</option><option value="urgent">紧急</option></select>
       <select id="taskQty"><option value="">--</option><option value="1章">1章</option><option value="2章">2章</option><option value="1篇">1篇</option><option value="2篇">2篇</option><option value="30题">30题</option><option value="50题">50题</option></select>
       <button class="add-btn" onclick="addTask()">＋</button>
+    </div>
+  </div>
+  <!-- 出门清单：已从独立页面并入仪表盘小组件（F12: 可增删改，按天重置勾选） -->
+  <div class="card" id="clWidgetCard">
+    <div class="card-hd"><div class="card-dot dot-blue"></div><div class="card-title">出门清单</div>
+      <span id="clCount" style="margin-left:auto;font-size:11px;color:var(--text2)"></span>
+      <button class="gd-manage" onclick="clReset()">重置</button></div>
+    <div id="clWidget"></div>
+    <div class="add-row">
+      <input type="text" id="clInput" placeholder="新增物品..." onkeydown="if(event.keyCode===13)clAdd()">
+      <button class="add-btn" onclick="clAdd()">＋</button>
     </div>
   </div>
   <div class="card">
@@ -848,19 +858,6 @@ body{
 </div>
 
 <!-- ================ 清单页 ================ -->
-<div class="page" id="page-checklist">
-  <div class="card">
-    <div class="card-hd"><div class="card-dot dot-blue"></div><div class="card-title">出门检查清单</div></div>
-    <div id="checklist"></div>
-    <!-- F12: 清单条目可增删改 -->
-    <div class="add-row">
-      <input type="text" id="clInput" placeholder="新增物品..." onkeydown="if(event.keyCode===13)addClItem()">
-      <button class="add-btn" onclick="addClItem()">＋</button>
-    </div>
-    <div style="text-align:right;margin-top:10px"><button class="btn" onclick="resetChecklist()">全部重置</button></div>
-  </div>
-</div>
-
 <!-- ================ 资讯页 ================ -->
 <div class="page" id="page-info">
   <div class="card">
@@ -906,6 +903,9 @@ var MATH_CHAPTERS=['Ch1 函数极限','Ch2 导数与微分','Ch3 中值定理','
 var C408_MODULES=['DS·队列','DS·栈和队列应用','DS·特殊矩阵','DS·串','DS·树','DS·图','DS·查找','DS·排序','计组·概述','计组·数据表示','计组·存储','计组·指令','计组·CPU','计组·总线与I/O','OS·进程管理','OS·内存管理','OS·文件管理','OS·I/O管理','计网·概述+物理层','计网·链路层','计网·网络层','计网·传输层','计网·应用层'];
 var ENG_ARTICLES=['2010 T1','2010 T3','2010 T4','2011 T1','2011 T3','2011 T4','2012 T1','2012 T2','2012 T3','2012 T4','2013 T2','2013 T3','2013 T4','2014 T1','2014 T2','2014 T3','2015 T1','2015 T2','2015 T3','2015 T4'];
 var POL_CHAPTERS=['马原','毛中特','史纲','思修','当代']; // 政治章节，可自行增删
+// 学习目标状态：必须提前初始化！否则 init 阶段 renderGoalsDash() 读取 LG.goals 会因 hoisting 拿到 undefined 而抛错，
+// 进而中断整段脚本，导致 lgRender/lgInit 虽被 hoist 但运行时 LG 始终 undefined → 目标页空白。
+var LG={goals:[],records:[],weekly:{},seeded:false};
 // ============================================================
 // R3/R4: 复习调度引擎常量（压缩版艾宾浩斯 + 考前巩固循环）
 // ============================================================
@@ -1150,11 +1150,10 @@ function switchPage(name){
   document.querySelectorAll('.tab-item').forEach(function(t){t.classList.remove('active')});
   document.getElementById('page-'+name).classList.add('active');
   document.querySelector('.tab-item[data-page="'+name+'"]').classList.add('active');
-  if(name==='dashboard'){renderTasks();renderRing();renderChart();renderBar();udStats();renderQueue();renderTodayDone();renderGoalsDash()}
+  if(name==='dashboard'){renderTasks();renderRing();renderChart();renderBar();udStats();renderQueue();renderTodayDone();renderGoalsDash();renderChecklistWidget()}
   if(name==='review'){renderChTags();renderRevHistory();renderPlanMeta()}
   if(name==='errors')renderErrors();
   if(name==='cards')renderCards();
-  if(name==='checklist')renderChecklist();
   if(name==='info'){renderEvents();if(S.rssSources===undefined)rssSeedDefaults();renderNews();renderResources();if((S.rssSources||[]).length)rssRefresh(false);}
   if(name==='goals'){lgInit();lgRender();}
 }
@@ -3004,33 +3003,36 @@ function importFocus(evt){
   }
 }
 
-// ============ 清单（F12: 可增删改，{v:2,items:[{text,done}]}；预置项删除后不复活） ============
-function renderChecklist(){
+// ============ 出门清单（已并入仪表盘小组件；可增删改，{v:2,items:[{text,done}]}；预置项删除后不复活） ============
+function renderChecklistWidget(){
+  var box=document.getElementById('clWidget');if(!box)return;
   var items=S.checklist.items||[];
-  document.getElementById('checklist').innerHTML=items.map(function(it,i){
-    return'<div class="cl-row'+(it.done?' done':'')+'" onclick="toggleCL('+i+')"><input type="checkbox" '+(it.done?'checked':'')+' onclick="event.stopPropagation();toggleCL('+i+')"><span class="cl-text">'+esc(it.text)+'</span><span class="cl-edit-btns"><button class="cl-mini" onclick="event.stopPropagation();editClItem('+i+')" title="编辑"><svg class="ic" viewBox="0 0 24 24"><path d="M4 20l4-1 11-11-3-3L5 16l-1 4z"/><path d="M14 6l3 3"/></svg></button><button class="cl-mini" onclick="event.stopPropagation();delClItem('+i+')" title="删除"><svg class="ic" viewBox="0 0 24 24"><path d="M4 7h16"/><path d="M9 7V4h6v3"/><path d="M6 7l1 13h10l1-13"/></svg></button></span></div>';
+  var done=items.filter(function(it){return it.done}).length;
+  var cnt=document.getElementById('clCount');if(cnt)cnt.textContent=done+' / '+items.length+' 已备';
+  box.innerHTML=items.map(function(it,i){
+    return'<div class="cl-row'+(it.done?' done':'')+'" onclick="clToggle('+i+')"><input type="checkbox" '+(it.done?'checked':'')+' onclick="event.stopPropagation();clToggle('+i+')"><span class="cl-text">'+esc(it.text)+'</span><span class="cl-edit-btns"><button class="cl-mini" onclick="event.stopPropagation();clEdit('+i+')" title="编辑"><svg class="ic" viewBox="0 0 24 24"><path d="M4 20l4-1 11-11-3-3L5 16l-1 4z"/><path d="M14 6l3 3"/></svg></button><button class="cl-mini" onclick="event.stopPropagation();clDel('+i+')" title="删除"><svg class="ic" viewBox="0 0 24 24"><path d="M4 7h16"/><path d="M9 7V4h6v3"/><path d="M6 7l1 13h10l1-13"/></svg></button></span></div>';
   }).join('')||'<div style="text-align:center;color:var(--text3);padding:14px;font-size:12px">清单为空，在下方添加物品</div>';
 }
-function toggleCL(i){var it=S.checklist.items[i];if(!it)return;it.done=!it.done;sv('w5_cl',S.checklist);renderChecklist()}
-function addClItem(){
+function clToggle(i){var it=S.checklist.items[i];if(!it)return;it.done=!it.done;sv('w5_cl',S.checklist);renderChecklistWidget()}
+function clAdd(){
   var el=document.getElementById('clInput'),t=el.value.trim();
   if(!t)return;
   S.checklist.items.push({text:t,done:false});
-  sv('w5_cl',S.checklist);el.value='';renderChecklist();
+  sv('w5_cl',S.checklist);el.value='';renderChecklistWidget();
 }
-function editClItem(i){
+function clEdit(i){
   var it=S.checklist.items[i];if(!it)return;
   var t=prompt('修改物品名称',it.text);
   if(t===null)return;
   t=t.trim();if(!t){toast('名称不能为空');return}
-  it.text=t;sv('w5_cl',S.checklist);renderChecklist();
+  it.text=t;sv('w5_cl',S.checklist);renderChecklistWidget();
 }
-function delClItem(i){
+function clDel(i){
   var it=S.checklist.items[i];if(!it)return;
   if(!confirm('删除「'+it.text+'」？'))return;
-  S.checklist.items.splice(i,1);sv('w5_cl',S.checklist);renderChecklist();
+  S.checklist.items.splice(i,1);sv('w5_cl',S.checklist);renderChecklistWidget();
 }
-function resetChecklist(){S.checklist.items.forEach(function(it){it.done=false});sv('w5_cl',S.checklist);renderChecklist()}
+function clReset(){S.checklist.items.forEach(function(it){it.done=false});sv('w5_cl',S.checklist);renderChecklistWidget()}
 
 // ============ 事件/资讯/资源 ============
 function renderEvents(){
@@ -3949,7 +3951,7 @@ function renderPlanMeta(){
 function renderAll(){
   try{
     renderTasks();renderRing();renderChart();renderBar();renderChTags();renderRevHistory();
-    renderErrors();renderEvents();renderNews();renderResources();renderChecklist();udStats();
+    renderErrors();renderEvents();renderNews();renderResources();renderChecklistWidget();udStats();
     renderQueue();renderTodayDone();renderPlanMeta();updateTabDots();
   }catch(e){try{toast('渲染出错: '+e.message)}catch(e2){}}
 }
@@ -4232,8 +4234,8 @@ function lgUid(){return Date.now().toString(36)+Math.random().toString(36).slice
 function lgNum(v){v=parseFloat(v);return isNaN(v)?0:v;}
 
 /* ================= 状态（独立存储，不污染宿主 S） ================= */
+// LG 已在脚本顶部初始化（var LG），此处仅保留存储键，不再用 var 重复声明以免覆盖已加载数据。
 var LGK="w5_lgm";
-var LG={goals:[],records:[],weekly:{},seeded:false};
 function lgSave(){try{sv(LGK,LG);}catch(e){}}
 function lgLoad(){try{var r=lds(LGK,null);if(r){LG=Object.assign({goals:[],records:[],weekly:{},seeded:false},r);if(!LG.goals)LG.goals=[];if(!LG.records)LG.records=[];if(!LG.weekly)LG.weekly={};}}catch(e){}}
 function lgTotalRecords(){return LG.records.length;}
