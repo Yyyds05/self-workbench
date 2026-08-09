@@ -504,6 +504,9 @@ body{
 #goalsDashBody .pill.gray{background:#f0ece6;color:#8c7a72}
 #goalsDashBody .gd-checkin{flex:0 0 auto;border:none;background:#5a9e6f;color:#fff;font-size:12.5px;font-weight:700;padding:7px 12px;border-radius:10px;cursor:pointer}
 #goalsDashBody .gd-checkin:active{opacity:.85}
+#goalsDashBody .today-divider{display:flex;align-items:center;gap:8px;margin:16px 0 10px;font-size:12.5px;font-weight:700;color:var(--ink2,#3d2e2a)}
+#goalsDashBody .today-divider::after{content:"";flex:1;height:1px;background:var(--line2,#eee)}
+#goalsDashBody .today-ctrls{display:flex;align-items:center;flex-wrap:wrap;gap:8px;margin:0 0 10px}
 </style>
 </head>
 <body>
@@ -697,12 +700,29 @@ body{
     <div class="td-grid" id="todayDoneGrid"></div>
     <div class="td-sub" id="todayDoneSub" style="font-size:10px;color:var(--text3);margin-top:6px"></div>
   </div>
-  <!-- 目标进度：融入考研每日主流程 -->
-  <div class="card" id="goalsDashCard">
-    <div class="card-hd"><div class="card-dot dot-pink"></div><div class="card-title">学习目标进度</div>
+  <!-- 今日：目标打卡 + 任务，统一每日动作区（融合考研计划） -->
+  <div class="card" id="todayCard">
+    <div class="card-hd"><div class="card-dot dot-pink"></div><div class="card-title">今日</div>
       <span id="goalsDashExam" style="margin-left:auto;font-size:11px;color:var(--text2)"></span>
-      <button class="gd-manage" onclick="switchPage('goals')">去管理 ›</button></div>
+      <button class="gd-manage" onclick="switchPage('goals')">目标管理 ›</button></div>
     <div id="goalsDashBody"></div>
+    <div class="today-divider">今日任务</div>
+    <div class="today-ctrls">
+      <span id="timerDisp" style="font-size:12px;font-weight:700;color:var(--gold)"></span>
+      <select class="ptlen-select" id="ptlenSel" onchange="setPtlen(this.value)" title="番茄时长">
+        <option value="25">25分</option><option value="45">45分</option><option value="60">60分</option><option value="custom">自定义</option>
+      </select>
+      <button class="btn btn-sm" onclick="event.stopPropagation();enterFocus()" title="全屏专注"><svg class="ic" viewBox="0 0 24 24"><path d="M4 9V4h5"/><path d="M20 9V4h-5"/><path d="M4 15v5h5"/><path d="M20 15v5h-5"/></svg>专注</button>
+      <button class="btn btn-sm" onclick="event.stopPropagation();stopTimer()">停止</button>
+    </div>
+    <div id="taskList"></div>
+    <div class="add-row">
+      <input type="text" id="taskInput" placeholder="任务名..." onkeydown="if(event.keyCode===13)addTask()">
+      <select id="taskSubject"></select>
+      <select id="taskPriority"><option value="normal">普通</option><option value="important">重要</option><option value="urgent">紧急</option></select>
+      <select id="taskQty"><option value="">--</option><option value="1章">1章</option><option value="2章">2章</option><option value="1篇">1篇</option><option value="2篇">2篇</option><option value="30题">30题</option><option value="50题">50题</option></select>
+      <button class="add-btn" onclick="addTask()">＋</button>
+    </div>
   </div>
   <div class="card">
     <div class="card-hd"><div class="card-dot dot-gold"></div><div class="card-title">科目进度</div></div>
@@ -722,23 +742,8 @@ body{
     <div class="card-hd"><div class="card-dot dot-purple"></div><div class="card-title">各科正确率（近7次复盘）</div></div>
     <div class="bar-wrap"><canvas class="bar-canvas" id="barCanvas"></canvas></div>
   </div>
-  <div class="card">
-    <div class="card-hd" style="flex-wrap:wrap"><div class="card-dot dot-green"></div><div class="card-title">今日任务</div><span id="timerDisp" style="margin-left:auto;font-size:12px;font-weight:700;color:var(--gold)"></span>
-      <!-- F10: 番茄时长选择 + 全屏专注 + 停止 -->
-      <select class="ptlen-select" id="ptlenSel" onchange="setPtlen(this.value)" title="番茄时长">
-        <option value="25">25分</option><option value="45">45分</option><option value="60">60分</option><option value="custom">自定义</option>
-      </select>
-      <button class="btn btn-sm" onclick="event.stopPropagation();enterFocus()" title="全屏专注"><svg class="ic" viewBox="0 0 24 24"><path d="M4 9V4h5"/><path d="M20 9V4h-5"/><path d="M4 15v5h5"/><path d="M20 15v5h-5"/></svg>专注</button>
-      <button class="btn btn-sm" onclick="event.stopPropagation();stopTimer()">停止</button></div>
-    <div id="taskList"></div>
-    <div class="add-row">
-      <input type="text" id="taskInput" placeholder="任务名..." onkeydown="if(event.keyCode===13)addTask()">
-      <select id="taskSubject"></select>
-      <select id="taskPriority"><option value="normal">普通</option><option value="important">重要</option><option value="urgent">紧急</option></select>
-      <select id="taskQty"><option value="">--</option><option value="1章">1章</option><option value="2章">2章</option><option value="1篇">1篇</option><option value="2篇">2篇</option><option value="30题">30题</option><option value="50题">50题</option></select>
-      <button class="add-btn" onclick="addTask()">＋</button>
-    </div>
-  </div>
+  <!-- 今日任务已并入上方「今日」卡 -->
+
 </div>
 
 <!-- ================ 复盘页 ================ -->
