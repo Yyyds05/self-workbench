@@ -313,6 +313,173 @@ body{
 .tag-filter-row{display:flex;gap:4px;flex-wrap:wrap;margin-top:6px}
 .tag-chip-f{font-size:10px;padding:3px 9px;border:1.5px solid var(--border);border-radius:7px;background:transparent;color:var(--text2);cursor:pointer;font-weight:600;transition:all .15s}
 .tag-chip-f.on{background:var(--purple);color:#fff;border-color:var(--purple)}
+
+/* ===== 学习目标管理模块（融入 self-workbench，作用域隔离在 #lgRoot 内） ===== */
+#lgRoot{--surface:#ffffff;--surface2:#FCEAF1;--ink:#3d2e2a;--ink2:#9a7d86;--line:#F3DCE5;--line2:#F9E8EF;--pink:#E86A9C;--pink-d:#C94F80;--pink-grad:linear-gradient(135deg,#F6A8C4,#E86A9C);--green:#5a9e6f;--green-d:#4a8a5e;--red:#c75b5b;--red-d:#b04a4a;--amber:#E0A23C;--amber-d:#c98a2a;--blue:#5B8DEF;--shadow:0 2px 12px rgba(212,120,150,.08);--shadow2:0 8px 28px rgba(212,120,150,.12);--r:16px;--r2:12px;max-width:720px;margin:0 auto;padding-left:16px;padding-right:16px;padding-bottom:calc(86px + env(safe-area-inset-bottom));color:var(--ink);}
+#lgRoot *{box-sizing:border-box;}
+#lgRoot button{font-family:inherit;cursor:pointer;border:none;background:none;color:inherit;}
+#lgRoot input,#lgRoot textarea,#lgRoot select{font-family:inherit;font-size:15px;color:var(--ink);}
+#lgRoot svg{display:block;}
+#lgRoot .icon{width:18px;height:18px;flex:none;fill:none;stroke:currentColor;stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round;}
+#lgRoot .icon-sm{width:15px;height:15px;}
+#page-goals .hide{display:none!important;}
+
+/* 子页签 */
+#lgRoot .lg-subtabs{display:flex;gap:6px;margin-bottom:16px;background:var(--surface2);padding:5px;border-radius:12px;}
+#lgRoot .lg-subtab{flex:1;padding:9px 6px;border-radius:9px;font-size:13.5px;font-weight:700;color:var(--ink2);background:none;transition:.15s;}
+#lgRoot .lg-subtab.active{background:var(--surface);color:var(--pink-d);box-shadow:var(--shadow);}
+
+/* 横幅 */
+#lgRoot .banner{display:flex;align-items:center;gap:12px;background:linear-gradient(135deg,#FDEEF4,#FBDCE7);border:1px solid #F3C9D8;color:#C94F80;padding:12px 16px;border-radius:14px;margin-bottom:18px;font-size:13.5px;font-weight:600;}
+#lgRoot .banner svg{stroke:#E86A9C;flex:none;}
+#lgRoot .banner .grow{flex:1;}
+#lgRoot .banner button{background:#fff;border:1px solid #F3C9D8;color:#C94F80;padding:7px 14px;border-radius:9px;font-weight:700;font-size:13px;}
+
+/* 卡片 / 通用 */
+#lgRoot .card{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);box-shadow:var(--shadow);}
+#lgRoot .muted{color:var(--ink2);}
+#lgRoot .pill{display:inline-flex;align-items:center;gap:5px;padding:3px 9px;border-radius:999px;font-size:12px;font-weight:700;}
+#lgRoot .pill.green{background:#E7F4EB;color:var(--green-d);}
+#lgRoot .pill.red{background:#FCE9E9;color:var(--red-d);}
+#lgRoot .pill.amber{background:#FDF1E0;color:var(--amber-d);}
+#lgRoot .pill.gray{background:#f1ece6;color:var(--ink2);}
+#lgRoot .pill.pink{background:#FCE4ED;color:var(--pink-d);}
+#lgRoot .btn{display:inline-flex;align-items:center;justify-content:center;gap:7px;padding:10px 16px;border-radius:11px;font-weight:700;font-size:14px;transition:.15s;background:var(--pink-grad);color:#fff;box-shadow:0 4px 12px rgba(212,120,150,.28);}
+#lgRoot .btn:hover{filter:brightness(1.04);}
+#lgRoot .btn:active{transform:translateY(1px);}
+#lgRoot .btn.ghost{background:var(--surface);color:var(--ink);border:1px solid var(--line);box-shadow:none;}
+#lgRoot .btn.ghost:hover{background:var(--surface2);}
+#lgRoot .btn.green{background:linear-gradient(135deg,#7bc093,#5a9e6f);box-shadow:0 4px 12px rgba(90,158,111,.22);}
+#lgRoot .btn.sm{padding:7px 12px;font-size:13px;border-radius:9px;}
+#lgRoot .btn.danger{background:#fff;color:var(--red-d);border:1px solid #F0D2D2;box-shadow:none;}
+#lgRoot .btn.block{width:100%;}
+
+#page-goals .lg-fab{position:fixed;left:18px;bottom:calc(80px + env(safe-area-inset-bottom));z-index:35;width:54px;height:54px;border-radius:50%;background:var(--pink-grad);color:#fff;display:flex;align-items:center;justify-content:center;box-shadow:0 8px 22px rgba(212,120,150,.35);}
+#page-goals .lg-fab svg{stroke:#fff;width:24px;height:24px;}
+#page-goals #lgConfetti{position:fixed;inset:0;width:100%;height:100%;pointer-events:none;z-index:55;}
+
+/* 目标卡 */
+#lgRoot .goals{display:flex;flex-direction:column;gap:14px;}
+#lgRoot .gcard{padding:16px 17px;border-radius:var(--r);border:1px solid var(--line);background:var(--surface);box-shadow:var(--shadow);position:relative;overflow:hidden;}
+#lgRoot .gcard .stripe{position:absolute;left:0;top:0;bottom:0;width:5px;}
+#lgRoot .gcard.pinned{padding-top:14px;}
+#lgRoot .gcard .pinhead{display:flex;gap:9px;align-items:flex-start;font-size:13px;font-weight:600;padding:9px 12px;border-radius:10px;margin-bottom:12px;}
+#lgRoot .pinhead.yellow{background:#FDF1E0;color:var(--amber-d);}
+#lgRoot .pinhead.red{background:#FCE9E9;color:var(--red-d);}
+#lgRoot .pinhead svg{flex:none;margin-top:1px;}
+#lgRoot .gcard .top{display:flex;align-items:flex-start;justify-content:space-between;gap:10px;}
+#lgRoot .gcard .name{font-size:16.5px;font-weight:750;display:flex;align-items:center;gap:8px;}
+#lgRoot .gcard .name .dot{width:10px;height:10px;border-radius:50%;flex:none;}
+#lgRoot .gcard .meta{font-size:12.5px;color:var(--ink2);margin-top:3px;}
+#lgRoot .gcard .ops{display:flex;gap:6px;flex:none;}
+#lgRoot .iconbtn{width:34px;height:34px;border-radius:9px;display:flex;align-items:center;justify-content:center;color:var(--ink2);border:1px solid var(--line);background:var(--surface2);}
+#lgRoot .iconbtn:hover{color:var(--ink);background:#fff;}
+#lgRoot .progbar{height:9px;background:var(--line2);border-radius:99px;overflow:hidden;margin:12px 0 8px;}
+#lgRoot .progbar > i{display:block;height:100%;border-radius:99px;transition:width .4s;}
+#lgRoot .statline{display:flex;flex-wrap:wrap;gap:10px 18px;font-size:12.5px;color:var(--ink2);}
+#lgRoot .statline b{color:var(--ink);font-weight:700;}
+#lgRoot .suggest{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-top:13px;padding:11px 13px;background:var(--surface2);border-radius:11px;border:1px dashed var(--line);}
+#lgRoot .suggest .lab{font-size:13px;color:var(--ink2);}
+#lgRoot .suggest .val{font-size:20px;font-weight:800;color:var(--pink-d);}
+#lgRoot .suggest .val small{font-size:13px;font-weight:600;color:var(--ink2);}
+#lgRoot .gops{display:flex;gap:9px;margin-top:13px;flex-wrap:wrap;}
+#lgRoot .plan-toggle{margin-top:11px;font-size:13px;color:var(--pink-d);font-weight:600;display:inline-flex;align-items:center;gap:6px;cursor:pointer;}
+#lgRoot .plan-box{margin-top:10px;padding:12px 13px;background:var(--surface2);border-radius:11px;border:1px solid var(--line);font-size:13px;display:none;}
+#lgRoot .plan-box.open{display:block;}
+#lgRoot .plan-box .pt{font-weight:700;color:var(--ink);margin-bottom:4px;display:flex;gap:6px;align-items:center;}
+#lgRoot .plan-box .pt svg{stroke:var(--amber);}
+#lgRoot .plan-box p{margin:2px 0 9px;color:var(--ink2);line-height:1.55;}
+
+/* 看板 */
+#lgRoot .kpis{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:16px;}
+#lgRoot .kpi{padding:16px;border-radius:var(--r);background:var(--surface);border:1px solid var(--line);box-shadow:var(--shadow);}
+#lgRoot .kpi .n{font-size:26px;font-weight:800;letter-spacing:-.5px;}
+#lgRoot .kpi .l{font-size:12.5px;color:var(--ink2);margin-top:2px;}
+#lgRoot .board-grid{display:grid;grid-template-columns:300px 1fr;gap:16px;align-items:start;}
+#lgRoot .ring-wrap{display:flex;flex-direction:column;align-items:center;gap:10px;padding:20px 16px;}
+#lgRoot .recents{display:flex;flex-direction:column;gap:8px;}
+#lgRoot .rec-item{display:flex;align-items:center;gap:10px;padding:9px 12px;border-radius:11px;background:var(--surface2);border:1px solid var(--line);font-size:13px;}
+#lgRoot .rec-item .dot{width:9px;height:9px;border-radius:50%;flex:none;}
+#lgRoot .rec-item .grow{flex:1;min-width:0;}
+#lgRoot .rec-item .t{font-weight:600;}
+#lgRoot .rec-item .s{color:var(--ink2);font-size:12px;}
+#lgRoot .rec-item .bk{font-size:10.5px;font-weight:800;color:var(--amber-d);background:#FDF1E0;padding:1px 6px;border-radius:6px;flex:none;}
+#lgRoot .chart-card{padding:16px 18px;}
+#lgRoot .chart-title{font-weight:700;margin-bottom:6px;display:flex;align-items:center;gap:8px;}
+#lgRoot .legend{display:flex;flex-wrap:wrap;gap:10px 16px;margin-top:10px;font-size:12px;color:var(--ink2);}
+#lgRoot .legend span{display:inline-flex;align-items:center;gap:6px;}
+#lgRoot .legend i{width:11px;height:11px;border-radius:3px;display:inline-block;}
+
+/* 周报 */
+#lgRoot .wk-summary{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:16px;}
+#lgRoot .wk-block{padding:15px 16px;border-radius:var(--r);background:var(--surface);border:1px solid var(--line);box-shadow:var(--shadow);}
+#lgRoot .wk-block .n{font-size:23px;font-weight:800;}
+#lgRoot .wk-block .l{font-size:12.5px;color:var(--ink2);}
+#lgRoot .wk-block .cmp{font-size:12px;font-weight:700;margin-top:4px;}
+#lgRoot .cmp.up{color:var(--green-d);} #lgRoot .cmp.down{color:var(--red-d);} #lgRoot .cmp.flat{color:var(--ink2);}
+#lgRoot .four{padding:16px;}
+#lgRoot .four-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:14px;}
+#lgRoot .four-col h4{margin:0 0 8px;font-size:14px;display:flex;align-items:center;gap:7px;}
+#lgRoot .four-col textarea{width:100%;min-height:78px;border:1px solid var(--line);border-radius:10px;padding:10px;resize:vertical;font-size:13.5px;line-height:1.5;background:var(--surface2);}
+#lgRoot .four-col textarea:focus{outline:none;border-color:var(--pink);background:#fff;}
+#lgRoot .wk-hist{margin-top:16px;}
+#lgRoot .wk-hist table{width:100%;border-collapse:collapse;font-size:13px;}
+#lgRoot .wk-hist th,#lgRoot .wk-hist td{text-align:left;padding:9px 10px;border-bottom:1px solid var(--line2);}
+#lgRoot .wk-hist th{color:var(--ink2);font-weight:600;font-size:12px;}
+
+/* 我的 */
+#lgRoot .mine-list{display:flex;flex-direction:column;gap:12px;max-width:680px;}
+#lgRoot .mine-item{padding:15px 16px;display:flex;align-items:center;gap:13px;}
+#lgRoot .mine-item .mi-ic{width:38px;height:38px;border-radius:10px;background:var(--surface2);display:flex;align-items:center;justify-content:center;color:var(--pink-d);flex:none;}
+#lgRoot .mine-item .mi-ic svg{stroke:var(--pink-d);}
+#lgRoot .mine-item .mi-txt{flex:1;}
+#lgRoot .mine-item .mi-txt b{font-size:14.5px;}
+#lgRoot .mine-item .mi-txt p{margin:2px 0 0;font-size:12.5px;color:var(--ink2);}
+#lgRoot .steps{display:flex;flex-direction:column;gap:10px;margin-top:6px;}
+#lgRoot .step{display:flex;gap:11px;align-items:flex-start;}
+#lgRoot .step .num{width:24px;height:24px;border-radius:50%;background:var(--pink-grad);color:#fff;font-size:12.5px;font-weight:800;display:flex;align-items:center;justify-content:center;flex:none;}
+#lgRoot .step .tx{font-size:13px;padding-top:2px;}
+#lgRoot .dangerzone{border:1px solid #F0D2D2;}
+#lgRoot .dangerzone .mi-ic{color:var(--red-d);} #lgRoot .dangerzone .mi-ic svg{stroke:var(--red-d);}
+#lgRoot .clear-input{display:flex;gap:9px;margin-top:10px;}
+#lgRoot .clear-input input{flex:1;border:1px solid var(--line);border-radius:10px;padding:10px 12px;}
+
+/* 弹窗 */
+#lgRoot .mask{position:fixed;inset:0;background:rgba(40,34,28,.42);z-index:60;display:flex;align-items:flex-end;justify-content:center;}
+#lgRoot .sheet{background:var(--surface);width:100%;max-width:520px;border-radius:20px 20px 0 0;padding:20px 20px calc(20px + env(safe-area-inset-bottom));max-height:92vh;overflow:auto;animation:lgUp .22s ease;}
+@keyframes lgUp{from{transform:translateY(40px);opacity:.6}to{transform:translateY(0);opacity:1}}
+#lgRoot .sheet h3{margin:0 0 16px;font-size:18px;font-weight:750;display:flex;align-items:center;gap:9px;}
+#lgRoot .field{margin-bottom:13px;}
+#lgRoot .field label{display:block;font-size:13px;font-weight:600;color:var(--ink2);margin-bottom:6px;}
+#lgRoot .field input,#lgRoot .field textarea,#lgRoot .field select{width:100%;border:1px solid var(--line);border-radius:11px;padding:11px 13px;background:var(--surface2);font-size:15px;}
+#lgRoot .field textarea{resize:vertical;min-height:64px;}
+#lgRoot .field input:focus,#lgRoot .field textarea:focus,#lgRoot .field select:focus{outline:none;border-color:var(--pink);background:#fff;}
+#lgRoot .field .hint{font-size:11.5px;color:var(--ink2);margin-top:5px;}
+#lgRoot .grid2{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+#lgRoot .swatches{display:flex;gap:9px;flex-wrap:wrap;}
+#lgRoot .sw{width:30px;height:30px;border-radius:9px;cursor:pointer;border:2px solid transparent;}
+#lgRoot .sw.sel{border-color:var(--ink);box-shadow:0 0 0 2px #fff inset;}
+#lgRoot .sheet-ops{display:flex;gap:10px;margin-top:18px;}
+#lgRoot .modal-close{position:absolute;top:14px;right:16px;color:var(--ink2);}
+#lgRoot .mask.centered .sheet{border-radius:20px;margin:auto;}
+#lgRoot .checkin-prefill{background:var(--surface2);border:1px solid var(--line);border-radius:11px;padding:11px 13px;font-size:13px;color:var(--ink2);margin-bottom:14px;display:flex;justify-content:space-between;gap:10px;}
+#lgRoot .checkin-prefill b{color:var(--pink-d);font-size:15px;}
+
+#lgRoot .empty{padding:40px 20px;text-align:center;color:var(--ink2);}
+#lgRoot .empty svg{stroke:var(--ink2);margin:0 auto 12px;opacity:.5;}
+
+#lgRoot .page-head{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:18px;flex-wrap:wrap;}
+#lgRoot .page-head h1{font-size:22px;margin:0;font-weight:750;letter-spacing:-.3px;}
+#lgRoot .page-head p{margin:3px 0 0;color:var(--ink2);font-size:13px;}
+
+@media (max-width:768px){
+  #lgRoot .board-grid{grid-template-columns:1fr;}
+  #lgRoot .four-grid{grid-template-columns:1fr;}
+  #lgRoot .kpis{grid-template-columns:1fr 1fr;}
+  #lgRoot .wk-summary{grid-template-columns:1fr;}
+  #lgRoot .gops .btn{flex:1;}
+  #lgRoot .banner{font-size:12.5px;}
+}
 </style>
 </head>
 <body>
@@ -435,6 +602,7 @@ body{
   <div class="tab-item" data-page="cards" onclick="switchPage('cards')"><div class="tab-icon"><svg viewBox="0 0 24 24"><rect x="4" y="8" width="13" height="11" rx="2"/><path d="M8 8V6a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2h-2"/></svg></div><div class="tab-label">背记卡</div><span class="badge-dot" id="tabDotCard"></span></div>
   <div class="tab-item" data-page="checklist" onclick="switchPage('checklist')"><div class="tab-icon"><svg viewBox="0 0 24 24"><rect x="4" y="4" width="16" height="16" rx="3"/><path d="M8.5 12l2.5 2.5 4.5-5"/></svg></div><div class="tab-label">清单</div></div>
   <div class="tab-item" data-page="info" onclick="switchPage('info')"><div class="tab-icon"><svg viewBox="0 0 24 24"><rect x="5" y="3" width="14" height="18" rx="2"/><path d="M8.5 8h7M8.5 12h7M8.5 16h4"/></svg></div><div class="tab-label">资讯</div></div>
+  <div class="tab-item" data-page="goals" onclick="switchPage('goals')"><div class="tab-icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg></div><div class="tab-label">目标</div></div>
 </div>
 
 <div class="container">
@@ -678,6 +846,14 @@ body{
     </div>
   </div>
 </div>
+</div>
+
+
+<!-- ================ 学习目标管理页（融合模块） ================ -->
+<div class="page" id="page-goals">
+  <div id="lgRoot"></div>
+  <button class="lg-fab" id="lgFab" onclick="lgNewGoal()" title="新建学习目标"><svg class="icon" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg></button>
+  <canvas id="lgConfetti" class="hide"></canvas>
 </div>
 
 <!-- R9: 全局快捷计时 FAB（Calflow 一键计时） -->
@@ -944,6 +1120,7 @@ function switchPage(name){
   if(name==='cards')renderCards();
   if(name==='checklist')renderChecklist();
   if(name==='info'){renderEvents();if(S.rssSources===undefined)rssSeedDefaults();renderNews();renderResources();if((S.rssSources||[]).length)rssRefresh(false);}
+  if(name==='goals'){lgInit();lgRender();}
 }
 
 // ============ 倒计时 + 统计（F3: 主数据源 = 复盘手填时长 reviews[].time） ============
@@ -4004,6 +4181,506 @@ ghSetStatus(ghReady()?(GH.auto?'自动同步已开启':'已配置（手动同步
 if(GH.auto&&ghReady()){setTimeout(function(){try{ghPull(false)}catch(e){}},600)}
 // R9: PWA Service Worker 注册
 if('serviceWorker' in navigator){navigator.serviceWorker.register('./sw.js').then(function(){/* ok */}).catch(function(){})}
+
+/* ================= 学习目标管理模块（融入 self-workbench） ================= */
+var LGDAY=86400000;
+function lgFmt(d){var y=d.getFullYear(),m=("0"+(d.getMonth()+1)).slice(-2),da=("0"+d.getDate()).slice(-2);return y+"-"+m+"-"+da;}
+function lgParseDate(s){var p=s.split("-");return new Date(+p[0],+p[1]-1,+p[2]);}
+function lgToday(){var d=new Date();d.setHours(0,0,0,0);return d;}
+function lgAddDays(d,n){var x=new Date(d);x.setHours(0,0,0,0);x.setDate(x.getDate()+n);return x;}
+function lgWeekStart(d){var x=new Date(d);x.setHours(0,0,0,0);var day=(x.getDay()+6)%7;x.setDate(x.getDate()-day);return x;}
+function lgWeekKey(d){return lgFmt(lgWeekStart(d));}
+function lgDaysBetween(a,b){return Math.floor((lgParseDate(b)-lgParseDate(a))/LGDAY);}
+function lgUid(){return Date.now().toString(36)+Math.random().toString(36).slice(2,7);}
+function lgNum(v){v=parseFloat(v);return isNaN(v)?0:v;}
+
+/* ================= 状态（独立存储，不污染宿主 S） ================= */
+var LGK="w5_lgm";
+var LG={goals:[],records:[],weekly:{},seeded:false};
+function lgSave(){try{sv(LGK,LG);}catch(e){}}
+function lgLoad(){try{var r=lds(LGK,null);if(r){LG=Object.assign({goals:[],records:[],weekly:{},seeded:false},r);if(!LG.goals)LG.goals=[];if(!LG.records)LG.records=[];if(!LG.weekly)LG.weekly={};}}catch(e){}}
+function lgTotalRecords(){return LG.records.length;}
+
+/* ================= 计算 ================= */
+function lgGoalById(id){for(var i=0;i<LG.goals.length;i++)if(LG.goals[i].id===id)return LG.goals[i];return null;}
+function lgRecsOf(gid){return LG.records.filter(function(r){return r.gid===gid;});}
+function lgDateSetOf(gid){var s={};lgRecsOf(gid).forEach(function(r){s[r.date]=1;});return s;}
+function lgAmountOnDate(gid,date){var t=0;LG.records.forEach(function(r){if(r.gid===gid&&r.date===date)t+=lgNum(r.amount);});return t;}
+function lgDoneOf(g){var t=0;lgRecsOf(g.id).forEach(function(r){t+=lgNum(r.amount);});return t;}
+function lgRemainOf(g){return Math.max(0,lgNum(g.total)-lgDoneOf(g));}
+function lgPctOf(g){var t=lgNum(g.total);if(t<=0)return 0;return Math.min(100,Math.round(lgDoneOf(g)/t*100));}
+function lgDaysToDeadline(g){return lgDaysBetween(lgFmt(lgToday()),g.deadline);}
+function lgIsOverdue(g){return lgDaysToDeadline(g)<0 && lgRemainOf(g)>0;}
+
+function lgSuggestedOn(g,dateStr){
+  var doneBefore=0;
+  LG.records.forEach(function(r){if(r.gid===g.id&&r.date<=dateStr)doneBefore+=lgNum(r.amount);});
+  var rem=Math.max(0,lgNum(g.total)-doneBefore);
+  var dleft=lgDaysBetween(dateStr,g.deadline);
+  if(dleft<=0)return rem;
+  return Math.max(1,Math.ceil(rem/dleft));
+}
+function lgSuggestedToday(g){return lgSuggestedOn(g,lgFmt(lgToday()));}
+
+function lgComputeStreak(gid,baseDate){
+  var set=lgDateSetOf(gid);
+  var d=new Date(baseDate);d.setHours(0,0,0,0);
+  if(!set[lgFmt(d)])d.setDate(d.getDate()-1);
+  var streak=0,missInWeek=0,curWeek=lgWeekStart(d).getTime(),guard=0;
+  while(guard++<4000){
+    var w=lgWeekStart(d).getTime();
+    if(w!==curWeek){curWeek=w;missInWeek=0;}
+    if(set[lgFmt(d)]){streak++;}
+    else{missInWeek++;if(missInWeek>=2)break;}
+    d.setDate(d.getDate()-1);
+  }
+  return streak;
+}
+function lgYesterdayMiss(gid){
+  var y=lgAddDays(lgToday(),-1);
+  var set=lgDateSetOf(gid);
+  if(set[lgFmt(y)])return null;
+  var ws=lgWeekStart(y),we=lgAddDays(ws,7),misses=0,todayS=lgFmt(lgToday());
+  for(var d=new Date(ws);d<we;d=lgAddDays(d,1)){
+    if(lgFmt(d)===todayS)continue;
+    if(!set[lgFmt(d)])misses++;
+  }
+  return {red:misses>=2,yellow:misses===1,misses:misses};
+}
+function lgEstCompletion(g){
+  var t=lgFmt(lgToday()),sum=0;
+  for(var i=0;i<7;i++){sum+=lgAmountOnDate(g.id,lgFmt(lgAddDays(lgToday(),-i)));}
+  if(sum<=0)return {status:"none"};
+  var avg=sum/7,rem=lgRemainOf(g);
+  if(rem<=0)return {status:"done"};
+  var need=Math.ceil(rem/avg);
+  var ed=lgAddDays(lgToday(),need);
+  var dl=g.deadline;
+  var diff=lgDaysBetween(lgFmt(ed),dl);
+  return {status:"ok",date:lgFmt(ed),early:diff>=0,diff:Math.abs(diff)};
+}
+
+/* ================= 预置数据 ================= */
+function lgSeed(){
+  var t=lgToday(),mk=function(n){return lgAddDays(t,-n);};
+  LG.goals=[
+    {id:"g1",name:"背单词",unit:"个",total:2000,deadline:lgFmt(lgAddDays(t,40)),color:"#E86A9C",obstacle:"背了容易忘",counter:"用艾宾浩斯曲线，隔天复习前一天的列表",created:lgFmt(mk(10))},
+    {id:"g2",name:"读《人类简史》",unit:"页",total:440,deadline:lgFmt(lgAddDays(t,60)),color:"#5a9e6f",obstacle:"长段落读不进去，容易犯困",counter:"每天睡前固定 30 分钟，手机放另一个房间",created:lgFmt(mk(10))},
+    {id:"g3",name:"Python 课",unit:"节",total:80,deadline:lgFmt(lgAddDays(t,50)),color:"#3FA7A0",obstacle:"看视频容易走神",counter:"边看边敲代码，每节结束写 3 行笔记",created:lgFmt(mk(10))}
+  ];
+  LG.records=[];var rid=0;
+  function rec(gid,n,amount,minutes,backfill){LG.records.push({id:"r"+(rid++),gid:gid,date:lgFmt(mk(n)),amount:amount,minutes:minutes||null,backfill:!!backfill,ts:mk(n).getTime()});}
+  [1,2,3,4,5,6,7,8,9].forEach(function(n){rec("g1",n,50,20);});
+  rec("g1",7,30,15,true);
+  [2,3,4,5,6,7,8,9].forEach(function(n){rec("g2",n,10,30);});
+  [4,5,6,7,8,9].forEach(function(n){rec("g3",n,2,25);});
+  LG.seeded=true;lgSave();
+}
+
+/* ================= 渲染框架 ================= */
+var lgTab="today";
+function lgSetTab(t){lgTab=t;lgRender();}
+function lgRender(){
+  var el=document.getElementById("lgRoot");if(!el)return;
+  var sub='<div class="lg-subtabs">'+
+    lgSubTab("today","今日")+lgSubTab("board","看板")+lgSubTab("week","周报")+lgSubTab("mine","我的")+
+    '</div>';
+  var body=lgTab==="today"?lgRenderToday():lgTab==="board"?lgRenderBoard():lgTab==="week"?lgRenderWeek():lgRenderMine();
+  el.innerHTML=sub+body;
+  lgBindContent();
+}
+function lgSubTab(t,label){return '<button class="lg-subtab'+(lgTab===t?" active":"")+'" onclick="lgSetTab(\''+t+'\')">'+label+'</button>';}
+
+/* ================= 今日 ================= */
+function lgRenderToday(){
+  var t=lgFmt(lgToday());
+  var banner="";
+  if(lgTotalRecords()>=20){
+    banner='<div class="banner"><svg class="icon" viewBox="0 0 24 24"><path d="M12 2l2.4 7.4H22l-6 4.4 2.3 7.2L12 16.8 5.7 21l2.3-7.2-6-4.4h7.6Z"/></svg><div class="grow">数据已累计 '+lgTotalRecords()+' 条，建议导出备份以防丢失</div><button onclick="lgExportJSON()">导出备份</button></div>';
+  }
+  if(!LG.goals.length){
+    return banner+'<div class="empty"><svg class="icon" viewBox="0 0 24 24" style="width:46px;height:46px"><path d="M12 5v14M5 12h14"/></svg><div style="font-size:15px;font-weight:600;margin-bottom:4px">还没有目标</div><div>点击下方按钮，创建第一个有终点、有总量的学习目标</div></div>';
+  }
+  var pinned="";
+  LG.goals.forEach(function(g){
+    var m=lgYesterdayMiss(g.id);
+    if(m){
+      var rolled=lgSuggestedToday(g)+(m.red?lgSuggestedOn(g,lgFmt(lgAddDays(lgToday(),-1))):0);
+      var cls=m.red?"red":"yellow";
+      var title=m.red?"昨日中断 · 已滚入今日":"昨日休息日 · 今日补上";
+      var desc=m.red?"本周已漏打多次，连续打卡已中断。昨日未完成的量已并入今天，今天两天的量一起补上吧。":"本周还有 1 次休息日额度，昨天的量顺延到今天，不中断连续打卡。";
+      pinned+='<div class="gcard pinned"><div class="pinhead '+cls+'"><svg class="icon" viewBox="0 0 24 24">'+(m.red?'<path d="M12 9v4M12 17h.01"/><path d="M10.3 3.9 2 18a2 2 0 0 0 1.7 3h16.6A2 2 0 0 0 22 18L13.7 3.9a2 2 0 0 0-3.4 0Z">':'<path d="M12 3a9 9 0 1 0 9 9"/><path d="M12 7v5l3 2">')+'</svg><div><div>'+esc(g.name)+' · '+title+'</div><div style="font-weight:500;font-size:12px;opacity:.85;margin-top:2px">'+desc+'</div></div></div>'+lgGoalBody(g,rolled,true)+'</div>';
+    }
+  });
+  var others="";
+  LG.goals.forEach(function(g){if(!lgYesterdayMiss(g.id))others+=lgGoalCard(g);});
+  var pinnedSec=pinned?'<div style="margin-bottom:6px"><div style="font-size:12.5px;font-weight:700;color:var(--ink2);margin:0 0 10px 2px">置顶 · 昨日未完成的</div>'+pinned+'</div>':'';
+  var newEntry='<button class="btn block" style="margin-top:6px" onclick="lgNewGoal()"><svg class="icon icon-sm" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>新建学习目标</button>';
+  return banner+pinnedSec+others+newEntry;
+}
+function lgGoalBody(g,sugg,isPinned){
+  var p=lgPctOf(g),rem=lgRemainOf(g),dg=lgDaysToDeadline(g),ov=lgIsOverdue(g);
+  var st=lgComputeStreak(g.id,lgToday()),est=lgEstCompletion(g);
+  var color=g.color||"#E86A9C";
+  var sugVal=isPinned?sugg:lgSuggestedToday(g);
+  var overdueHtml=ov?'<span class="pill red">已逾期 '+Math.abs(dg)+' 天</span>':'';
+  var estHtml="";
+  if(est.status==="done")estHtml='<span class="pill green">已达成</span>';
+  else if(est.status==="none")estHtml='<span class="pill gray">暂无推算</span>';
+  else estHtml='<span class="pill '+(est.early?"green":"red")+'">'+(est.early?"提前 ":"拖后 ")+est.diff+' 天</span>';
+  var planHtml=(g.obstacle||g.counter)?'<div class="plan-box" id="plan-'+g.id+'"><div class="pt"><svg class="icon icon-sm" viewBox="0 0 24 24"><path d="M12 2 4 6v6c0 5 3.5 8 8 10 4.5-2 8-5 8-10V6Z"/></svg>预案</div>'+(g.obstacle?'<p><b>最大障碍：</b>'+esc(g.obstacle)+'</p>':'')+(g.counter?'<p><b>如果它出现，我就：</b>'+esc(g.counter)+'</p>':'')+'</div>':'';
+  return ''+
+  '<div class="top"><div><div class="name"><span class="dot" style="background:'+color+'"></span>'+esc(g.name)+'</div>'+
+  '<div class="meta">'+lgDoneOf(g)+' / '+lgNum(g.total)+' '+esc(g.unit)+' · 截止 '+g.deadline+' '+overdueHtml+'</div></div>'+
+  '<div class="ops">'+
+    '<button class="iconbtn" title="编辑" onclick="lgEditGoal(\''+g.id+'\')"><svg class="icon icon-sm" viewBox="0 0 24 24"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg></button>'+
+    '<button class="iconbtn" title="删除" onclick="lgDelGoal(\''+g.id+'\')"><svg class="icon icon-sm" viewBox="0 0 24 24"><path d="M4 7h16M9 7V5a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2M6 7l1 13a1 1 0 0 0 1 1h8a1 1 0 0 0 1-1l1-13"/></svg></button>'+
+  '</div></div>'+
+  '<div class="progbar"><i style="width:'+p+'%;background:'+color+'"></i></div>'+
+  '<div class="statline"><span>完成率 <b>'+p+'%</b></span><span>剩余 <b>'+rem+(g.unit?(" "+esc(g.unit)):"")+'</b></span><span>连续 <b>'+st+'</b> 天</span><span>预计 '+estHtml+'</span></div>'+
+  '<div class="suggest"><div class="lab">今日建议量'+(isPinned?'（含昨日滚入）':'')+'</div><div class="val">'+sugVal+' <small>'+esc(g.unit)+'</small></div></div>'+
+  (planHtml?('<div class="plan-toggle" onclick="lgTogglePlan(\''+g.id+'\')"><svg class="icon icon-sm" viewBox="0 0 24 24"><path d="M12 2 4 6v6c0 5 3.5 8 8 10 4.5-2 8-5 8-10V6Z"/></svg>查看我的预案</div>'+planHtml):'')+
+  '<div class="gops"><button class="btn green sm" onclick="lgOpenCheckin(\''+g.id+'\')"><svg class="icon icon-sm" viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></svg>立即打卡</button>'+
+  '<button class="btn ghost sm" onclick="lgEditGoal(\''+g.id+'\')"><svg class="icon icon-sm" viewBox="0 0 24 24"><path d="M4 7h16M4 12h10M4 17h7"/></svg>调整计划</button></div>';
+}
+function lgGoalCard(g){return '<div class="gcard">'+lgGoalBody(g,lgSuggestedToday(g),false)+'</div>';}
+
+/* ================= 看板 ================= */
+function lgRenderBoard(){
+  if(!LG.goals.length)return '<div class="empty"><svg class="icon" viewBox="0 0 24 24" style="width:46px;height:46px"><path d="M4 19V5a2 2 0 0 1 2-2h9l5 5v11a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2Z"/></svg><div>暂无目标，去「今日」创建</div></div>';
+  var ringPct=lgOverallPct();
+  var ring='<div class="card ring-wrap"><svg width="150" height="150" viewBox="0 0 150 150">'+
+    '<circle cx="75" cy="75" r="62" fill="none" stroke="#ECE3D8" stroke-width="14"/>'+
+    '<circle cx="75" cy="75" r="62" fill="none" stroke="url(#lgrg)" stroke-width="14" stroke-linecap="round" stroke-dasharray="'+(2*Math.PI*62)+'" stroke-dashoffset="'+(2*Math.PI*62*(1-ringPct/100))+'" transform="rotate(-90 75 75)"/>'+
+    '<defs><linearGradient id="lgrg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#F6A8C4"/><stop offset="1" stop-color="#E86A9C"/></linearGradient></defs>'+
+    '<text x="75" y="70" text-anchor="middle" font-size="30" font-weight="800" fill="#3d2e2a">'+ringPct+'%</text>'+
+    '<text x="75" y="92" text-anchor="middle" font-size="12" fill="#8c7a72">总完成度</text></svg>'+
+    '<div style="font-size:12.5px;color:var(--ink2);text-align:center">'+lgDoneAll()+' / '+lgTotalAll()+' '+lgFirstUnit()+'</div></div>';
+  var active=LG.goals.filter(function(g){return lgRemainOf(g)>0;}).length;
+  var wkStart=lgWeekStart(lgToday()),wkAmt=0,wkDays={},wkMin=0;
+  LG.records.forEach(function(r){if(r.date>=lgFmt(wkStart)){wkAmt+=lgNum(r.amount);wkDays[r.date]=1;wkMin+=lgNum(r.minutes);}});
+  var kpiHtml='<div class="kpis" style="margin-top:0">'+
+    lgKpi(active,"进行中目标")+
+    lgKpi(wkAmt,"本周投入量")+
+    lgKpi(lgTotalRecords(),"累计打卡")+
+    '</div>';
+  var plans='<div class="card" style="padding:15px 16px"><div class="chart-title"><svg class="icon icon-sm" viewBox="0 0 24 24" style="stroke:var(--amber)"><path d="M12 2 4 6v6c0 5 3.5 8 8 10 4.5-2 8-5 8-10V6Z"/></svg>目标预案</div>';
+  LG.goals.forEach(function(g){if(g.obstacle||g.counter)plans+='<div style="padding:10px 0;border-bottom:1px solid var(--line2)"><div style="font-weight:700;display:flex;align-items:center;gap:7px"><span class="dot" style="width:9px;height:9px;border-radius:50%;background:'+g.color+'"></span>'+esc(g.name)+'</div>'+(g.obstacle?'<div style="font-size:12.5px;color:var(--ink2);margin-top:5px"><b>障碍：</b>'+esc(g.obstacle)+'</div>':'')+(g.counter?'<div style="font-size:12.5px;color:var(--ink2);margin-top:3px"><b>对策：</b>'+esc(g.counter)+'</div>':'')+'</div>';});
+  plans+='</div>';
+  var recs=LG.records.slice().sort(function(a,b){return b.ts-a.ts;}).slice(0,10);
+  var recHtml='<div class="card" style="padding:15px 16px"><div class="chart-title"><svg class="icon icon-sm" viewBox="0 0 24 24" style="stroke:var(--pink)"><path d="M12 8v4l3 2"/><circle cx="12" cy="12" r="9"/></svg>最近 10 条记录</div><div class="recents">';
+  if(!recs.length)recHtml+='<div class="muted" style="font-size:13px">还没有记录</div>';
+  recs.forEach(function(r){var g=lgGoalById(r.gid);recHtml+='<div class="rec-item"><span class="dot" style="background:'+(g?g.color:"#ccc")+'"></span><div class="grow"><div class="t">'+esc(g?g.name:"?")+' +'+lgNum(r.amount)+' '+(g?esc(g.unit):"")+(r.minutes?' · '+r.minutes+' 分':'')+'</div><div class="s">'+r.date+'</div></div>'+(r.backfill?'<span class="bk">补</span>':'')+'<button class="iconbtn" title="删除" onclick="lgDelRec(\''+r.id+'\')"><svg class="icon icon-sm" viewBox="0 0 24 24"><path d="M4 7h16M9 7V5a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2M6 7l1 13a1 1 0 0 0 1 1h8a1 1 0 0 0 1-1l1-13"/></svg></button></div>';});
+  recHtml+='</div></div>';
+  var chart=lgChart();
+  return kpiHtml+'<div class="board-grid"><div style="display:flex;flex-direction:column;gap:14px">'+ring+plans+'</div>'+
+    '<div style="display:flex;flex-direction:column;gap:14px">'+recHtml+chart+'</div></div>';
+}
+function lgKpi(n,l){return '<div class="kpi"><div class="n">'+n+'</div><div class="l">'+l+'</div></div>';}
+function lgOverallPct(){var t=lgTotalAll();if(t<=0)return 0;return Math.round(lgDoneAll()/t*100);}
+function lgDoneAll(){var t=0;LG.goals.forEach(function(g){t+=lgDoneOf(g);});return t;}
+function lgTotalAll(){var t=0;LG.goals.forEach(function(g){t+=lgNum(g.total);});return t;}
+function lgFirstUnit(){return LG.goals.length?LG.goals[0].unit:"";}
+
+function lgChart(){
+  var days=14,data=[],maxV=1;
+  for(var i=days-1;i>=0;i--){
+    var d=lgAddDays(lgToday(),-i),key=lgFmt(d),row={date:key,label:(d.getMonth()+1)+"/"+d.getDate(),vals:{}};
+    LG.goals.forEach(function(g){var a=lgAmountOnDate(g.id,key);row.vals[g.id]=a;if(a>maxV)maxV=a;});
+    data.push(row);
+  }
+  var W=680,H=210,padL=8,padR=8,padT=10,padB=26,colW=(W-padL-padR)/days,barW=Math.min(26,colW*0.6);
+  var plotH=H-padT-padB,scale=plotH/maxV;
+  var svg='<svg viewBox="0 0 '+W+' '+H+'" width="100%" preserveAspectRatio="none" style="height:auto">';
+  for(var g=0;g<=2;g++){var gy=padT+plotH*g/2;svg+='<line x1="'+padL+'" y1="'+gy+'" x2="'+(W-padR)+'" y2="'+gy+'" stroke="#ECE3D8"/>';}
+  data.forEach(function(row,idx){
+    var x=padL+colW*idx+(colW-barW)/2,cx=padL+colW*idx+colW/2;
+    var yb=padT+plotH;
+    LG.goals.forEach(function(gg){
+      var v=row.vals[gg.id]||0;if(v<=0)return;
+      var h=Math.max(1,v*scale);
+      svg+='<rect x="'+x+'" y="'+(yb-h)+'" width="'+barW+'" height="'+h+'" rx="2" fill="'+gg.color+'"><title>'+esc(gg.name)+' '+v+' '+(gg.unit||'')+' · '+row.date+'</title></rect>';
+      yb-=h;
+    });
+    if(idx%2===0||days<=10)svg+='<text x="'+cx+'" y="'+(H-8)+'" text-anchor="middle" font-size="9" fill="#a99e93">'+row.label+'</text>';
+  });
+  svg+='</svg>';
+  var legend='<div class="legend">';
+  LG.goals.forEach(function(g){legend+='<span><i style="background:'+g.color+'"></i>'+esc(g.name)+'</span>';});
+  legend+='</div>';
+  return '<div class="card chart-card"><div class="chart-title"><svg class="icon icon-sm" viewBox="0 0 24 24" style="stroke:var(--pink)"><path d="M4 20V4M4 20h16"/><path d="M8 16l4-5 3 3 4-7"/></svg>近 14 天 · 分目标投入量</div>'+svg+legend+'</div>';
+}
+
+/* ================= 周报 ================= */
+function lgRenderWeek(){
+  var ws=lgWeekStart(lgToday()),we=lgAddDays(ws,7);
+  var wkAmt=0,wkDays={},wkMin=0;
+  LG.records.forEach(function(r){if(r.date>=lgFmt(ws)&&r.date<lgFmt(we)){wkAmt+=lgNum(r.amount);wkDays[r.date]=1;wkMin+=lgNum(r.minutes);}});
+  var lw=lgAddDays(ws,-7),lwEnd=ws,lwAmt=0;
+  LG.records.forEach(function(r){if(r.date>=lgFmt(lw)&&r.date<lgFmt(lwEnd))lwAmt+=lgNum(r.amount);});
+  var cmp="";
+  if(lwAmt>0){var pct=Math.round((wkAmt-lwAmt)/lwAmt*100);cmp='<div class="cmp '+(pct>0?"up":pct<0?"down":"flat")+'">'+(pct>0?"▲ 较上周 +":"▼ 较上周 ")+(pct>0?pct:pct)+'%</div>';}
+  else if(wkAmt>0)cmp='<div class="cmp up">▲ 上周无数据</div>';
+  else cmp='<div class="cmp flat">上周无数据</div>';
+  var sumHtml='<div class="wk-summary">'+
+    lgWkBlock(wkAmt,"本周投入量","单位累计")+
+    lgWkBlock(Object.keys(wkDays).length,"打卡天数","天")+
+    lgWkBlock(wkMin,"投入分钟","分钟")+
+    '</div>';
+  var wk=lgWeekKey(lgToday());var wd=LG.weekly[wk]||{keep:"",problem:"",try:"",plan:""};
+  var four='<div class="card four"><div class="chart-title" style="margin-bottom:12px"><svg class="icon icon-sm" viewBox="0 0 24 24" style="stroke:var(--pink)"><path d="M4 4h16v16H4z"/><path d="M8 9h8M8 13h6"/></svg>本周复盘（'+lgFmt(ws)+' ~ '+lgFmt(lgAddDays(ws,6))+'）</div><div class="four-grid">'+
+    lgFourCol("keep","保持","这周做得好的、要延续的",wd.keep)+
+    lgFourCol("problem","问题","卡住我、没完成的原因",wd.problem)+
+    lgFourCol("try","尝试","下周想试的新方法",wd.try)+
+    lgFourCol("plan","下周预案","具体要做的调整",wd.plan)+
+    '</div><div style="margin-top:14px"><button class="btn" onclick="lgGenWeekReport()"><svg class="icon icon-sm" viewBox="0 0 24 24"><path d="M9 12l2 2 4-4"/><path d="M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"/></svg>一键生成周报文本</button></div></div>';
+  var weeks={};
+  LG.records.forEach(function(r){var k=lgWeekKey(lgParseDate(r.date));if(!weeks[k])weeks[k]={amt:0,days:{},min:0};weeks[k].amt+=lgNum(r.amount);weeks[k].days[r.date]=1;weeks[k].min+=lgNum(r.minutes);});
+  var keys=Object.keys(weeks).sort().reverse().slice(0,8);
+  var hist='<div class="card wk-hist" style="padding:14px 16px;margin-top:16px"><div class="chart-title" style="margin-bottom:8px"><svg class="icon icon-sm" viewBox="0 0 24 24" style="stroke:var(--ink2)"><path d="M3 3v18h18"/><path d="M7 14l4-4 3 3 5-6"/></svg>历史周</div><table><thead><tr><th>周（周一）</th><th>投入量</th><th>天数</th><th>分钟</th></tr></thead><tbody>';
+  if(!keys.length)hist+='<tr><td colspan="4" class="muted">暂无历史</td></tr>';
+  keys.forEach(function(k){hist+='<tr><td>'+k+'</td><td>'+weeks[k].amt+'</td><td>'+Object.keys(weeks[k].days).length+'</td><td>'+weeks[k].min+'</td></tr>';});
+  hist+='</tbody></table></div>';
+  return sumHtml+four+hist;
+}
+function lgWkBlock(n,l,sub){return '<div class="wk-block"><div class="n">'+n+'</div><div class="l">'+l+'</div></div>';}
+function lgFourCol(key,title,ph,val){
+  return '<div class="four-col"><h4><span class="dot" style="width:9px;height:9px;border-radius:50%;background:var(--pink)"></span>'+title+'</h4><textarea data-wk="'+key+'" placeholder="'+ph+'">'+esc(val)+'</textarea></div>';
+}
+
+/* ================= 我的 ================= */
+function lgRenderMine(){
+  return ''+
+  '<div class="mine-list">'+
+  '<div class="card mine-item"><div class="mi-ic"><svg class="icon" viewBox="0 0 24 24"><path d="M12 3v12M7 10l5 5 5-5"/><path d="M5 21h14"/></svg></div><div class="mi-txt"><b>导出 JSON 备份</b><p>把全部目标与记录存成一个文件，换设备可导入恢复</p></div><button class="btn sm" onclick="lgExportJSON()">导出</button></div>'+
+  '<div class="card mine-item"><div class="mi-ic"><svg class="icon" viewBox="0 0 24 24"><path d="M12 3v12M7 10l5 5 5-5"/><path d="M5 21h14"/></svg></div><div class="mi-txt"><b>导入恢复</b><p>选择之前导出的文件，将覆盖当前全部数据</p></div><button class="btn ghost sm" onclick="lgImportJSON()">导入</button></div>'+
+  '<div class="card mine-item"><div class="mi-ic"><svg class="icon" viewBox="0 0 24 24"><path d="M3 12a9 9 0 1 0 9-9"/><path d="M3 4v5h5"/></svg></div><div class="mi-txt"><b>旧版数据迁移</b><p>若检测到旧格式备份，自动合并到当前结构</p></div><button class="btn ghost sm" onclick="lgMigrateOld()">迁移</button></div>'+
+  '<div class="card mine-item"><div class="mi-ic"><svg class="icon" viewBox="0 0 24 24"><path d="M4 7h16M9 7V5a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2M6 7l1 13a1 1 0 0 0 1 1h8a1 1 0 0 0 1-1l1-13"/></svg></div><div class="mi-txt"><b>清空示例数据</b><p>删除全部目标与记录，但保留你的复盘笔记</p></div><button class="btn ghost sm" onclick="lgClearDemo()">清空示例</button></div>'+
+  '<div class="card mine-item dangerzone"><div class="mi-ic"><svg class="icon" viewBox="0 0 24 24"><path d="M12 9v4M12 17h.01"/><path d="M10.3 3.9 2 18a2 2 0 0 0 1.7 3h16.6A2 2 0 0 0 22 18L13.7 3.9a2 2 0 0 0-3.4 0Z"/></svg></div><div class="mi-txt"><b>清空全部数据</b><p>彻底删除所有目标、记录与笔记，不可恢复</p></div></div>'+
+  '<div class="clear-input"><input id="clearConfirm" placeholder="输入「清空」以确认" /><button class="btn danger sm" onclick="lgClearAll()">确认清空</button></div>'+
+  '<div class="card mine-item" style="margin-top:4px"><div class="mi-ic"><svg class="icon" viewBox="0 0 24 24"><path d="M12 17v-6"/><path d="M9 11h6"/><rect x="6" y="3" width="12" height="18" rx="2"/></svg></div><div class="mi-txt"><b>添加到主屏幕（当 APP 用）</b><p>iOS / Android 浏览器均可，离线也能打开</p></div></div>'+
+  '<div class="steps"><div class="step"><div class="num">1</div><div class="tx">打开本页后，点浏览器右上角「分享 / 菜单」按钮</div></div>'+
+  '<div class="step"><div class="num">2</div><div class="tx">选择「添加到主屏幕 / Add to Home Screen」</div></div>'+
+  '<div class="step"><div class="num">3</div><div class="tx">命名后确认，桌面即出现图标，随时点开使用</div></div></div>'+
+  '</div>';
+}
+
+/* ================= 交互绑定 ================= */
+function lgBindContent(){
+  document.querySelectorAll("#lgRoot textarea[data-wk]").forEach(function(ta){
+    ta.addEventListener("input",function(){
+      var wk=lgWeekKey(lgToday());if(!LG.weekly[wk])LG.weekly[wk]={keep:"",problem:"",try:"",plan:""};
+      LG.weekly[wk][ta.getAttribute("data-wk")]=ta.value;lgSave();
+    });
+  });
+}
+function lgTogglePlan(id){var el=document.getElementById("plan-"+id);if(el)el.classList.toggle("open");}
+
+/* ================= 弹窗 ================= */
+function lgOpenMask(html,centered){
+  lgCloseMask();
+  var m=document.createElement("div");
+  m.className="mask"+(centered?" centered":"");
+  m.id="lgMask";
+  m.innerHTML='<div class="sheet">'+html+'</div>';
+  m.addEventListener("click",function(e){if(e.target===m)lgCloseMask();});
+  document.body.appendChild(m);
+}
+function lgCloseMask(){var m=document.getElementById("lgMask");if(m)m.remove();}
+
+var LGSW=["#E86A9C","#5a9e6f","#c97b5b","#3FA7A0","#E0A23C","#b5694b","#7a9e5a","#c96b8a"];
+function lgGoalFormHTML(g,mode){
+  var isEdit=!!g;
+  var id=g?g.id:"";
+  var name=g?g.name:"",unit=g?g.unit:"个",total=g?g.total:"",deadline=g?g.deadline:"",color=g?g.color:LGSW[0];
+  var obs=g?g.obstacle:"",cnt=g?g.counter:"";
+  var sw="";LGSW.forEach(function(c){sw+='<span class="sw'+(c===color?" sel":"")+'" data-c="'+c+'" style="background:'+c+'" onclick="lgSelColor(this)"></span>';});
+  var todayStr=lgFmt(lgToday());
+  var dlVal=deadline||lgFmt(lgAddDays(lgToday(),30));
+  return '<h3><svg class="icon" viewBox="0 0 24 24" style="stroke:var(--pink)"><path d="M12 5v14M5 12h14"/></svg>'+(isEdit?"编辑目标":"新建目标")+'</h3>'+
+  '<div class="field"><label>目标名称</label><input id="f-name" value="'+esc(name)+'" placeholder="如：背完 2000 个单词" maxlength="40"></div>'+
+  '<div class="grid2"><div class="field"><label>单位</label><input id="f-unit" value="'+esc(unit)+'" placeholder="个 / 页 / 节" maxlength="6"></div>'+
+  '<div class="field"><label>总量</label><input id="f-total" type="number" inputmode="decimal" value="'+esc(total)+'" placeholder="2000"></div></div>'+
+  '<div class="field"><label>截止日</label><input id="f-deadline" type="date" value="'+dlVal+'" min="'+todayStr+'"></div>'+
+  '<div class="field"><label>配色</label><div class="swatches">'+sw+'</div><input type="hidden" id="f-color" value="'+color+'"></div>'+
+  '<div class="field"><label>最大障碍（选填）</label><input id="f-obs" value="'+esc(obs)+'" placeholder="学习中最大的阻碍是什么" maxlength="60"></div>'+
+  '<div class="field"><label>如果它出现，我就……（选填对策）</label><textarea id="f-cnt" placeholder="提前想好应对方式，卡住时翻开看" maxlength="120">'+esc(cnt)+'</textarea></div>'+
+  '<div class="sheet-ops"><button class="btn block" onclick="lgSaveGoal(\''+id+'\')">'+(isEdit?"保存修改":"创建目标")+'</button><button class="btn ghost block" onclick="lgCloseMask()">取消</button></div>';
+}
+function lgSelColor(el){document.querySelectorAll("#lgRoot .sw").forEach(function(s){s.classList.remove("sel");});el.classList.add("sel");document.getElementById("f-color").value=el.getAttribute("data-c");}
+
+function lgNewGoal(){lgOpenMask(lgGoalFormHTML(null,false));}
+function lgEditGoal(id){var g=lgGoalById(id);if(g)lgOpenMask(lgGoalFormHTML(g,true));}
+function lgSaveGoal(id){
+  var name=document.getElementById("f-name").value.trim();
+  if(!name){toast("请填写目标名称");return;}
+  var total=lgNum(document.getElementById("f-total").value);
+  if(total<=0){toast("总量需大于 0");return;}
+  var deadline=document.getElementById("f-deadline").value;
+  if(!deadline){toast("请选择截止日");return;}
+  var unit=document.getElementById("f-unit").value.trim()||"个";
+  var color=document.getElementById("f-color").value;
+  var obs=document.getElementById("f-obs").value.trim();
+  var cnt=document.getElementById("f-cnt").value.trim();
+  if(id){
+    var g=lgGoalById(id);g.name=name;g.unit=unit;g.total=total;g.deadline=deadline;g.color=color;g.obstacle=obs;g.counter=cnt;
+  }else{
+    LG.goals.push({id:lgUid(),name:name,unit:unit,total:total,deadline:deadline,color:color,obstacle:obs,counter:cnt,created:lgFmt(lgToday())});
+  }
+  lgSave();lgCloseMask();lgRender();toast(id?"已保存":"目标已创建");
+}
+function lgDelGoal(id){
+  lgOpenMask('<h3><svg class="icon" viewBox="0 0 24 24" style="stroke:var(--red)"><path d="M12 9v4M12 17h.01"/><path d="M10.3 3.9 2 18a2 2 0 0 0 1.7 3h16.6A2 2 0 0 0 22 18L13.7 3.9a2 2 0 0 0-3.4 0Z"/></svg>确认删除</h3>'+
+    '<p style="color:var(--ink2);font-size:13.5px;margin:0 0 6px">删除后该目标及其全部打卡记录将一并移除，且<strong>无法恢复</strong>。确定要删除吗？</p>'+
+    '<div class="sheet-ops"><button class="btn danger block" onclick="lgDoDelGoal(\''+id+'\')">确认删除</button><button class="btn ghost block" onclick="lgCloseMask()">取消</button></div>',true);
+}
+function lgDoDelGoal(id){LG.goals=LG.goals.filter(function(g){return g.id!==id;});LG.records=LG.records.filter(function(r){return r.gid!==id;});lgSave();lgCloseMask();lgRender();toast("已删除");}
+
+/* 打卡 */
+function lgOpenCheckin(gid){
+  var g=lgGoalById(gid);if(!g)return;
+  var t=lgFmt(lgToday());
+  var sugg=lgSuggestedToday(g);
+  var ym=lgYesterdayMiss(gid);
+  if(ym)sugg+=ym.red?lgSuggestedOn(g,lgFmt(lgAddDays(lgToday(),-1))):0;
+  var minDate=lgFmt(lgAddDays(lgToday(),-6));
+  var html='<h3><svg class="icon" viewBox="0 0 24 24" style="stroke:var(--green)"><path d="M20 6 9 17l-5-5"/></svg>打卡 · '+esc(g.name)+'</h3>'+
+    '<div class="checkin-prefill"><span>今日建议量'+(ym?'（含昨日滚入）':'')+'</span><b>'+sugg+' '+esc(g.unit)+'</b></div>'+
+    '<div class="grid2"><div class="field"><label>日期</label><input id="c-date" type="date" value="'+t+'" min="'+minDate+'" max="'+t+'"></div>'+
+    '<div class="field"><label>完成量（'+esc(g.unit)+'）</label><input id="c-amt" type="number" inputmode="decimal" value="'+sugg+'"></div></div>'+
+    '<div class="field"><label>用时分钟（选填）</label><input id="c-min" type="number" inputmode="numeric" placeholder="如 30"></div>'+
+    '<div id="c-backfill" class="pill gray" style="display:none;margin-bottom:12px">补记</div>'+
+    '<div class="sheet-ops"><button class="btn green block" onclick="lgDoCheckin(\''+gid+'\')">打卡</button><button class="btn ghost block" onclick="lgCloseMask()">取消</button></div>';
+  lgOpenMask(html);
+  var dEl=document.getElementById("c-date");
+  dEl.addEventListener("change",function(){
+    var isB=dEl.value<t;
+    document.getElementById("c-backfill").style.display=isB?"inline-flex":"none";
+    if(isB)toast("补记模式：按真实日期参与连续天数与推算");
+  });
+}
+function lgDoCheckin(gid){
+  var g=lgGoalById(gid);if(!g)return;
+  var date=document.getElementById("c-date").value;
+  var amt=lgNum(document.getElementById("c-amt").value);
+  if(amt<=0){toast("完成量需大于 0");return;}
+  var min=document.getElementById("c-min").value;min=min===""?null:lgNum(min);
+  var t=lgFmt(lgToday());
+  var backfill=date<t;
+  var before=lgPctOf(g);
+  LG.records.push({id:lgUid(),gid:gid,date:date,amount:amt,minutes:min,backfill:backfill,ts:Date.now()});
+  lgSave();lgCloseMask();
+  var after=lgPctOf(g);
+  if(after>=100&&before<100)lgCelebrate();
+  lgRender();toast(backfill?"已补记":"打卡成功");
+}
+function lgDelRec(rid){LG.records=LG.records.filter(function(r){return r.id!==rid;});lgSave();lgRender();toast("已删除该记录");}
+
+/* ================= 我的操作 ================= */
+function lgExportJSON(){
+  var data={type:"learning-goal-manager",version:1,exported:lgFmt(lgToday()),state:LG};
+  var blob=new Blob([JSON.stringify(data,null,2)],{type:"application/json"});
+  var a=document.createElement("a");a.href=URL.createObjectURL(blob);
+  a.download="学习目标管理台-备份-"+lgFmt(lgToday())+".json";a.click();
+  setTimeout(function(){URL.revokeObjectURL(a.href);},1000);
+  toast("已导出备份");
+}
+function lgImportJSON(){
+  lgOpenMask('<h3><svg class="icon" viewBox="0 0 24 24" style="stroke:var(--pink)"><path d="M12 3v12M7 10l5 5 5-5"/><path d="M5 21h14"/></svg>导入恢复</h3>'+
+    '<p style="font-size:13.5px;color:var(--ink2);margin:0 0 12px">选择之前导出的 JSON 备份。<b>导入将覆盖当前所有数据</b>。</p>'+
+    '<input type="file" id="imp-file" accept="application/json,.json" style="font-size:14px">'+
+    '<div class="sheet-ops"><button class="btn block" onclick="lgDoImport()">覆盖导入</button><button class="btn ghost block" onclick="lgCloseMask()">取消</button></div>',true);
+}
+function lgDoImport(){
+  var f=document.getElementById("imp-file").files[0];
+  if(!f){toast("请先选择文件");return;}
+  var rd=new FileReader();
+  rd.onload=function(){
+    try{
+      var d=JSON.parse(rd.result);
+      var st=d.state||d;
+      if(!st.goals||!st.records)throw new Error("格式不符");
+      if(!confirm("确定用该备份覆盖当前全部数据？此操作不可撤销。"))return;
+      LG={goals:st.goals,records:st.records,weekly:st.weekly||{},seeded:true};
+      lgSave();lgCloseMask();lgRender();toast("导入成功");
+    }catch(e){toast("文件格式不正确");}
+  };
+  rd.readAsText(f);
+}
+function lgMigrateOld(){
+  var found=false,maps=[];
+  for(var i=0;i<localStorage.length;i++){
+    var k=localStorage.key(i);
+    if(k&&(k.indexOf("wb_goal")>=0||k.indexOf("wb_record")>=0||k==="lgm_old"||k.indexOf("learninggoal")>=0)){
+      maps.push(k);found=true;
+    }
+  }
+  if(!found){toast("未检测到旧版数据");return;}
+  toast("检测到 "+maps.length+" 个旧键，但当前无兼容旧版结构，已跳过");
+}
+function lgClearDemo(){
+  if(!confirm("清空全部目标与记录（保留复盘笔记）？"))return;
+  LG.goals=[];LG.records=[];LG.seeded=false;lgSave();lgRender();toast("示例数据已清空");
+}
+function lgClearAll(){
+  var v=(document.getElementById("clearConfirm")||{}).value||"";
+  if(v.trim()!=="清空"){toast("请在输入框输入「清空」");return;}
+  if(!confirm("彻底删除所有目标、记录与笔记？不可恢复！"))return;
+  LG={goals:[],records:[],weekly:{},seeded:false};
+  try{localStorage.removeItem(LGK);}catch(e){}
+  lgRender();toast("已全部清空");
+}
+
+/* 周报文本 */
+function lgGenWeekReport(){
+  var ws=lgWeekStart(lgToday()),we=lgAddDays(ws,7);
+  var wkAmt=0,wkDays={},wkMin=0;
+  LG.records.forEach(function(r){if(r.date>=lgFmt(ws)&&r.date<lgFmt(we)){wkAmt+=lgNum(r.amount);wkDays[r.date]=1;wkMin+=lgNum(r.minutes);}});
+  var wk=lgWeekKey(lgToday());var wd=LG.weekly[wk]||{};
+  var lines=[];
+  lines.push("【学习目标周报】"+lgFmt(ws)+" ~ "+lgFmt(lgAddDays(ws,6)));
+  lines.push("");
+  lines.push("▸ 本周投入："+wkAmt+" 单位 · 打卡 "+Object.keys(wkDays).length+" 天 · 用时 "+wkMin+" 分钟");
+  lines.push("");
+  lines.push("▸ 各目标进度：");
+  LG.goals.forEach(function(g){lines.push("  · "+g.name+"："+lgDoneOf(g)+"/"+g.total+g.unit+"（"+lgPctOf(g)+"%"+(lgIsOverdue(g)?"，已逾期":"")+"）");});
+  lines.push("");
+  lines.push("▸ 保持："+(wd.keep||"（未填写）"));
+  lines.push("▸ 问题："+(wd.problem||"（未填写）"));
+  lines.push("▸ 尝试："+(wd.try||"（未填写）"));
+  lines.push("▸ 下周预案："+(wd.plan||"（未填写）"));
+  var txt=lines.join("\n");
+  lgOpenMask('<h3><svg class="icon" viewBox="0 0 24 24" style="stroke:var(--pink)"><path d="M4 4h16v16H4z"/><path d="M8 9h8M8 13h6"/></svg>周报文本</h3>'+
+    '<textarea readonly style="width:100%;min-height:240px;font-size:13px;line-height:1.6;padding:12px;border:1px solid var(--line);border-radius:11px;background:var(--surface2)">'+esc(txt)+'</textarea>'+
+    '<div class="sheet-ops"><button class="btn block" onclick="lgCopyText(this)">复制到剪贴板</button><button class="btn ghost block" onclick="lgCloseMask()">关闭</button></div>',true);
+  window.__lgwktext=txt;
+}
+function lgCopyText(btn){
+  var t=window.__lgwktext||"";
+  if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(t).then(function(){toast("已复制");},function(){lgFallbackCopy(t);});}
+  else lgFallbackCopy(t);
+}
+function lgFallbackCopy(t){var ta=document.createElement("textarea");ta.value=t;document.body.appendChild(ta);ta.select();try{document.execCommand("copy");toast("已复制");}catch(e){toast("复制失败，请手动选择");}ta.remove();}
+
+/* ================= 彩带动效 ================= */
+function lgCelebrate(){
+  var cv=document.getElementById("lgConfetti");if(!cv)return;cv.classList.remove("hide");cv.width=innerWidth;cv.height=innerHeight;
+  var ctx=cv.getContext("2d"),parts=[],colors=["#E86A9C","#5a9e6f","#c97b5b","#E0A23C","#3FA7A0","#b5694b"];
+  for(var i=0;i<120;i++)parts.push({x:innerWidth/2,y:innerHeight/3,vx:(Math.random()-.5)*9,vy:Math.random()*-11-3,size:6+Math.random()*7,c:colors[i%colors.length],rot:Math.random()*6,vr:(Math.random()-.5)*.3,life:0});
+  var t0=performance.now();
+  (function loop(t){var dt=(t-t0)/16;ctx.clearRect(0,0,cv.width,cv.height);
+    parts.forEach(function(p){p.x+=p.vx;p.y+=p.vy;p.vy+=.28;p.rot+=p.vr;p.life+=dt;
+      ctx.save();ctx.translate(p.x,p.y);ctx.rotate(p.rot);ctx.fillStyle=p.c;ctx.globalAlpha=Math.max(0,1-p.life/120);ctx.fillRect(-p.size/2,-p.size/2,p.size,p.size*.6);ctx.restore();});
+    if(performance.now()-t0<2200 && parts.some(function(p){return p.y<cv.height+20;}))requestAnimationFrame(loop);
+    else{cv.classList.add("hide");ctx.clearRect(0,0,cv.width,cv.height);}
+  })(performance.now());
+}
+
+/* ================= 初始化（由宿主启动调用） ================= */
+function lgInit(){
+  lgLoad();
+  if(!LG.seeded||!LG.goals.length){lgSeed();}
+}
 </script>
 </body>
 </html>
