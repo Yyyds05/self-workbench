@@ -168,6 +168,7 @@ body{
 .info-date.major{color:var(--gold);font-weight:600}
 .info-empty{color:var(--text3);font-size:12px;text-align:center;padding:16px 0}
 .info-meta{font-size:10px;color:var(--text3);margin-bottom:5px;padding-left:2px}
+.info-toggle{color:var(--blue);cursor:pointer;margin-left:4px;border-bottom:1px dashed var(--blue);user-select:none}
 .news-desc{font-size:12px;color:var(--ink2);line-height:1.55;padding:5px 8px;margin-top:2px;background:var(--surface2);border-radius:8px;border-left:3px solid var(--blue)}
 .rss-src-row{display:flex;align-items:center;gap:6px;padding:4px 8px;background:var(--bg);border-radius:8px;margin-bottom:3px;font-size:11px}
 .rss-src-name{flex:1;color:var(--text)}
@@ -3040,6 +3041,17 @@ function clReset(){S.checklist.items.forEach(function(it){it.done=false});sv('w5
 function renderEvents(){
   document.getElementById('eventsList').innerHTML=S.events.map(function(e){return'<div class="info-row"><span class="info-date'+(e.major?' major':'')+'">'+esc(e.date)+'</span><span class="info-text'+(e.major?' major':'')+'">'+esc(e.text)+'</span></div>'}).join('')
 }
+// 资讯噪声过滤：广告/推广/纯营销 + 与「考试资讯」无关的择校方法类软文隐藏
+// 精准过滤，避免误伤官方公告、报名时间、大纲、分数线、调剂等真实考试资讯
+var NEWS_NOISE=[
+ '广告','推广','合作','赞助','招生简章','招生广告','培训班','辅导班','课程优惠','限时优惠','抢报','报班','考研机构','教育机构','名师','押题','保过','提分班','集训营','VIP','优惠券','领券','低价','秒杀','直降','活动价','免单','包过','保录',
+ '择校','选校','院校排名','选专业','院校推荐','报录比','录取率','性价比','如何选','怎么选','择校方法','择校攻略','报考择校'
+];
+function newsIsNoise(n){
+ var t=(n.title||'')+' '+(n.desc||'')+(n.src&&n.src.indexOf('百度')>=0?' 百度':'');
+ for(var i=0;i<NEWS_NOISE.length;i++){if(t.indexOf(NEWS_NOISE[i])>=0)return true;}
+ return false;
+}
 function renderNews(){
  renderRssSources();
  var items=S.rssItems||[],srcMap={};
@@ -3050,15 +3062,22 @@ function renderNews(){
  var cutoff=Date.now()-90*86400000;
  var fresh=items.filter(function(n){return!n.ts||n.ts>cutoff});
  var stale=items.length-fresh.length;
+ // 噪声过滤（默认开启，可通过开关还原全部）
+ var showAll=window.__showAllNews;
+ var useful=fresh.filter(function(n){return showAll||!newsIsNoise(n)});
+ var noiseCount=fresh.length-useful.length;
  var lastTs=0;(S.rssSources||[]).forEach(function(s){if(s.lastTs&&s.lastTs>lastTs)lastTs=s.lastTs});
  var meta=lastTs?('最后更新 '+new Date(lastTs).toLocaleString('zh-CN',{hour12:false}).slice(5)):'尚未更新';
  if(stale>0)meta+=' · 已隐藏 '+stale+' 条过期内容';
- d.innerHTML='<div class="info-meta">'+esc(meta)+' · 显示 '+fresh.length+' 条</div>'+fresh.slice(0,80).map(function(n){
+ if(noiseCount>0&&!showAll)meta+=' · 已过滤 '+noiseCount+' 条广告/软文';
+ var toggle=noiseCount>0?' <span class="info-toggle" onclick="__toggleNews()">'+(showAll?'收起全部':'查看被过滤的 '+noiseCount+' 条')+'</span>':'';
+ d.innerHTML='<div class="info-meta">'+esc(meta)+toggle+'</div>'+useful.slice(0,80).map(function(n){
    var src=srcMap[n.src]||n.src||'';
    var desc=n.desc?'<div class="news-desc" onclick="event.stopPropagation()">'+esc(n.desc)+'</div>':'';
    return'<div class="info-row"><div class="info-head"><span class="info-date">'+esc(n.date)+'</span><span class="info-text"><a href="'+esc(n.url)+'" target="_blank" rel="noopener">'+esc(n.title)+'</a>'+(src?' <span style="color:var(--text3);font-size:10px">['+esc(src)+']</span>':'')+'</span></div>'+desc+'</div>';
  }).join('')
 }
+function __toggleNews(){window.__showAllNews=!window.__showAllNews;renderNews()}
 
 function renderResources(){
   document.getElementById('resList').innerHTML=S.resources.map(function(r,i){return'<div class="res-row"><a href="'+esc(r.url)+'" target="_blank">'+esc(r.title)+'</a><span class="res-del" onclick="delRes('+i+')">×</span></div>'}).join('')
