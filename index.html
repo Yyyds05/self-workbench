@@ -155,29 +155,32 @@ body{
 .eq-more summary{font-size:11px;color:var(--text3);cursor:pointer;user-select:none;padding:4px 0}
 @media(max-width:520px){.eq-shots{grid-template-columns:1fr}}
 /* ===== OKR 目标页（分数大目标 → 科目 → 分数段 → 短期 → 每日） ===== */
+/* ===== OKR 目标页（柔和紫/粉/蓝系） ===== */
 .okr-prog{height:9px;background:var(--line2);border-radius:99px;overflow:hidden}
-.okr-prog>i{display:block;height:100%;background:var(--green);border-radius:99px;transition:width .4s}
-.okr-item{display:flex;align-items:center;gap:10px;padding:10px 12px;border:1px solid var(--line);border-radius:11px;margin-bottom:8px;background:var(--surface2);cursor:pointer}
+.okr-prog>i{display:block;height:100%;background:#B8A8D8;border-radius:99px;transition:width .4s}
+.okr-item{display:flex;align-items:center;gap:10px;padding:10px 12px;border:1px solid var(--line);border-radius:11px;margin-bottom:8px;background:var(--surface2);cursor:pointer;transition:background .15s}
+.okr-item:hover{background:#F3F0FA}
 .okr-item.done{opacity:.55}
 .okr-item.done .okr-txt{text-decoration:line-through}
-.okr-check{width:22px;height:22px;border-radius:7px;border:2px solid var(--green);display:flex;align-items:center;justify-content:center;color:#fff;font-size:13px;font-weight:800;flex:none}
-.okr-item.done .okr-check{background:var(--green)}
+.okr-check{width:22px;height:22px;border-radius:7px;border:2px solid #B8A8D8;display:flex;align-items:center;justify-content:center;color:#fff;font-size:13px;font-weight:800;flex:none}
+.okr-item.done .okr-check{background:#B8A8D8}
 .okr-txt{flex:1;font-size:14px}
 .okr-del{color:var(--red);border:none;background:none;font-size:16px;padding:4px 8px;flex:none}
-#okrRoot .okr-hero{background:linear-gradient(135deg,#2D6A4F,#40916C);color:#fff;border-radius:16px;padding:18px;margin-bottom:16px;box-shadow:var(--shadow)}
-#okrRoot .okr-hero-label{font-size:12.5px;opacity:.85}
+#okrRoot .okr-hero{background:linear-gradient(135deg,#E8E0F7,#F7E0EB);color:#4A4A4A;border-radius:16px;padding:18px;margin-bottom:16px;box-shadow:var(--shadow)}
+#okrRoot .okr-hero-label{font-size:12.5px;color:#6B6B6B}
 #okrRoot .okr-hero-big{font-size:30px;font-weight:800;display:flex;align-items:center;gap:6px;margin-top:2px}
-#okrRoot .okr-hero-big input{width:120px;font-size:30px;font-weight:800;background:rgba(255,255,255,.16);border:1px solid rgba(255,255,255,.4);color:#fff;border-radius:10px;padding:2px 8px}
-#okrRoot .okr-hero-sub{font-size:12.5px;opacity:.92;margin-top:10px}
-#okrRoot .okr-hero .okr-prog{background:rgba(255,255,255,.28)}
-#okrRoot .okr-hero .okr-prog>i{background:#fff}
+#okrRoot .okr-hero-big input{width:120px;font-size:30px;font-weight:800;background:rgba(255,255,255,.55);border:1px solid rgba(0,0,0,.12);color:#4A4A4A;border-radius:10px;padding:2px 8px}
+#okrRoot .okr-hero-sub{font-size:12.5px;color:#5A5A5A;margin-top:10px}
+#okrRoot .okr-hero .okr-prog{background:rgba(0,0,0,.08)}
+#okrRoot .okr-hero .okr-prog>i{background:#B8A8D8}
 #okrRoot .okr-sec{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:15px;margin-bottom:14px;box-shadow:var(--shadow)}
-#okrRoot .okr-sec-h{display:flex;align-items:center;gap:8px;font-size:15px;font-weight:700;margin-bottom:12px}
+#okrRoot .okr-sec-h{display:flex;align-items:center;gap:8px;font-size:15px;font-weight:700;margin-bottom:12px;color:#4A4A4A}
 #okrRoot .okr-sec-h .icon{width:20px;height:20px;flex:none;fill:none;stroke:currentColor;stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round}
-#okrRoot .okr-sec-h .okr-add{margin-left:auto;padding:7px 13px;border-radius:9px;background:var(--green);color:#fff;font-size:13px;font-weight:700;border:none}
+#okrRoot .okr-sec-h .okr-add{margin-left:auto;padding:7px 13px;border-radius:9px;background:#B8A8D8;color:#fff;font-size:13px;font-weight:700;border:none;cursor:pointer;transition:background .15s}
+#okrRoot .okr-sec-h .okr-add:hover{background:#A798C8}
 #okrRoot .okr-sec-h .okr-add.ghost{background:var(--surface2);color:var(--ink);border:1px solid var(--line)}
-#okrRoot .okr-subj{border:1px solid var(--line);border-radius:12px;padding:12px;margin-bottom:10px}
-#okrRoot .okr-subj-head{display:flex;align-items:center;justify-content:space-between;font-weight:700;margin-bottom:8px}
+#okrRoot .okr-subj{border:1px solid var(--line);border-radius:12px;padding:12px;margin-bottom:10px;background:#FDFBFD}
+#okrRoot .okr-subj-head{display:flex;align-items:center;justify-content:space-between;font-weight:700;margin-bottom:8px;color:#4A4A4A}
 #okrRoot .okr-subj-head .okr-del{font-size:14px}
 #okrRoot .okr-subj-row{display:grid;grid-template-columns:1fr 1fr;gap:10px}
 #okrRoot .okr-subj-row label{display:block;font-size:12px;color:var(--ink2);margin-bottom:4px}
@@ -185,14 +188,15 @@ body{
 #okrRoot .okr-subj .okr-prog{margin-top:9px}
 #okrRoot .okr-band{display:grid;grid-template-columns:96px 1fr auto;gap:8px;margin-bottom:8px;align-items:center}
 #okrRoot .okr-band input{border:1px solid var(--line);border-radius:9px;padding:9px;font-size:14px;background:var(--surface2)}
-#okrRoot .okr-band-lab{font-weight:700}
+#okrRoot .okr-band-lab{font-weight:700;color:#4A4A4A}
 #okrRoot .okr-add-row{display:flex;gap:8px;margin-top:8px}
 #okrRoot .okr-add-row input{flex:1;border:1px solid var(--line);border-radius:10px;padding:10px;font-size:15px;background:var(--surface2)}
-#okrRoot .okr-add-btn{padding:10px 16px;border-radius:10px;background:var(--green);color:#fff;font-weight:700;font-size:14px;border:none;flex:none}
+#okrRoot .okr-add-btn{padding:10px 16px;border-radius:10px;background:#B8A8D8;color:#fff;font-weight:700;font-size:14px;border:none;flex:none;cursor:pointer;transition:background .15s}
+#okrRoot .okr-add-btn:hover{background:#A798C8}
 /* 仪表盘 OKR 摘要 */
 .gd-okr-hero{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:12px 14px;margin-bottom:10px}
 .gd-okr-line{display:flex;justify-content:space-between;font-size:13px}
-.gd-okr-line b{color:var(--green-d)}
+.gd-okr-line b{color:#8B7AA8}
 .gd-okr-sub{font-size:11.5px;color:var(--ink2);margin-top:6px}
 .gd-okr-daily{display:flex;flex-direction:column;gap:6px}
 
