@@ -130,6 +130,70 @@ body{
 .err-form select,.err-form input,.err-form textarea{width:100%;background:var(--bg);border:1px solid var(--border);border-radius:10px;padding:8px 10px;color:var(--text);font-size:12px;outline:none;margin-bottom:6px}
 .err-form textarea{min-height:50px;resize:vertical}
 .imp-select{background:var(--bg);border:1px solid var(--border);border-radius:6px;padding:4px 8px;font-size:10px;color:var(--text2);outline:none;cursor:pointer}
+/* R-QUICK: 错题快速录入（科目 + 拍题目 + 拍解析），置顶醒目 */
+.eq{background:var(--surface2,#faf7f0);border:1px solid var(--border);border-radius:14px;padding:14px;margin-bottom:12px}
+.eq-head{display:flex;align-items:center;gap:6px;font-size:13px;font-weight:700;color:var(--text);margin-bottom:10px}
+.eq-head .eq-badge{font-size:10px;font-weight:700;color:var(--gold);background:var(--gold-bg,#fff8e8);border:1px solid var(--gold);border-radius:20px;padding:2px 9px}
+.eq-subj{margin-bottom:10px}
+.eq-lbl{display:block;font-size:11px;font-weight:700;color:var(--text2);margin-bottom:5px}
+.eq select{width:100%;background:var(--bg);border:1px solid var(--border);border-radius:10px;padding:11px;color:var(--text);font-size:16px;outline:none}
+.eq input[type=text]{width:100%;background:var(--bg);border:1px solid var(--border);border-radius:10px;padding:11px;color:var(--text);font-size:16px;outline:none;margin-bottom:10px}
+.eq-shots{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px}
+.eq-shot{position:relative;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;min-height:124px;background:var(--bg);border:1.5px dashed var(--border);border-radius:13px;cursor:pointer;padding:10px;text-align:center;transition:.15s}
+.eq-shot:hover{border-color:var(--gold);background:var(--gold-bg,#fff8e8)}
+.eq-shot-ico{font-size:26px;line-height:1}
+.eq-shot b{font-size:14px;color:var(--text)}
+.eq-shot span{font-size:11px;color:var(--text3)}
+.eq-prev{display:none;flex-wrap:wrap;gap:4px;justify-content:center;margin-top:6px}
+.eq-prev.has{display:flex}
+.eq-prev img{width:46px;height:46px;object-fit:cover;border-radius:8px;border:1px solid var(--border)}
+.eq-prev-chip{font-size:10px;background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:4px 6px;color:var(--text2);max-width:120px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.eq-prev-more{font-size:11px;color:var(--text2);align-self:center}
+.eq-add{width:100%;padding:13px;border-radius:12px;background:var(--gold);color:#fff;font-size:15px;font-weight:700;margin-top:2px;cursor:pointer}
+.eq-add:hover{background:#c08d14}
+.eq-more{margin-top:10px}
+.eq-more summary{font-size:11px;color:var(--text3);cursor:pointer;user-select:none;padding:4px 0}
+@media(max-width:520px){.eq-shots{grid-template-columns:1fr}}
+/* ===== OKR 目标页（分数大目标 → 科目 → 分数段 → 短期 → 每日） ===== */
+.okr-prog{height:9px;background:var(--line2);border-radius:99px;overflow:hidden}
+.okr-prog>i{display:block;height:100%;background:var(--green);border-radius:99px;transition:width .4s}
+.okr-item{display:flex;align-items:center;gap:10px;padding:10px 12px;border:1px solid var(--line);border-radius:11px;margin-bottom:8px;background:var(--surface2);cursor:pointer}
+.okr-item.done{opacity:.55}
+.okr-item.done .okr-txt{text-decoration:line-through}
+.okr-check{width:22px;height:22px;border-radius:7px;border:2px solid var(--green);display:flex;align-items:center;justify-content:center;color:#fff;font-size:13px;font-weight:800;flex:none}
+.okr-item.done .okr-check{background:var(--green)}
+.okr-txt{flex:1;font-size:14px}
+.okr-del{color:var(--red);border:none;background:none;font-size:16px;padding:4px 8px;flex:none}
+#okrRoot .okr-hero{background:linear-gradient(135deg,#2D6A4F,#40916C);color:#fff;border-radius:16px;padding:18px;margin-bottom:16px;box-shadow:var(--shadow)}
+#okrRoot .okr-hero-label{font-size:12.5px;opacity:.85}
+#okrRoot .okr-hero-big{font-size:30px;font-weight:800;display:flex;align-items:center;gap:6px;margin-top:2px}
+#okrRoot .okr-hero-big input{width:120px;font-size:30px;font-weight:800;background:rgba(255,255,255,.16);border:1px solid rgba(255,255,255,.4);color:#fff;border-radius:10px;padding:2px 8px}
+#okrRoot .okr-hero-sub{font-size:12.5px;opacity:.92;margin-top:10px}
+#okrRoot .okr-hero .okr-prog{background:rgba(255,255,255,.28)}
+#okrRoot .okr-hero .okr-prog>i{background:#fff}
+#okrRoot .okr-sec{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:15px;margin-bottom:14px;box-shadow:var(--shadow)}
+#okrRoot .okr-sec-h{display:flex;align-items:center;gap:8px;font-size:15px;font-weight:700;margin-bottom:12px}
+#okrRoot .okr-sec-h .okr-add{margin-left:auto;padding:7px 13px;border-radius:9px;background:var(--green);color:#fff;font-size:13px;font-weight:700;border:none}
+#okrRoot .okr-sec-h .okr-add.ghost{background:var(--surface2);color:var(--ink);border:1px solid var(--line)}
+#okrRoot .okr-subj{border:1px solid var(--line);border-radius:12px;padding:12px;margin-bottom:10px}
+#okrRoot .okr-subj-head{display:flex;align-items:center;justify-content:space-between;font-weight:700;margin-bottom:8px}
+#okrRoot .okr-subj-head .okr-del{font-size:14px}
+#okrRoot .okr-subj-row{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+#okrRoot .okr-subj-row label{display:block;font-size:12px;color:var(--ink2);margin-bottom:4px}
+#okrRoot .okr-subj-row input{width:100%;border:1px solid var(--line);border-radius:9px;padding:9px;font-size:16px;background:var(--surface2)}
+#okrRoot .okr-subj .okr-prog{margin-top:9px}
+#okrRoot .okr-band{display:grid;grid-template-columns:96px 1fr auto;gap:8px;margin-bottom:8px;align-items:center}
+#okrRoot .okr-band input{border:1px solid var(--line);border-radius:9px;padding:9px;font-size:14px;background:var(--surface2)}
+#okrRoot .okr-band-lab{font-weight:700}
+#okrRoot .okr-add-row{display:flex;gap:8px;margin-top:8px}
+#okrRoot .okr-add-row input{flex:1;border:1px solid var(--line);border-radius:10px;padding:10px;font-size:15px;background:var(--surface2)}
+#okrRoot .okr-add-btn{padding:10px 16px;border-radius:10px;background:var(--green);color:#fff;font-weight:700;font-size:14px;border:none;flex:none}
+/* 仪表盘 OKR 摘要 */
+.gd-okr-hero{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:12px 14px;margin-bottom:10px}
+.gd-okr-line{display:flex;justify-content:space-between;font-size:13px}
+.gd-okr-line b{color:var(--green-d)}
+.gd-okr-sub{font-size:11.5px;color:var(--ink2);margin-top:6px}
+.gd-okr-daily{display:flex;flex-direction:column;gap:6px}
 
 .ai-modal{position:fixed;inset:0;background:rgba(0,0,0,.4);z-index:200;display:none;align-items:center;justify-content:center}
 .ai-modal.open{display:flex}
@@ -273,12 +337,6 @@ body{
 .q-a{font-size:12px;color:var(--green);margin-top:4px;white-space:pre-wrap}
 .q-acts{display:flex;gap:6px;margin-top:6px}
 .q-empty{text-align:center;color:var(--text3);font-size:12px;padding:14px}
-.nl-input{width:100%;min-height:64px;background:var(--bg);border:1px solid var(--border);border-radius:10px;padding:8px 10px;font-size:12px;outline:none;resize:vertical;font-family:inherit}
-.nl-wrap .add-row{margin-top:8px}
-.nl-preview{margin-top:8px}
-.nl-tbl{width:100%;border-collapse:collapse;font-size:11px}
-.nl-tbl th,.nl-tbl td{border:1px solid var(--border);padding:4px 6px;text-align:left;vertical-align:top}
-.nl-tbl th{background:var(--card2);color:var(--text2)}
 .nl-lv1{background:var(--gold-bg)}
 .nl-lv2{background:var(--blue-bg)}
 .nl-lv3{background:var(--red-bg)}
@@ -674,22 +732,6 @@ body{
     <div class="streak-sprout" id="streakSprout"></div>
   </div>
 
-  <!-- R6: 自然语言复盘录入（替代坏掉的集中导入） -->
-  <div class="card">
-    <div class="card-hd"><div class="card-dot dot-purple"></div><div class="card-title">一句话复盘（自然语言）</div></div>
-    <div class="nl-wrap">
-      <textarea id="nlInput" class="nl-input" placeholder="多条记录请用分号（；）或句号（。）分隔。例：今天做完了 408 数据结构 树与二叉树 课后题；数学 高数 中值定理 看了 2 小时；政治 马原 第一章 只看了半章；错题原因是概念不清，数学 线代 行列式 这道。"></textarea>
-      <div class="add-row">
-        <button class="add-btn" onclick="nlAnalyze()">解析</button>
-        <button class="btn" onclick="nlApply()">确认写入</button>
-        <button class="btn" onclick="nlUndo()">撤销上一条</button>
-        <button class="btn" onclick="nlClear()">清空</button>
-      </div>
-      <div class="nl-undo" id="nlUndoHint" style="font-size:10px;color:var(--text3);margin-top:4px"></div>
-      <div id="nlPreview" class="nl-preview"></div>
-    </div>
-  </div>
-
   <!-- R8/R9: 今日复习队列（错题待复习 + 背记卡到期 合并） -->
   <div class="card">
     <div class="card-hd"><div class="card-dot dot-gold"></div><div class="card-title">今日复习队列</div><span id="queueBar" style="margin-left:auto;font-size:11px;color:var(--text2)"></span></div>
@@ -708,34 +750,6 @@ body{
       <span id="goalsDashExam" style="margin-left:auto;font-size:11px;color:var(--text2)"></span>
       <button class="gd-manage" onclick="switchPage('goals')">目标管理 ›</button></div>
     <div id="goalsDashBody"></div>
-    <div class="today-divider">今日任务</div>
-    <div class="today-ctrls">
-      <span id="timerDisp" style="font-size:12px;font-weight:700;color:var(--gold)"></span>
-      <select class="ptlen-select" id="ptlenSel" onchange="setPtlen(this.value)" title="番茄时长">
-        <option value="25">25分</option><option value="45">45分</option><option value="60">60分</option><option value="custom">自定义</option>
-      </select>
-      <button class="btn btn-sm" onclick="event.stopPropagation();enterFocus()" title="全屏专注"><svg class="ic" viewBox="0 0 24 24"><path d="M4 9V4h5"/><path d="M20 9V4h-5"/><path d="M4 15v5h5"/><path d="M20 15v5h-5"/></svg>专注</button>
-      <button class="btn btn-sm" onclick="event.stopPropagation();stopTimer()">停止</button>
-    </div>
-    <div id="taskList"></div>
-    <div class="add-row">
-      <input type="text" id="taskInput" placeholder="任务名..." onkeydown="if(event.keyCode===13)addTask()">
-      <select id="taskSubject"></select>
-      <select id="taskPriority"><option value="normal">普通</option><option value="important">重要</option><option value="urgent">紧急</option></select>
-      <select id="taskQty"><option value="">--</option><option value="1章">1章</option><option value="2章">2章</option><option value="1篇">1篇</option><option value="2篇">2篇</option><option value="30题">30题</option><option value="50题">50题</option></select>
-      <button class="add-btn" onclick="addTask()">＋</button>
-    </div>
-  </div>
-  <!-- 出门清单：已从独立页面并入仪表盘小组件（F12: 可增删改，按天重置勾选） -->
-  <div class="card" id="clWidgetCard">
-    <div class="card-hd"><div class="card-dot dot-blue"></div><div class="card-title">出门清单</div>
-      <span id="clCount" style="margin-left:auto;font-size:11px;color:var(--text2)"></span>
-      <button class="gd-manage" onclick="clReset()">重置</button></div>
-    <div id="clWidget"></div>
-    <div class="add-row">
-      <input type="text" id="clInput" placeholder="新增物品..." onkeydown="if(event.keyCode===13)clAdd()">
-      <button class="add-btn" onclick="clAdd()">＋</button>
-    </div>
   </div>
   <div class="card">
     <div class="card-hd"><div class="card-dot dot-gold"></div><div class="card-title">科目进度</div></div>
@@ -761,8 +775,21 @@ body{
 
 <!-- ================ 复盘页 ================ -->
 <div class="page" id="page-review">
+  <div class="card" style="background:var(--blue-bg);border-color:var(--border)">
+    <div class="card-hd"><div class="card-dot dot-blue"></div><div class="card-title">复盘怎么用</div></div>
+    <div style="font-size:13px;color:var(--text);line-height:1.7">
+      <p>每天学习结束后，来这里记录一次：</p>
+      <ol style="margin:6px 0 0 18px;padding:0">
+        <li>点击下面各科目标签，勾选今天已完成的章节；</li>
+        <li>填写有效时长、四科正确率、今日卡点、明日计划等；</li>
+        <li>点「提交复盘 & AI诊断」，系统会保存记录并给出明日学习建议。</li>
+      </ol>
+      <p style="margin-top:6px;color:var(--text2)">数据会驱动首页的连续打卡、趋势图、错题本提醒和达标判定。</p>
+    </div>
+  </div>
   <div class="card">
     <div class="card-hd"><div class="card-dot dot-purple"></div><div class="card-title">每日复盘 · 章节完成情况</div></div>
+    <div style="font-size:12px;color:var(--text2);margin-bottom:8px">点击科目标签即可标记今天已完成，再次点击取消。</div>
     <div id="chGroups"></div>
     <div class="rev-grid" id="revGrid"></div>
     <div class="rev-submit"><button class="btn btn-gold" style="padding:10px 24px" onclick="submitReview()">提交复盘 & AI诊断</button></div>
@@ -804,31 +831,50 @@ body{
     </div>
     <!-- F13-3: 本地暂存附件批量上传入口（配置同步后出现） -->
     <div id="attPendingBar" style="display:none;margin-bottom:8px"><button class="err-btn" onclick="attPushPending()" id="attPendingBtn">⬆ 上传本地暂存附件</button></div>
-    <div class="err-list" id="errList"></div>
-    <details style="margin-top:12px"><summary style="font-size:11px;color:var(--text3);cursor:pointer">+ 录入新错题</summary>
-      <div class="err-form" style="margin-top:8px">
+    <!-- R-QUICK: 错题快速录入（科目 + 拍题目 + 拍解析），置顶醒目 -->
+    <div class="eq">
+      <div class="eq-head"><span class="eq-badge">快速录入</span>拍题目 + 拍解析，关联科目，一键入册</div>
+      <div class="eq-subj">
+        <label class="eq-lbl">科目</label>
         <select id="errSubject" onchange="syncErrChapterList()"></select>
-        <select id="errChapter" list="errChapterList"></select>
-        <select id="errQtype" onchange="buildQtypeSel()">
-          <option value="">题型（选填）</option>
-        </select>
-        <select id="errCause" title="错因（陈汉五类，选填）">
-          <option value="">错因（选填）</option>
-        </select>
-        <input type="text" id="errTopic" placeholder="错因/分析（如：概念不清；可只拍照不填）">
-        <textarea id="errContent" placeholder="题目文字（可选；拍照后不必再打字）"></textarea>
-        <input type="text" id="errAnswer" placeholder="正确选项/答案（选填）">
-        <input type="text" id="errSource" placeholder="来源（选填，如：王道 P123）">
-        <textarea id="errAnalysis" placeholder="解析（选填）"></textarea>
-        <input type="text" id="errTags" placeholder="标签（选填，逗号分隔，如：计算差,概念不清）">
-        <!-- R7.4+R7.6: 题目图 + 解析图 两个文件框，capture="environment" 移动端默认调用相机 -->
-        <label style="font-size:11px;color:var(--gold);font-weight:600;margin-top:6px;display:block">📸 题目图片（拍照或选图即可，不打字也能录）</label>
-        <input type="file" id="errAtt" accept="image/*,.pdf" multiple capture="environment">
-        <label style="font-size:11px;color:var(--blue);font-weight:600;margin-top:6px;display:block">解析/错因图片（可选，手写解析拍照上传）</label>
-        <input type="file" id="errAttAna" accept="image/*" multiple capture="environment">
-        <button class="add-btn" onclick="addError()">录入</button>
       </div>
-    </details>
+      <div class="eq-shots">
+        <label class="eq-shot">
+          <input type="file" id="errAtt" accept="image/*,.pdf" multiple capture="environment" hidden onchange="eqPreview(this,'eqPrevQ')">
+          <div class="eq-shot-ico">📸</div>
+          <b>题目</b>
+          <span>拍照 / 相册</span>
+          <div class="eq-prev" id="eqPrevQ"></div>
+        </label>
+        <label class="eq-shot">
+          <input type="file" id="errAttAna" accept="image/*" multiple capture="environment" hidden onchange="eqPreview(this,'eqPrevA')">
+          <div class="eq-shot-ico">📸</div>
+          <b>解析</b>
+          <span>拍照 / 相册</span>
+          <div class="eq-prev" id="eqPrevA"></div>
+        </label>
+      </div>
+      <input type="text" id="errTags" placeholder="备注 / 标签（选填，如：计算差、概念不清）">
+      <button class="add-btn eq-add" onclick="addError()">保存到错题本</button>
+      <details class="eq-more">
+        <summary>更多字段（章节 / 题型 / 错因 / 答案 / 来源 / 解析文字）</summary>
+        <div class="err-form" style="margin-top:8px">
+          <select id="errChapter" list="errChapterList"></select>
+          <select id="errQtype" onchange="buildQtypeSel()">
+            <option value="">题型（选填）</option>
+          </select>
+          <select id="errCause" title="错因（陈汉五类，选填）">
+            <option value="">错因（选填）</option>
+          </select>
+          <input type="text" id="errTopic" placeholder="错因/分析（如：概念不清；可只拍照不填）">
+          <textarea id="errContent" placeholder="题目文字（可选；拍照后不必再打字）"></textarea>
+          <input type="text" id="errAnswer" placeholder="正确选项/答案（选填）">
+          <input type="text" id="errSource" placeholder="来源（选填，如：王道 P123）">
+          <textarea id="errAnalysis" placeholder="解析（选填）"></textarea>
+        </div>
+      </details>
+    </div>
+    <div class="err-list" id="errList"></div>
   </div>
 </div>
 
@@ -887,9 +933,7 @@ body{
 
 <!-- ================ 学习目标管理页（融合模块） ================ -->
 <div class="page" id="page-goals">
-  <div id="lgRoot"></div>
-  <button class="lg-fab" id="lgFab" onclick="lgNewGoal()" title="新建学习目标"><svg class="icon" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg></button>
-  <canvas id="lgConfetti" class="hide"></canvas>
+  <div id="okrRoot"></div>
 </div>
 
 <!-- R9: 全局快捷计时 FAB（Calflow 一键计时） -->
@@ -1153,12 +1197,12 @@ function switchPage(name){
   document.querySelectorAll('.tab-item').forEach(function(t){t.classList.remove('active')});
   document.getElementById('page-'+name).classList.add('active');
   document.querySelector('.tab-item[data-page="'+name+'"]').classList.add('active');
-  if(name==='dashboard'){renderTasks();renderRing();renderChart();renderBar();udStats();renderQueue();renderTodayDone();renderGoalsDash();renderChecklistWidget()}
+  if(name==='dashboard'){renderTasks();renderRing();renderChart();renderBar();udStats();renderQueue();renderTodayDone();renderGoalsDash()}
   if(name==='review'){renderChTags();renderRevHistory();renderPlanMeta()}
   if(name==='errors')renderErrors();
   if(name==='cards')renderCards();
   if(name==='info'){renderEvents();if(S.rssSources===undefined)rssSeedDefaults();renderNews();renderResources();if((S.rssSources||[]).length)rssRefresh(false);}
-  if(name==='goals'){lgInit();lgRender();}
+  if(name==='goals'){okrInit();renderOKR();}
 }
 
 // ============ 倒计时 + 统计（F3: 主数据源 = 复盘手填时长 reviews[].time） ============
@@ -1424,7 +1468,8 @@ function subjectClass(s){return subjById(s)?'badge-'+s:'badge-other'}
 function subjectName(s){var sb=subjById(s);return sb?sb.name:'其他'}
 function timerClass(s){return subjById(s)?'task-timer-'+s:'task-timer-other'}
 function renderTasks(){
-  document.getElementById('taskList').innerHTML=S.tasks.map(function(t,i){
+  var el=document.getElementById('taskList');if(!el)return;
+  el.innerHTML=S.tasks.map(function(t,i){
     // F9: 行内编辑态 —— 只改 text/subject，done/priority/qty 原样保留
     if(S.editingTask===i){
       var opts=SUBJECTS.map(function(sb){return '<option value="'+sb.id+'"'+(t.subject===sb.id?' selected':'')+'>'+esc(sb.name)+'</option>'}).join('')+'<option value="other"'+(subjById(t.subject)?'':' selected')+'>其他</option>';
@@ -1452,9 +1497,10 @@ function saveTaskEdit(i){
 function toggleTask(i){if(S.editingTask===i)return;S.tasks[i].done=!S.tasks[i].done;sv('w5_tasks',S.tasks);renderTasks()}
 function delTask(i){S.tasks.splice(i,1);sv('w5_tasks',S.tasks);renderTasks()}
 function addTask(){
-  var t=document.getElementById('taskInput').value.trim(),s=document.getElementById('taskSubject').value,p=document.getElementById('taskPriority').value,q=document.getElementById('taskQty').value;
+  var ti=document.getElementById('taskInput');if(!ti)return;
+  var t=ti.value.trim(),s=document.getElementById('taskSubject').value,p=document.getElementById('taskPriority').value,q=document.getElementById('taskQty').value;
   if(!t)return;S.tasks.push({text:t,subject:s,done:false,priority:p,qty:q});sv('w5_tasks',S.tasks);
-  document.getElementById('taskInput').value='';renderTasks()
+  ti.value='';renderTasks()
 }
 
 // ============ 番茄计时（DEF-02: 时间戳驱动单心跳；DEF-07: 先结算旧科目再切换）
@@ -1579,7 +1625,7 @@ function submitReview(){
       if(confirm('今日番茄计时 '+h+' h，填入复盘时长？'))tEl.value=String(h);
     }
   }
-  var entry={date:d,time:document.getElementById('rvTime').value,block:document.getElementById('rvBlock').value};
+  var entry={date:d,time:document.getElementById('rvTime').value,block:document.getElementById('rvBlock').value,done:document.getElementById('rvDone').value,plan:document.getElementById('rvPlan').value,note:document.getElementById('rvNote').value};
   SUBJECTS.forEach(function(sb){
     entry[sb.rvField]=document.getElementById('rv_'+sb.id).value;
     entry[sb.stateKey]=[].concat(S[sb.stateKey]||[]);
@@ -1590,26 +1636,33 @@ function submitReview(){
   S.reviews.unshift(entry);
   if(S.reviews.length>REV_MAX)S.reviews=S.reviews.slice(0,REV_MAX);
   sv('w5_rev',S.reviews);
-  var ids=['rvTime','rvBlock'];SUBJECTS.forEach(function(sb){ids.push('rv_'+sb.id)});
-  ids.forEach(function(id){document.getElementById(id).value=''});
+  var ids=['rvTime','rvBlock','rvDone','rvPlan','rvNote'];SUBJECTS.forEach(function(sb){ids.push('rv_'+sb.id)});
+  ids.forEach(function(id){var el=document.getElementById(id);if(el)el.value=''});
   renderRevHistory();renderRing();renderChart();renderBar();udStats();
   var diag=runDiagnosis(entry);
   showAiModal(diag);
   toast('复盘已保存');
 }
 function buildRevGrid(){
-  var html='<div class="rev-field"><label>有效时长（h）</label><input type="text" id="rvTime" placeholder="9.5"></div>';
+  var html='<div class="rev-field"><label>有效时长（h）</label><input type="text" id="rvTime" placeholder="例：9.5"></div>';
   SUBJECTS.forEach(function(sb){
     html+='<div class="rev-field"><label>'+esc(sb.name)+'正确率</label><input type="text" id="rv_'+sb.id+'" placeholder="'+esc(sb.ph)+'"></div>';
   });
-  html+='<div class="rev-field rev-full"><label>卡点/问题</label><textarea id="rvBlock" placeholder="今天卡住的地方..."></textarea></div>';
+  html+='<div class="rev-field rev-full"><label>今日完成内容</label><textarea id="rvDone" placeholder="今天完成了哪些章节/题目/课程..."></textarea></div>';
+  html+='<div class="rev-field rev-full"><label>卡点 / 问题</label><textarea id="rvBlock" placeholder="今天卡住的地方、错题原因、需要突破的点..."></textarea></div>';
+  html+='<div class="rev-field rev-full"><label>明日计划</label><textarea id="rvPlan" placeholder="明天打算学什么、重点补哪里..."></textarea></div>';
+  html+='<div class="rev-field rev-full"><label>备注 / 心情</label><textarea id="rvNote" placeholder="任何想记录的，比如状态、作息、方法调整..."></textarea></div>';
   document.getElementById('revGrid').innerHTML=html;
 }
 // DEF-12: 历史复盘 6 类字段全部 esc()
 function renderRevHistory(){
   document.getElementById('revHistory').innerHTML=S.reviews.map(function(r){
     var parts=SUBJECTS.map(function(sb){return esc(sb.name)+':'+esc(r[sb.rvField]||'-')});
-    return '<div class="rev-entry"><strong>'+esc(r.date||'-')+'</strong> | '+parts.join(' | ')+' | '+esc(r.time||'-')+'h<br>卡点: '+esc(r.block||'-')+'</div>';
+    return '<div class="rev-entry"><strong>'+esc(r.date||'-')+'</strong> | 时长 '+esc(r.time||'-')+'h | '+parts.join(' | ')
+      +(r.done?'<br><span style="color:var(--green)">完成：</span>'+esc(r.done):'')
+      +(r.block?'<br><span style="color:var(--red)">卡点：</span>'+esc(r.block):'')
+      +(r.plan?'<br><span style="color:var(--blue)">明日：</span>'+esc(r.plan):'')
+      +(r.note?'<br><span style="color:var(--text2)">备注：</span>'+esc(r.note):'')+'</div>';
   }).join('')
 }
 
@@ -1887,6 +1940,8 @@ function addError(){
   if(document.getElementById('errTags'))document.getElementById('errTags').value='';
   var imgCount=((files&&files.length)||0)+((anaFiles&&anaFiles.length)||0);
   renderErrors();updateTabDots();toast('错题已录入'+(imgCount?' （含 '+imgCount+' 张图）':''));
+  eqResetPreviews();
+  if(!((files&&files.length)||(anaFiles&&anaFiles.length))){ if(attInput)attInput.value=''; if(anaInput)anaInput.value=''; }
   if((files&&files.length)||(anaFiles&&anaFiles.length)){
     var pr1=processAttachments(id,files||[],'q');
     var pr2=processAttachments(id,anaFiles||[],'a');
@@ -1902,6 +1957,26 @@ function addError(){
       toast('附件已保存 '+all.length+' 个');
     });
   }
+}
+// R-QUICK: 录入区图片预览 + 重置（配合置顶快速录入）
+function eqPreview(input, prevId){
+  var box=document.getElementById(prevId); if(!box)return;
+  box.innerHTML=''; box.classList.remove('has');
+  var files=Array.prototype.slice.call(input.files||[]);
+  if(!files.length)return;
+  box.classList.add('has');
+  files.slice(0,4).forEach(function(f){
+    if(/\.pdf$/i.test(f.name)||f.type==='application/pdf'){
+      var c=document.createElement('div'); c.className='eq-prev-chip'; c.textContent='📄 '+f.name; box.appendChild(c); return;
+    }
+    var r=new FileReader();
+    r.onload=function(){ var i=document.createElement('img'); i.src=r.result; box.appendChild(i); };
+    r.readAsDataURL(f);
+  });
+  if(files.length>4){ var m=document.createElement('div'); m.className='eq-prev-more'; m.textContent='+'+(files.length-4); box.appendChild(m); }
+}
+function eqResetPreviews(){
+  ['eqPrevQ','eqPrevA'].forEach(function(id){ var b=document.getElementById(id); if(b){ b.innerHTML=''; b.classList.remove('has'); } });
 }
 // F13-3: 附件查看（GH → fetch raw → blob；IDB → base64 → blob）
 var ATT_URL_CACHE={};
@@ -3790,7 +3865,8 @@ function nlSegDate(seg){
   return null;
 }
 function nlAnalyze(){
-  var raw=document.getElementById('nlInput').value;
+  var inp=document.getElementById('nlInput');if(!inp)return;
+  var raw=inp.value;
   S.nlItems=nlParseAll(raw);
   renderNlPreview();
 }
@@ -3826,6 +3902,7 @@ function nlSnapshot(){
   sv('w5_undo',S.undo);renderNlUndoHint();
 }
 function nlApply(){
+  if(!document.getElementById('nlInput'))return;
   if(!S.nlItems||!S.nlItems.length){toast('先点"解析"识别条目');return}
   nlSnapshot();
   var doneCount=0,planCount=0;
@@ -3849,6 +3926,7 @@ function nlApply(){
   toast('已写入：'+doneCount+' 项完成'+(planCount?('，计划表标绿 '+planCount+' 格'):''));
 }
 function nlUndo(){
+  if(!document.getElementById('nlInput'))return;
   if(!S.undo||!S.undo.length){toast('没有可撤销的操作');return}
   var snap=S.undo.pop();sv('w5_undo',S.undo);
   S.planGrid=snap;sv('w5_plangrid',S.planGrid);
@@ -4204,7 +4282,7 @@ function ghOnLocalChange(key){
 
 // ============ 初始化 ============
 function buildSubjectUI(){
-  document.getElementById('taskSubject').innerHTML=SUBJECTS.map(function(sb){return '<option value="'+sb.id+'">'+esc(sb.name)+'</option>'}).join('')+'<option value="other">其他</option>';
+  var ts=document.getElementById('taskSubject');if(ts)ts.innerHTML=SUBJECTS.map(function(sb){return '<option value="'+sb.id+'">'+esc(sb.name)+'</option>'}).join('')+'<option value="other">其他</option>';
   document.getElementById('errSubject').innerHTML=SUBJECTS.map(function(sb){return '<option>'+esc(sb.name)+'</option>'}).join('');
   document.getElementById('impSubject').innerHTML=SUBJECTS.map(function(sb){return '<option'+(sb.id==='408'?' selected':'')+'>'+esc(sb.name)+'</option>'}).join('');
   buildRevGrid();
@@ -4548,7 +4626,8 @@ function lgOpenMask(html,centered){
   m.id="lgMask";
   m.innerHTML='<div class="sheet">'+html+'</div>';
   m.addEventListener("click",function(e){if(e.target===m)lgCloseMask();});
-  document.body.appendChild(m);
+  var root=document.getElementById("lgRoot")||document.body;
+  root.appendChild(m);
 }
 function lgCloseMask(){var m=document.getElementById("lgMask");if(m)m.remove();}
 
@@ -4643,43 +4722,28 @@ function lgDelRec(rid){LG.records=LG.records.filter(function(r){return r.id!==ri
 /* ================= 仪表盘目标进度卡（融入考研每日主流程） ================= */
 function renderGoalsDash(){
   var box=document.getElementById('goalsDashBody');if(!box)return;
-  lgLoad();
+  okrLoad();
   var examDays=Math.ceil((EXAM_DATE-new Date())/86400000);
   var exEl=document.getElementById('goalsDashExam');if(exEl)exEl.textContent='考研初试还剩 '+examDays+' 天';
-  if(!LG.goals||!LG.goals.length){
-    box.innerHTML='<div class="gd-empty">还没有学习目标。把考研任务（背单词 / 刷题量 / 读书页数）拆成有终点的目标，每天在这里打卡 —— <a href="javascript:void(0)" onclick="switchPage(\'goals\')">去添加 ›</a></div>';
+  if(!OKR.subjects.length){
+    box.innerHTML='<div class="gd-empty">还没设目标。去「目标」页设置考研分数 OKR，每天在这里打卡 —— <a href="javascript:void(0)" onclick="switchPage(\'goals\')">去设置 ›</a></div>';
     return;
   }
-  var examStr=lgFmt(EXAM_DATE);
-  function row(g){
-    var p=lgPctOf(g),dg=lgDaysToDeadline(g),ovf=lgIsOverdue(g),ym=lgYesterdayMiss(g.id);
-    var sugg=lgSuggestedToday(g)+(ym?(ym.red?lgSuggestedOn(g,lgFmt(lgAddDays(lgToday(),-1))):0):0);
-    var color=g.color||"#E86A9C";
-    var pills='';
-    if(ovf)pills+='<span class="pill red">逾期'+Math.abs(dg)+'天</span>';
-    else if(ym&&ym.red)pills+='<span class="pill red">昨日中断</span>';
-    else if(ym&&ym.yellow)pills+='<span class="pill amber">补昨日</span>';
-    var est=lgEstCompletion(g);
-    if(est.status==='done')pills+='<span class="pill green">已达成</span>';
-    else if(est.status==='ok'){
-      var dte=lgDaysBetween(est.date,examStr);
-      if(dte<0)pills+='<span class="pill red">赶不上初试</span>';
-      else pills+='<span class="pill '+(est.early?'green':'amber')+'">'+(est.early?'提前':'拖后')+est.diff+'天</span>';
-    }
-    var meta=lgDoneOf(g)+'/'+lgNum(g.total)+' '+esc(g.unit)+' · '+p+'%';
-    if(sugg>0)meta+=' · 今日建议 <b>'+sugg+'</b> '+esc(g.unit);
-    return '<div class="gd-row'+(ovf||(ym&&ym.red)?' alert':'')+'">'+
-      '<span class="gd-dot" style="background:'+color+'"></span>'+
-      '<div class="gd-main"><div class="gd-name">'+esc(g.name)+'</div><div class="gd-meta">'+meta+'</div></div>'+
-      '<div class="gd-pills">'+pills+'</div>'+
-      '<button class="gd-checkin" onclick="lgOpenCheckin(\''+g.id+'\')">打卡</button>'+
-      '</div>';
+  var cur=okrCurrentTotal(),tot=OKR.total||0,pct=tot?Math.round(cur/tot*100):0;
+  var dh=OKR.daily.filter(function(d){return d.done}).length,dt=OKR.daily.length;
+  var html='<div class="gd-okr-hero">'+
+    '<div class="gd-okr-line"><span>总分进度</span><b>'+cur+' / '+tot+' 分</b></div>'+
+    '<div class="okr-prog"><i style="width:'+pct+'%"></i></div>'+
+    '<div class="gd-okr-sub">完成度 '+pct+'% · 今日重复 '+dh+'/'+dt+'</div></div>';
+  if(dt){
+    html+='<div class="gd-okr-daily">';
+    OKR.daily.forEach(function(d){
+      html+='<div class="okr-item'+(d.done?' done':'')+'" onclick="okrToggleDaily(\''+d.id+'\');renderGoalsDash()">'+
+        '<span class="okr-check">'+(d.done?'✓':'')+'</span><span class="okr-txt">'+esc(d.text)+'</span></div>';
+    });
+    html+='</div>';
   }
-  var ov=LG.goals.filter(function(g){var m=lgYesterdayMiss(g.id);return lgIsOverdue(g)||(m&&m.red);});
-  var ok=LG.goals.filter(function(g){return ov.indexOf(g)<0;});
-  var warn='';
-  LG.goals.forEach(function(g){var est=lgEstCompletion(g);if(est.status==='ok'&&lgDaysBetween(est.date,examStr)<0&&lgRemainOf(g)>0){warn+='<div class="gd-warn">⚠ 「'+esc(g.name)+'」预计 '+est.date+' 完成，已晚于考研初试（'+examStr+'），需加快节奏</div>';}});
-  box.innerHTML=warn+'<div class="gd-rows">'+ov.map(row).join('')+ok.map(row).join('')+'</div>';
+  box.innerHTML=html;
 }
 
 /* ================= 我的操作 ================= */
@@ -4783,6 +4847,95 @@ function lgCelebrate(){
 }
 
 /* ================= 初始化（由宿主启动调用） ================= */
+/* ================= OKR 目标（分数大目标 → 科目 → 分数段 → 短期 → 每日） ================= */
+var OKR={total:0,dailyKey:'',subjects:[],bands:[],shorts:[],daily:[],seeded:false};
+function okrId(){return Date.now().toString(36)+Math.random().toString(36).slice(2,6);}
+function okrLoad(){
+  try{var r=lds('w5_okr',null);if(r)OKR=Object.assign({total:0,dailyKey:'',subjects:[],bands:[],shorts:[],daily:[],seeded:false},r);}catch(e){}
+  if(!OKR.seeded && OKR.total===0 && !OKR.subjects.length) okrSeed();
+  if(OKR.dailyKey!==td()){OKR.daily.forEach(function(d){d.done=false});OKR.dailyKey=td();okrSave();}
+}
+function okrSave(){sv('w5_okr',OKR);}
+function okrSeed(){
+  OKR={total:380,dailyKey:td(),seeded:true,
+    subjects:[
+      {id:okrId(),name:'数学',target:120,current:80,color:'#d4a017'},
+      {id:okrId(),name:'英语',target:75,current:50,color:'#9b6bb0'},
+      {id:okrId(),name:'政治',target:65,current:40,color:'#5a9e6f'},
+      {id:okrId(),name:'专业课',target:120,current:70,color:'#4a90c4'}
+    ],
+    bands:[
+      {id:okrId(),label:'总分 380',text:'四科均衡，无短板'},
+      {id:okrId(),label:'数学 120+',text:'高数错题率<10%，线代力争全对'}
+    ],
+    shorts:[
+      {id:okrId(),text:'本周完成 3 套数学真题',done:false},
+      {id:okrId(),text:'每天 2h 高数 + 1h 线代',done:false}
+    ],
+    daily:[
+      {id:okrId(),text:'背 50 个单词',done:false},
+      {id:okrId(),text:'做 20 道数学题',done:false},
+      {id:okrId(),text:'复习错题 30 分钟',done:false}
+    ]
+  };
+  okrSave();
+}
+function okrInit(){okrLoad();}
+function okrCurrentTotal(){return OKR.subjects.reduce(function(s,x){return s+(+x.current||0);},0);}
+function renderOKR(){
+  var root=document.getElementById('okrRoot');if(!root)return;
+  okrLoad();
+  var cur=okrCurrentTotal(),tot=OKR.total||0,pct=tot?Math.min(100,Math.round(cur/tot*100)):0;
+  var h='';
+  h+='<div class="okr-hero">'+
+    '<div class="okr-hero-label">考研分数大目标</div>'+
+    '<div class="okr-hero-big"><input type="number" value="'+tot+'" onchange="okrSetTotal(this.value)"> 分</div>'+
+    '<div class="okr-prog"><i style="width:'+pct+'%"></i></div>'+
+    '<div class="okr-hero-sub">当前估算总分 <b>'+cur+'</b> / 目标 <b>'+tot+'</b> · 完成度 '+pct+'%</div>'+
+  '</div>';
+  h+='<div class="okr-sec"><div class="okr-sec-h"><svg class="icon" viewBox="0 0 24 24"><path d="M4 20V4M4 20h16"/><path d="M8 16l4-5 3 3 4-7"/></svg>各科目标分数<button class="okr-add ghost" onclick="okrAddSubject()">＋ 科目</button></div>';
+  if(!OKR.subjects.length)h+='<div style="color:var(--ink2);font-size:13px;padding:6px 0">还没有科目，点右上角添加。</div>';
+  OKR.subjects.forEach(function(s){
+    var sp=s.target>0?Math.min(100,Math.round((+s.current||0)/s.target*100)):0;
+    h+='<div class="okr-subj"><div class="okr-subj-head"><span>'+esc(s.name)+'</span><button class="okr-del" onclick="okrDelSubject(\''+s.id+'\')">✕</button></div>'+
+      '<div class="okr-subj-row"><div><label>目标分</label><input type="number" value="'+s.target+'" onchange="okrSetSubj(\''+s.id+'\',\'target\',this.value)"></div>'+
+      '<div><label>当前分</label><input type="number" value="'+s.current+'" onchange="okrSetSubj(\''+s.id+'\',\'current\',this.value)"></div></div>'+
+      '<div class="okr-prog"><i style="width:'+sp+'%"></i></div></div>';
+  });
+  h+='</div>';
+  h+='<div class="okr-sec"><div class="okr-sec-h"><svg class="icon" viewBox="0 0 24 24"><path d="M3 3v18h18"/><path d="M7 14l3-3 3 3 4-5"/></svg>分数段要达到的目标<button class="okr-add" onclick="okrAddBand()">＋ 添加</button></div>';
+  if(!OKR.bands.length)h+='<div style="color:var(--ink2);font-size:13px;padding:6px 0">为各分数段写清要达成的标准。</div>';
+  OKR.bands.forEach(function(b){
+    h+='<div class="okr-band"><input class="okr-band-lab" value="'+esc(b.label)+'" onchange="okrSetBand(\''+b.id+'\',\'label\',this.value)" placeholder="分数段">'+
+      '<input value="'+esc(b.text)+'" onchange="okrSetBand(\''+b.id+'\',\'text\',this.value)" placeholder="该分数段要达到的目标">'+
+      '<button class="okr-del" onclick="okrDelBand(\''+b.id+'\')">✕</button></div>';
+  });
+  h+='</div>';
+  h+='<div class="okr-sec"><div class="okr-sec-h"><svg class="icon" viewBox="0 0 24 24"><path d="M5 13l4 4L19 7"/></svg>关联的短期小目标<button class="okr-add" onclick="okrAddShort()">＋ 添加</button></div>';
+  OKR.shorts.forEach(function(s){
+    h+='<div class="okr-item'+(s.done?' done':'')+'" onclick="okrToggleShort(\''+s.id+'\')"><span class="okr-check">'+(s.done?'✓':'')+'</span><span class="okr-txt">'+esc(s.text)+'</span><button class="okr-del" onclick="event.stopPropagation();okrDelShort(\''+s.id+'\')">✕</button></div>';
+  });
+  h+='<div class="okr-add-row"><input id="okrShortInput" placeholder="如：本周完成 3 套真题" onkeydown="if(event.keyCode===13)okrAddShort()"><button class="okr-add-btn" onclick="okrAddShort()">＋</button></div></div>';
+  h+='<div class="okr-sec"><div class="okr-sec-h"><svg class="icon" viewBox="0 0 24 24"><path d="M4 7h16M9 7V5a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2M6 7l1 13h10l1-13"/></svg>每天都需要重复的目标<button class="okr-add" onclick="okrAddDaily()">＋ 添加</button></div>';
+  OKR.daily.forEach(function(d){
+    h+='<div class="okr-item'+(d.done?' done':'')+'" onclick="okrToggleDaily(\''+d.id+'\')"><span class="okr-check">'+(d.done?'✓':'')+'</span><span class="okr-txt">'+esc(d.text)+'</span><button class="okr-del" onclick="event.stopPropagation();okrDelDaily(\''+d.id+'\')">✕</button></div>';
+  });
+  h+='<div class="okr-add-row"><input id="okrDailyInput" placeholder="如：背 50 个单词" onkeydown="if(event.keyCode===13)okrAddDaily()"><button class="okr-add-btn" onclick="okrAddDaily()">＋</button></div></div>';
+  root.innerHTML=h;
+}
+function okrSetTotal(v){OKR.total=Math.max(0,+v||0);okrSave();renderOKR();renderGoalsDash();}
+function okrAddSubject(){var n=prompt('科目名称','');if(n===null)return;n=n.trim();if(!n){toast('名称不能为空');return;}OKR.subjects.push({id:okrId(),name:n,target:0,current:0,color:'#2D6A4F'});okrSave();renderOKR();}
+function okrDelSubject(id){OKR.subjects=OKR.subjects.filter(function(s){return s.id!==id;});okrSave();renderOKR();renderGoalsDash();}
+function okrSetSubj(id,f,v){var s=OKR.subjects.find(function(x){return x.id===id});if(!s)return;s[f]=+v||0;okrSave();renderOKR();renderGoalsDash();}
+function okrAddBand(){OKR.bands.push({id:okrId(),label:'分数段',text:''});okrSave();renderOKR();}
+function okrDelBand(id){OKR.bands=OKR.bands.filter(function(b){return b.id!==id;});okrSave();renderOKR();}
+function okrSetBand(id,f,v){var b=OKR.bands.find(function(x){return x.id===id});if(!b)return;b[f]=v;okrSave();renderOKR();}
+function okrAddShort(){var el=document.getElementById('okrShortInput'),t=el?el.value.trim():'';if(!t){t=prompt('短期小目标','');if(t===null)return;t=t.trim();}if(!t){toast('内容不能为空');return;}OKR.shorts.push({id:okrId(),text:t,done:false});okrSave();renderOKR();}
+function okrToggleShort(id){var s=OKR.shorts.find(function(x){return x.id===id});if(!s)return;s.done=!s.done;okrSave();renderOKR();}
+function okrDelShort(id){OKR.shorts=OKR.shorts.filter(function(x){return x.id!==id;});okrSave();renderOKR();}
+function okrAddDaily(){var el=document.getElementById('okrDailyInput'),t=el?el.value.trim():'';if(!t){t=prompt('每天重复的目标','');if(t===null)return;t=t.trim();}if(!t){toast('内容不能为空');return;}OKR.daily.push({id:okrId(),text:t,done:false});okrSave();renderOKR();renderGoalsDash();}
+function okrToggleDaily(id){var d=OKR.daily.find(function(x){return x.id===id});if(!d)return;d.done=!d.done;okrSave();renderOKR();renderGoalsDash();}
+function okrDelDaily(id){OKR.daily=OKR.daily.filter(function(x){return x.id!==id;});okrSave();renderOKR();renderGoalsDash();}
 function lgInit(){
   lgLoad();
   if(!LG.seeded||!LG.goals.length){lgSeed();}
