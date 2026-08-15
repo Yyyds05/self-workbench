@@ -365,6 +365,7 @@ body{
 .streak-ms{font-size:9px;padding:2px 7px;border-radius:6px;font-weight:700;border:1.5px solid var(--border);color:var(--text3)}
 .streak-ms.hit{background:var(--green-bg);border-color:var(--green);color:var(--green)}
 .streak-sprout{font-size:24px;line-height:1}
+.streak-empty{font-size:12px;color:var(--text3);padding:4px 0}
 /* 图表切换 */
 .chart-toggles{display:flex;gap:4px;margin-left:auto}
 .chart-toggle{font-size:10px;padding:3px 9px;border:1.5px solid var(--border);border-radius:6px;background:transparent;color:var(--text2);cursor:pointer;font-weight:600;transition:all .15s}
@@ -725,6 +726,14 @@ body{
   <!-- F10: 今日专注统计（数据源：当日 tlog 番茄留痕） -->
   <div class="backup-hint" id="todayFocus" style="margin-top:2px"></div>
 
+  <!-- 今日：目标打卡 + 任务，统一每日动作区（融合考研计划） -->
+  <div class="card" id="todayCard">
+    <div class="card-hd"><div class="card-dot dot-pink"></div><div class="card-title">今日</div>
+      <span id="goalsDashExam" style="margin-left:auto;font-size:11px;color:var(--text2)"></span>
+      <button class="gd-manage" onclick="switchPage('goals')">目标管理 ›</button></div>
+    <div id="goalsDashBody"></div>
+  </div>
+
   <!-- R9: 打卡成长轨迹（Calflow 风格） -->
   <div class="card streak-card" id="streakCard">
     <div class="streak-dots" id="streakDots"></div>
@@ -744,13 +753,7 @@ body{
     <div class="td-grid" id="todayDoneGrid"></div>
     <div class="td-sub" id="todayDoneSub" style="font-size:10px;color:var(--text3);margin-top:6px"></div>
   </div>
-  <!-- 今日：目标打卡 + 任务，统一每日动作区（融合考研计划） -->
-  <div class="card" id="todayCard">
-    <div class="card-hd"><div class="card-dot dot-pink"></div><div class="card-title">今日</div>
-      <span id="goalsDashExam" style="margin-left:auto;font-size:11px;color:var(--text2)"></span>
-      <button class="gd-manage" onclick="switchPage('goals')">目标管理 ›</button></div>
-    <div id="goalsDashBody"></div>
-  </div>
+
   <div class="card">
     <div class="card-hd"><div class="card-dot dot-gold"></div><div class="card-title">科目进度</div></div>
     <div class="rings-row" id="ringsRow"></div>
@@ -1241,9 +1244,13 @@ function renderStreak(){
   // 近14天 dots
   var dotsEl=document.getElementById('streakDots');
   if(dotsEl){
-    var html='';
-    for(var i=13;i>=0;i--){var d=new Date();d.setDate(d.getDate()-i);var k=td(d);var done=dates.indexOf(k)>=0;html+='<div class="streak-dot'+(done?' done':'')+'" title="'+k+(done?' ✓':'')+'"></div>'}
-    dotsEl.innerHTML=html;
+    if(!dates.length){
+      dotsEl.innerHTML='<div class="streak-empty">暂无连续打卡记录，提交一次复盘即可开始</div>';
+    }else{
+      var html='';
+      for(var i=13;i>=0;i--){var d=new Date();d.setDate(d.getDate()-i);var k=td(d);var done=dates.indexOf(k)>=0;html+='<div class="streak-dot'+(done?' done':'')+'" title="'+k+(done?' 已打卡':'')+'"></div>'}
+      dotsEl.innerHTML=html;
+    }
   }
   // 里程碑徽章
   var msEl=document.getElementById('streakMs');
