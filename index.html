@@ -3717,7 +3717,7 @@ function renderQueue(){
   var bar=document.getElementById('queueBar');
   var q=buildTodayQueue();
   if(bar)bar.textContent=q.length?('待复习 '+q.length+' 项'):'';
-  if(!q.length){body.innerHTML='<div class="q-empty">今天没有待复习项，状态在线 💪</div>';return}
+  if(!q.length){body.innerHTML='<div class="q-empty">今天没有待复习项，状态在线</div>';return}
   body.innerHTML=q.slice(0,12).map(function(it){
     var qa=queueQA(it);
     var boxId='qa_'+it.kind+it.id;
@@ -4292,17 +4292,23 @@ function buildSubjectUI(){
   buildCauseSel();   // R18: 错因下拉（陈汉五类）
   buildCardUI();
 }
+// OKR 全局状态须先于 init 初始化（renderGoalsDash 在 init 中调用）
+var OKR={total:0,dailyKey:'',subjects:[],bands:[],shorts:[],daily:[],seeded:false};
 buildSubjectUI();
 var tdy=td();
 // 出门清单按天重置勾选（沿用 w5_clr；F12: 只重置 done，不动条目）
-if(localStorage.getItem('w5_clr')!==tdy){S.checklist.items.forEach(function(it){it.done=false});sv('w5_cl',S.checklist);localStorage.setItem('w5_clr',tdy)}
+try{
+  if(localStorage.getItem('w5_clr')!==tdy){S.checklist.items.forEach(function(it){it.done=false});sv('w5_cl',S.checklist);localStorage.setItem('w5_clr',tdy)}
+}catch(e){}
 // DEF-16: 今日任务按天重置（新 key w5_tkr）
-if(localStorage.getItem('w5_tkr')!==tdy){
-  var anyDone=false;
-  S.tasks.forEach(function(t){if(t.done){t.done=false;anyDone=true}});
-  if(anyDone)sv('w5_tasks',S.tasks);
-  localStorage.setItem('w5_tkr',tdy);
-}
+try{
+  if(localStorage.getItem('w5_tkr')!==tdy){
+    var anyDone=false;
+    S.tasks.forEach(function(t){if(t.done){t.done=false;anyDone=true}});
+    if(anyDone)sv('w5_tasks',S.tasks);
+    localStorage.setItem('w5_tkr',tdy);
+  }
+}catch(e){}
 renderAll();udCd();
 syncPtlenSel();       // F10: 番茄时长选择器回显
 bindChartHover();     // F8: 趋势图 hover/touch 提示
@@ -4311,7 +4317,7 @@ renderPlanMeta();     // R7: 计划表写回元信息
 updateTabDots();      // R2/R4: 待复习角标
 renderNlUndoHint();   // R6: 撤销提示
 renderTodayDone();    // R12: 今日完成看板
-renderGoalsDash();   // 目标进度卡（融入每日主流程）
+try{renderGoalsDash();}catch(e){console.error('renderGoalsDash error',e);}   // 目标进度卡（融入每日主流程）
 // DEF-02: 刷新恢复计时（w5_tstart，3 小时内有效）
 var _ts=lds('w5_tstart',null);
 if(_ts&&Date.now()-_ts<3*3600000){S.tstart=_ts;S.trun=setInterval(tick,1000);tick();}
@@ -4848,7 +4854,6 @@ function lgCelebrate(){
 
 /* ================= 初始化（由宿主启动调用） ================= */
 /* ================= OKR 目标（分数大目标 → 科目 → 分数段 → 短期 → 每日） ================= */
-var OKR={total:0,dailyKey:'',subjects:[],bands:[],shorts:[],daily:[],seeded:false};
 function okrId(){return Date.now().toString(36)+Math.random().toString(36).slice(2,6);}
 function okrLoad(){
   try{var r=lds('w5_okr',null);if(r)OKR=Object.assign({total:0,dailyKey:'',subjects:[],bands:[],shorts:[],daily:[],seeded:false},r);}catch(e){}
