@@ -1276,9 +1276,9 @@ function renderStreak(){
 // F4: 备份提醒
 function udBackup(){
   var el=document.getElementById('backupHint');if(!el)return;
-  if(!S.lastExport){el.className='backup-hint warn';el.textContent='⚠️ 从未备份，点右上角「备份」导出一份吧';return}
+  if(!S.lastExport){el.className='backup-hint warn';el.textContent='[!] 从未备份，点右上角「备份」导出一份吧';return}
   var n=daysSince(S.lastExport);
-  if(n>=7){el.className='backup-hint warn';el.textContent='⚠️ 距上次备份已 '+n+' 天，该备份了';}
+  if(n>=7){el.className='backup-hint warn';el.textContent='[!] 距上次备份已 '+n+' 天，该备份了';}
   else{el.className='backup-hint';el.textContent='距上次备份 '+n+' 天';}
 }
 setInterval(function(){udCd();udStats()},60000);
