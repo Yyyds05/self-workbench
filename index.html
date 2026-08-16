@@ -211,6 +211,59 @@ body{
 .okr-band-shorts{margin-top:9px;display:flex;flex-direction:column;gap:6px;border-top:1px dashed var(--line);padding-top:9px}
 .okr-item.mini{padding:7px 10px;margin-bottom:0;background:var(--surface2)}
 .okr-linktag{display:inline-block;font-size:10.5px;font-weight:700;color:#7A6B95;background:#F0ECF7;border-radius:6px;padding:1px 7px;margin-right:7px;vertical-align:middle}
+/* ===== 学习规划页（源自 self-learning-planner skill：五步自学法 + 间隔重复 + 反思） ===== */
+#planRoot{max-width:720px;margin:0 auto;padding:14px 16px 96px;color:#3d2e2a;}
+#planRoot *{box-sizing:border-box;}
+#planRoot button{font-family:inherit;cursor:pointer;border:none;background:none;color:inherit;}
+#planRoot input,#planRoot textarea,#planRoot select{font-family:inherit;font-size:16px;color:#3d2e2a;outline:none;}
+#planRoot .icon{width:18px;height:18px;flex:none;fill:none;stroke:currentColor;stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round;}
+.plan-hero{background:linear-gradient(135deg,#FBEED7,#F7E4C8);border-radius:16px;padding:16px;margin-bottom:14px;box-shadow:0 2px 12px rgba(60,40,20,.06);}
+.plan-hero-label{font-size:12.5px;color:#8a6a3a;font-weight:700;}
+.plan-none{font-size:13px;color:#9a7d5a;padding:8px 0;}
+.plan-due{display:flex;align-items:center;gap:8px;padding:9px 10px;border-radius:11px;background:#fff;border:1px solid #EFDFC0;margin-top:8px;flex-wrap:wrap;}
+.plan-due.over{border-color:#c75b5b;background:#fdf0f0;}
+.plan-due-tag{font-size:10.5px;font-weight:800;padding:2px 8px;border-radius:99px;background:#EFDFC0;color:#8a6a3a;flex:none;}
+.plan-due.over .plan-due-tag{background:#c75b5b;color:#fff;}
+.plan-due-name{flex:1;font-size:13px;min-width:120px;}
+.plan-btn-ok{padding:8px 14px;border-radius:9px;background:#BA7517;color:#fff;font-size:12.5px;font-weight:700;flex:none;}
+.plan-btn-ok:hover{background:#9c5f10;}
+.plan-sec{background:#fff;border:1px solid #EDE3D2;border-radius:14px;padding:15px;margin-bottom:14px;box-shadow:0 2px 12px rgba(60,40,20,.06);}
+.plan-sec-h{display:flex;align-items:center;gap:8px;font-size:15px;font-weight:700;margin-bottom:12px;color:#3d2e2a;}
+.plan-sec-h .icon{color:#BA7517;}
+.plan-add-row{display:flex;gap:8px;margin-top:8px;flex-wrap:wrap;}
+.plan-add-row input,.plan-add-row select{flex:1;min-width:90px;border:1px solid #E5D9C2;border-radius:10px;padding:10px;font-size:15px;background:#FDFAF3;}
+.plan-add-btn{padding:10px 16px;border-radius:10px;background:#BA7517;color:#fff;font-weight:700;font-size:14px;flex:none;}
+.plan-add-btn:hover{background:#9c5f10;}
+.plan-card{border:1px solid #EDE3D2;border-radius:12px;padding:12px;margin-bottom:10px;background:#FEFCF7;}
+.plan-card-hd{display:flex;align-items:center;justify-content:space-between;font-weight:700;margin-bottom:6px;}
+.plan-type{font-size:10.5px;font-weight:700;color:#8a6a3a;background:#F7EEDC;border-radius:6px;padding:2px 8px;margin-left:8px;}
+.plan-strat{font-size:11px;color:#8c6a3c;background:#FBF3E3;border-radius:7px;padding:3px 8px;display:inline-block;margin:4px 0;}
+.plan-goal{font-size:12.5px;color:#7a6a55;margin:6px 0;}
+.plan-prog{height:8px;background:#F0E7D6;border-radius:99px;overflow:hidden;margin:8px 0;}
+.plan-prog>i{display:block;height:100%;background:#D4A017;border-radius:99px;transition:width .4s;}
+.plan-meta{font-size:11.5px;color:#a08d70;margin-top:6px;}
+.plan-step{display:flex;align-items:center;gap:8px;padding:7px 9px;border-radius:9px;background:#F7F2E9;margin-top:6px;font-size:13px;cursor:pointer;}
+.plan-step.done{opacity:.55;}
+.plan-step.done .plan-step-t{text-decoration:line-through;}
+.plan-check{width:20px;height:20px;border-radius:6px;border:2px solid #D4A017;display:flex;align-items:center;justify-content:center;color:#fff;font-size:12px;font-weight:800;flex:none;}
+.plan-step.done .plan-check{background:#D4A017;}
+.plan-step-t{flex:1;}
+.plan-res{display:flex;align-items:center;gap:6px;font-size:12.5px;padding:5px 8px;border-radius:8px;background:#FBF6EC;margin-top:5px;color:#6a5a44;}
+.plan-res-type{font-size:10px;font-weight:700;color:#fff;background:#BA7517;border-radius:5px;padding:1px 6px;flex:none;}
+.plan-rev{display:flex;align-items:center;gap:8px;padding:8px 10px;border-radius:10px;border:1px solid #EDE3D2;background:#FEFCF7;margin-top:7px;flex-wrap:wrap;font-size:13px;}
+.plan-rev.over{border-color:#c75b5b;background:#fdf0f0;}
+.plan-rev.done{opacity:.55;}
+.plan-rev-next{font-size:10.5px;font-weight:700;padding:2px 8px;border-radius:99px;background:#F0E7D6;color:#8a6a3a;flex:none;}
+.plan-rev.over .plan-rev-next{background:#c75b5b;color:#fff;}
+.plan-rev-name{flex:1;min-width:110px;}
+.plan-rev-btn{padding:6px 12px;border-radius:8px;background:#F0E7D6;color:#8a6a3a;font-size:12px;font-weight:700;flex:none;}
+.plan-rev-btn:hover{background:#D4A017;color:#fff;}
+.plan-rev-del{color:#c75b5b;font-size:15px;padding:2px 6px;flex:none;}
+.plan-ghost{background:#F7F2E9;color:#6a5a44;border:1px solid #EDE3D2;border-radius:8px;padding:6px 12px;font-size:12px;font-weight:700;margin:2px 4px 2px 0;}
+.plan-tpl{font-size:11.5px;color:#9a7d5a;background:#F7F2E9;border-radius:8px;padding:8px 10px;margin:8px 0;line-height:1.7;white-space:pre-wrap;}
+.plan-tarea{width:100%;border:1px solid #E5D9C2;border-radius:10px;padding:10px;font-size:15px;background:#FDFAF3;resize:vertical;min-height:70px;margin-top:8px;}
+.plan-reflect-item{border:1px solid #EDE3D2;border-radius:10px;padding:9px 11px;margin-top:7px;font-size:13px;background:#FEFCF7;}
+.plan-reflect-date{font-size:11px;color:#a08d70;font-weight:700;}
 
 .ai-modal{position:fixed;inset:0;background:rgba(0,0,0,.4);z-index:200;display:none;align-items:center;justify-content:center}
 .ai-modal.open{display:flex}
@@ -708,6 +761,7 @@ body{
   <div class="tab-item" data-page="cards" onclick="switchPage('cards')"><div class="tab-icon"><svg viewBox="0 0 24 24"><rect x="4" y="8" width="13" height="11" rx="2"/><path d="M8 8V6a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2h-2"/></svg></div><div class="tab-label">背记卡</div><span class="badge-dot" id="tabDotCard"></span></div>
   <div class="tab-item" data-page="info" onclick="switchPage('info')"><div class="tab-icon"><svg viewBox="0 0 24 24"><rect x="5" y="3" width="14" height="18" rx="2"/><path d="M8.5 8h7M8.5 12h7M8.5 16h4"/></svg></div><div class="tab-label">资讯</div></div>
   <div class="tab-item" data-page="goals" onclick="switchPage('goals')"><div class="tab-icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg></div><div class="tab-label">目标</div></div>
+  <div class="tab-item" data-page="plan" onclick="switchPage('plan')"><div class="tab-icon"><svg viewBox="0 0 24 24"><path d="M4 19V5a2 2 0 0 1 2-2h14v16H6a2 2 0 0 0-2 2z"/><path d="M9 7h6M9 10.5h6"/></svg></div><div class="tab-label">规划</div><span class="badge-dot" id="tabDotPlan"></span></div>
 </div>
 
 <div class="container">
@@ -954,6 +1008,10 @@ body{
 <!-- ================ 学习目标管理页（融合模块） ================ -->
 <div class="page" id="page-goals">
   <div id="okrRoot"></div>
+</div>
+
+<div class="page" id="page-plan">
+  <div id="planRoot"></div>
 </div>
 
 <!-- R9: 全局快捷计时 FAB（Calflow 一键计时） -->
@@ -1223,6 +1281,7 @@ function switchPage(name){
   if(name==='cards')renderCards();
   if(name==='info'){renderEvents();if(S.rssSources===undefined)rssSeedDefaults();renderNews();renderResources();if((S.rssSources||[]).length)rssRefresh(false);}
   if(name==='goals'){okrInit();renderOKR();}
+  if(name==='plan'){planInit();renderPlan();}
 }
 
 // ============ 倒计时 + 统计（F3: 主数据源 = 复盘手填时长 reviews[].time） ============
@@ -5041,6 +5100,188 @@ function okrDelDaily(id){OKR.daily=OKR.daily.filter(function(x){return x.id!==id
 
 
 
+/* ================= 学习规划页（源自 self-learning-planner skill：五步自学法 + 间隔重复 + 反思） ================= */
+var PLAN={seeded:false,plans:[],reviews:[],reflections:[]};
+var PLAN_INTERVALS=[1,3,7,14,30,60];
+var PLAN_TYPES={
+  academic:{label:'学术/概念',strategy:'间隔练习 · 提取练习 · 费曼技巧',steps:['通读教材/大纲','整理核心概念笔记','每周自测（提取练习）','向假想听众讲解（费曼）','期末综合练习']},
+  tech:{label:'技术/编程',strategy:'项目驱动 · 间隔练习 · 交错练习',steps:['环境搭建与基础概念','核心功能与常见模式','做一个小项目','重构与最佳实践','挑战更难的题目']},
+  language:{label:'语言学习',strategy:'间隔练习 · 主动回忆 · 沉浸输入',steps:['每日听/读输入','输出练习（说/写）','词汇间隔重复复习','真题/模拟训练','每周复盘输出']},
+  creative:{label:'创意/写作',strategy:'项目驱动 · 反馈循环 · 深度加工',steps:['基础技法与工具','元素与原则','风格研究','个人项目','作品集与复盘']}
+};
+function planId(){return Date.now().toString(36)+Math.random().toString(36).slice(2,6);}
+function planLoad(){
+  try{var r=lds('w5_plan',null);if(r)PLAN=Object.assign({seeded:false,plans:[],reviews:[],reflections:[]},r);}catch(e){}
+  if(!PLAN.plans)PLAN.plans=[];
+  if(!PLAN.reviews)PLAN.reviews=[];
+  if(!PLAN.reflections)PLAN.reflections=[];
+  if(!PLAN.seeded&&!PLAN.plans.length)planSeed();
+}
+function planSave(){sv('w5_plan',PLAN);}
+function planNext(days){var d=new Date();d.setDate(d.getDate()+days);return td(d);}
+function planFind(id){return PLAN.plans.find(function(p){return p.id===id;});}
+function planTypeLabel(t){return PLAN_TYPES[t]?PLAN_TYPES[t].label:'未分类';}
+function planStepsDone(p){var n=0;(p.steps||[]).forEach(function(s){if(s.d)n++;});return n;}
+function planPct(p){var n=(p.steps||[]).length;return n?Math.min(100,Math.round(planStepsDone(p)/n*100)):0;}
+function planDateLabel(iso){var p=String(iso||'').split('-');return p.length===3?(+p[1])+'月'+(+p[2])+'日':(iso||'');}
+function planNextLabel(r){
+  var t=td();
+  if(r.done)return '已掌握';
+  if(r.next<t)return '逾期 '+(Math.ceil((new Date(t)-new Date(r.next))/86400000))+' 天';
+  if(r.next===t)return '今天';
+  return '下次 '+planDateLabel(r.next);
+}
+function planSeed(){
+  var p1=planId(),p2=planId();
+  PLAN={seeded:true,
+    plans:[
+      {id:p1,name:'高等数学强化',type:'academic',strategy:PLAN_TYPES.academic.strategy,goal:'三个月内吃透高数核心章节，模拟卷稳定 100+ 分',start:planNext(-30),due:planNext(60),steps:PLAN_TYPES.academic.steps.map(function(t){return{t:t,d:false};}),resources:[{n:'张宇基础30讲',t:'主力',u:''},{n:'汤家凤1800题',t:'练习',u:''}]},
+      {id:p2,name:'考研英语词汇',type:'language',strategy:PLAN_TYPES.language.strategy,goal:'背完 5500 词，阅读正确率 80%+',start:planNext(-15),due:planNext(90),steps:PLAN_TYPES.language.steps.map(function(t){return{t:t,d:false};}),resources:[{n:'恋练有词',t:'主力',u:''}]}
+    ],
+    reviews:[
+      {id:planId(),planId:p1,name:'定积分应用 · 错题 3 题',stage:2,next:planNext(-2),done:false},
+      {id:planId(),planId:p1,name:'中值定理证明思路',stage:1,next:planNext(0),done:false},
+      {id:planId(),planId:p2,name:'词汇 List 10-12',stage:0,next:planNext(3),done:false}
+    ],
+    reflections:[
+      {id:planId(),date:planNext(-1),type:'每日',text:'今天番茄钟学了 4 轮，主动回忆比单纯重读记得牢；卡点：级数求和公式总混。'}
+    ]};
+  planSave();
+}
+function planInit(){planLoad();}
+function renderPlan(){
+  var root=document.getElementById('planRoot');if(!root)return;
+  planLoad();
+  var today=td();
+  var due=PLAN.reviews.filter(function(r){return !r.done&&r.next<=today;});
+  var up=PLAN.reviews.filter(function(r){return !r.done&&r.next>today;});
+  var done=PLAN.reviews.filter(function(r){return r.done;});
+  var dot=document.getElementById('tabDotPlan');
+  if(dot)dot.style.display=due.length?'block':'none';
+  var h='';
+  h+='<div class="plan-hero"><div class="plan-hero-label">今天要处理（间隔重复复习）</div>';
+  if(!due.length)h+='<div class="plan-none">没有到期复习项，可安排新计划或提前复习</div>';
+  due.forEach(function(r){
+    var p=planFind(r.planId),over=r.next<today;
+    h+='<div class="plan-due'+(over?' over':'')+'"><span class="plan-due-tag">'+(over?'逾期':'今天')+'</span>'+
+      '<span class="plan-due-name">'+esc(p?p.name:'(计划已删)')+' · '+esc(r.name)+'</span>'+
+      '<button class="plan-btn-ok" onclick="planDoReview(\''+r.id+'\')">完成复习</button></div>';
+  });
+  if(PLAN.seeded)h+='<div style="margin-top:10px"><button class="plan-ghost" onclick="planClearSeed()">清空示例数据</button></div>';
+  h+='</div>';
+  h+='<div class="plan-sec"><div class="plan-sec-h"><svg class="icon" viewBox="0 0 24 24"><path d="M4 19V5a2 2 0 0 1 2-2h14v16H6a2 2 0 0 0-2 2z"/><path d="M9 7h6M9 10.5h6"/></svg>学习计划（五步自学法）</div>';
+  h+='<div class="plan-add-row"><input id="planName" placeholder="学习主题，如：高等数学" style="flex:2"><select id="planType"><option value="academic">学术/概念</option><option value="tech">技术/编程</option><option value="language">语言学习</option><option value="creative">创意/写作</option></select></div>'+
+    '<div class="plan-add-row"><input id="planGoal" placeholder="目标（SMART，如：三个月内……）" style="flex:2"><input id="planDue" type="date" title="截止日期"><button class="plan-add-btn" onclick="planAddPlan()">＋ 添加计划</button></div>';
+  if(!PLAN.plans.length)h+='<div style="color:#a08d70;font-size:13px;padding:6px 0">还没有学习计划，上面添加一个试试。</div>';
+  PLAN.plans.forEach(function(p){
+    var pct=planPct(p),sd=planStepsDone(p),st=(p.steps||[]).length;
+    var revs=PLAN.reviews.filter(function(r){return r.planId===p.id;});
+    h+='<div class="plan-card"><div class="plan-card-hd"><span>'+esc(p.name)+'<span class="plan-type">'+planTypeLabel(p.type)+'</span></span><button class="okr-del" onclick="planDelPlan(\''+p.id+'\')">✕</button></div>'+
+      '<div class="plan-strat">'+esc(p.strategy||'')+'</div>'+
+      '<div class="plan-goal">'+esc(p.goal||'')+'</div>'+
+      '<div class="plan-prog"><i style="width:'+pct+'%"></i></div>'+
+      '<div class="plan-meta">完成度 '+sd+'/'+st+' · 开始 '+planDateLabel(p.start)+' · 截止 '+planDateLabel(p.due)+' · 复习项 '+revs.length+'</div>';
+    (p.steps||[]).forEach(function(s,i){
+      h+='<div class="plan-step'+(s.d?' done':'')+'" onclick="planToggleStep(\''+p.id+'\','+i+')"><span class="plan-check">'+(s.d?'✓':'')+'</span><span class="plan-step-t">'+esc(s.t)+'</span></div>';
+    });
+    if((p.resources||[]).length){
+      h+='<div style="font-size:11.5px;font-weight:700;color:#a08d70;margin-top:9px">核心资源（每主题 2-3 个）</div>';
+      (p.resources||[]).forEach(function(r,ri){
+        h+='<div class="plan-res"><span class="plan-res-type">'+esc(r.t||'资源')+'</span><span style="flex:1">'+esc(r.n)+'</span><button class="plan-rev-del" onclick="planDelResource(\''+p.id+'\','+ri+')">✕</button></div>';
+      });
+    }
+    h+='<div class="plan-add-row"><input id="resIn'+p.id+'" placeholder="资源名，如：张宇30讲"><select id="resTy'+p.id+'"><option>主力</option><option>练习</option><option>参考</option><option>社区</option></select><button class="plan-add-btn" onclick="planAddResource(\''+p.id+'\')">＋ 资源</button></div>'+
+      '<div class="plan-add-row"><input id="revIn'+p.id+'" placeholder="添加复习项，如：定积分错题"><button class="plan-add-btn" onclick="planAddReview(\''+p.id+'\')">＋ 复习</button></div></div>';
+  });
+  h+='</div>';
+  h+='<div class="plan-sec"><div class="plan-sec-h"><svg class="icon" viewBox="0 0 24 24"><path d="M12 3v12M7 10l5 5 5-5"/><path d="M5 21h14"/></svg>间隔重复复习队列（1→3→7→14→30→60 天）</div>';
+  if(!up.length&&!done.length)h+='<div style="color:#a08d70;font-size:13px;padding:6px 0">暂无复习项，在计划卡片里添加。</div>';
+  up.forEach(function(r){
+    var p=planFind(r.planId);
+    h+='<div class="plan-rev"><span class="plan-rev-next">'+planNextLabel(r)+'</span><span class="plan-rev-name">'+esc(p?p.name:'(计划已删)')+' · '+esc(r.name)+'</span><button class="plan-rev-btn" onclick="planDoReview(\''+r.id+'\')">完成</button><button class="plan-rev-del" onclick="planDelReview(\''+r.id+'\')">✕</button></div>';
+  });
+  done.forEach(function(r){
+    var p=planFind(r.planId);
+    h+='<div class="plan-rev done"><span class="plan-rev-next">已掌握</span><span class="plan-rev-name">'+esc(p?p.name:'(计划已删)')+' · '+esc(r.name)+'</span><button class="plan-rev-del" onclick="planDelReview(\''+r.id+'\')">✕</button></div>';
+  });
+  h+='</div>';
+  h+='<div class="plan-sec"><div class="plan-sec-h"><svg class="icon" viewBox="0 0 24 24"><path d="M12 3l2.5 6.5L21 12l-6.5 2.5L12 21l-2.5-6.5L3 12l6.5-2.5z"/></svg>反思日志（元认知是自学的老师）</div>'+
+    '<button class="plan-ghost" onclick="planFillReflect(\'每日\')">填入每日微反思</button>'+
+    '<button class="plan-ghost" onclick="planFillReflect(\'每周\')">填入每周深反思</button>'+
+    '<div class="plan-tpl" id="planTpl">每日 2 问：① 今天哪个学习方法让我感觉进步了？② 今天有什么卡住了？\n每周 3 问：① 本周最令我惊讶的发现是什么？② 本周学习与之前有什么联系？③ 如果重新开始这周，我会改变什么？</div>'+
+    '<textarea class="plan-tarea" id="planReflectIn" placeholder="记录反思……"></textarea>'+
+    '<div class="plan-add-row"><select id="planReflectType"><option>每日</option><option>每周</option></select><button class="plan-add-btn" onclick="planAddReflection()">保存反思</button></div>';
+  PLAN.reflections.slice(0,10).forEach(function(r){
+    h+='<div class="plan-reflect-item"><span class="plan-reflect-date">'+planDateLabel(r.date)+' · '+esc(r.type||'')+'</span><div style="margin-top:4px;white-space:pre-wrap">'+esc(r.text)+'</div></div>';
+  });
+  h+='</div>';
+  root.innerHTML=h;
+}
+function planAddPlan(){
+  var n=document.getElementById('planName'),t=document.getElementById('planType'),
+      g=document.getElementById('planGoal'),d=document.getElementById('planDue');
+  var name=n?n.value.trim():'',type=t?t.value:'academic',goal=g?g.value.trim():'',due=d&&d.value?d.value:planNext(30);
+  if(!name){toast('请填写学习主题');return;}
+  PLAN.plans.unshift({id:planId(),name:name,type:type,strategy:PLAN_TYPES[type]?PLAN_TYPES[type].strategy:'',goal:goal,start:td(),due:due,steps:(PLAN_TYPES[type]?PLAN_TYPES[type].steps:[]).map(function(x){return{t:x,d:false};}),resources:[]});
+  planSave();renderPlan();
+}
+function planDelPlan(id){
+  if(!confirm('删除该计划会连带删除它下面的复习项，确定？'))return;
+  PLAN.plans=PLAN.plans.filter(function(p){return p.id!==id;});
+  PLAN.reviews=PLAN.reviews.filter(function(r){return r.planId!==id;});
+  planSave();renderPlan();
+}
+function planToggleStep(pid,i){
+  var p=planFind(pid);if(!p||!p.steps[i])return;
+  p.steps[i].d=!p.steps[i].d;planSave();renderPlan();
+}
+function planAddResource(pid){
+  var p=planFind(pid);if(!p)return;
+  var el=document.getElementById('resIn'+pid),ty=document.getElementById('resTy'+pid);
+  var name=el?el.value.trim():'';
+  if(!name){toast('请填写资源名');return;}
+  (p.resources=p.resources||[]).push({n:name,t:ty?ty.value:'主力',u:''});
+  planSave();renderPlan();
+}
+function planDelResource(pid,idx){
+  var p=planFind(pid);if(!p)return;
+  p.resources.splice(idx,1);planSave();renderPlan();
+}
+function planAddReview(pid){
+  var p=planFind(pid);if(!p)return;
+  var el=document.getElementById('revIn'+pid);
+  var name=el?el.value.trim():'';
+  if(!name){toast('请填写复习内容');return;}
+  PLAN.reviews.push({id:planId(),planId:pid,name:name,stage:0,next:planNext(1),done:false});
+  planSave();renderPlan();
+}
+function planDoReview(id){
+  var r=PLAN.reviews.find(function(x){return x.id===id;});if(!r)return;
+  if(r.stage>=PLAN_INTERVALS.length-1){r.done=true;}
+  else{r.stage++;r.next=planNext(PLAN_INTERVALS[r.stage]);}
+  planSave();renderPlan();
+}
+function planDelReview(id){PLAN.reviews=PLAN.reviews.filter(function(x){return x.id!==id;});planSave();renderPlan();}
+function planClearSeed(){
+  if(!confirm('确定清空全部计划/复习/反思数据？（清空后无法恢复，建议先用导出备份）'))return;
+  PLAN={seeded:false,plans:[],reviews:[],reflections:[]};
+  planSave();renderPlan();
+}
+function planFillReflect(type){
+  var el=document.getElementById('planReflectIn'),ty=document.getElementById('planReflectType');
+  if(ty)ty.value=type;
+  var tpl=type==='每周'
+    ?'① 本周最令我惊讶的发现是什么？\n② 本周的学习与之前学的有什么联系？\n③ 如果重新开始这周，我会改变什么？'
+    :'① 今天哪个学习方法让我感觉进步了？\n② 今天有什么卡住了？（先意识到，不用立刻解决）';
+  if(el){el.value=tpl;el.focus();}
+}
+function planAddReflection(){
+  var el=document.getElementById('planReflectIn'),ty=document.getElementById('planReflectType');
+  var text=el?el.value.trim():'';
+  if(!text){toast('先写点内容再保存');return;}
+  PLAN.reflections.unshift({id:planId(),date:td(),type:ty?ty.value:'每日',text:text});
+  planSave();renderPlan();
+}
 function lgInit(){
   lgLoad();
   if(!LG.seeded||!LG.goals.length){lgSeed();}
