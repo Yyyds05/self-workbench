@@ -17,6 +17,11 @@
   --gold:#d4a017; --gold-bg:#fdf3e0; --blue:#4a90c4; --blue-bg:#e8f2fa;
   --purple:#9b6bb0; --purple-bg:#f3edf8; --green:#5a9e6f; --green-bg:#e8f4eb;
   --red:#c75b5b; --red-bg:#fce9e9; --pink-bg:#fff5f0;
+  /* v3.5 状态色板（统一标签语义：逾期/今天/已完成/信息） */
+  --status-overdue:#C75B5B;--status-overdue-bg:#FDF0F0;
+  --status-today:#C8501C;--status-today-bg:#FCEBDB;
+  --status-done:#5A9E6F;--status-done-bg:#E8F4EB;
+  --status-info:#4A90C4;--status-info-bg:#E8F2FA;
   --radius:14px; --safe-bottom:env(safe-area-inset-bottom,12px);
 }
 *{margin:0;padding:0;box-sizing:border-box}
@@ -223,8 +228,8 @@ body{
 .plan-none{font-size:13px;color:#9a7d5a;padding:8px 0;}
 .plan-due{display:flex;align-items:center;gap:8px;padding:9px 10px;border-radius:11px;background:#fff;border:1px solid #EFDFC0;margin-top:8px;flex-wrap:wrap;}
 .plan-due.over{border-color:#c75b5b;background:#fdf0f0;}
-.plan-due-tag{font-size:10.5px;font-weight:800;padding:2px 8px;border-radius:99px;background:#EFDFC0;color:#8a6a3a;flex:none;}
-.plan-due.over .plan-due-tag{background:#c75b5b;color:#fff;}
+.plan-due-tag{font-size:10.5px;font-weight:800;padding:2px 8px;border-radius:99px;background:var(--status-today-bg);color:var(--status-today);flex:none;}
+.plan-due.over .plan-due-tag{background:var(--status-overdue);color:#fff;}
 .plan-due-name{flex:1;font-size:13px;min-width:120px;}
 .plan-btn-ok{padding:8px 14px;border-radius:9px;background:#BA7517;color:#fff;font-size:12.5px;font-weight:700;flex:none;}
 .plan-btn-ok:hover{background:#9c5f10;}
@@ -255,7 +260,8 @@ body{
 .plan-rev.over{border-color:#c75b5b;background:#fdf0f0;}
 .plan-rev.done{opacity:.55;}
 .plan-rev-next{font-size:10.5px;font-weight:700;padding:2px 8px;border-radius:99px;background:#F0E7D6;color:#8a6a3a;flex:none;}
-.plan-rev.over .plan-rev-next{background:#c75b5b;color:#fff;}
+.plan-rev.over .plan-rev-next{background:var(--status-overdue);color:#fff;}
+.plan-rev.done .plan-rev-next{background:var(--status-done-bg);color:var(--status-done);border:1px solid #d8e6dc}
 .plan-rev-name{flex:1;min-width:110px;}
 .plan-rev-btn{padding:6px 12px;border-radius:8px;background:#F0E7D6;color:#8a6a3a;font-size:12px;font-weight:700;flex:none;}
 .plan-rev-btn:hover{background:#D4A017;color:#fff;}
@@ -280,6 +286,34 @@ body{
 .learn-stat div{flex:1;min-width:86px;border:1px solid #EDE3D2;border-radius:10px;background:#F7F2E9;padding:8px 10px;text-align:center;}
 .learn-stat b{display:block;font-size:17px;color:#BA7517;}
 .learn-stat span{font-size:10.5px;color:#9a7d5a;font-weight:700;}
+/* ===== v3.5 统一设计系统 ===== */
+/* P1-4 修法：全局 .icon 防呆（被各模块作用域规则覆盖） */
+.icon{width:18px;height:18px;flex:none;fill:none;stroke:currentColor;stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round}
+/* P2-2 统一标签色板 */
+.badge-overdue,.badge-today,.badge-done,.badge-info{font-size:11px;font-weight:700;padding:3px 9px;border-radius:99px;display:inline-block}
+.badge-overdue{background:var(--status-overdue-bg);color:var(--status-overdue)}
+.badge-today{background:var(--status-today-bg);color:var(--status-today)}
+.badge-done{background:var(--status-done-bg);color:var(--status-done)}
+.badge-info{background:var(--status-info-bg);color:var(--status-info)}
+/* P2-1 空状态组件 */
+.empty-state{display:flex;flex-direction:column;align-items:center;gap:10px;padding:28px 16px;color:#8c7a72;text-align:center}
+.empty-state svg{width:42px;height:42px;stroke:currentColor;fill:none;stroke-width:1.4;opacity:.55}
+.empty-state p{margin:0;font-size:13.5px;line-height:1.6}
+.empty-state a{display:inline-block;margin-top:6px;padding:8px 16px;border-radius:10px;background:#D4A017;color:#fff;font-size:12.5px;font-weight:700}
+.empty-state a:hover{background:#BA7517}
+/* P0-3 薄弱知识点聚合卡 */
+.weak-card{border:1px solid #EDE3D2;border-radius:12px;padding:11px;margin-bottom:10px;background:#FEFCF7}
+.weak-title{font-weight:700;font-size:13.5px;margin-bottom:6px;color:#4A4A4A}
+.weak-chip{display:inline-flex;align-items:center;gap:4px;padding:4px 9px;border-radius:99px;background:#F7F2E9;color:#8a6a3a;font-size:11.5px;margin:2px 4px 2px 0;cursor:pointer;border:none;font-family:inherit}
+.weak-chip b{color:#BA7517}
+.weak-chip:hover{background:#FDF6E9}
+/* P1-1 408 四门子进度环 */
+.c408-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}
+.c408-cell{border:1px solid #EDE3D2;border-radius:12px;padding:11px;background:#FEFCF7;text-align:center}
+.c408-cell svg.c408-ring{width:64px;height:64px}
+.c408-cell .c408-name{font-size:12px;font-weight:700;margin-top:4px;color:#4A4A4A}
+.c408-cell .c408-ch{font-size:11px;color:#a08d70;margin-top:2px}
+@media(min-width:768px){.c408-grid{grid-template-columns:repeat(4,1fr)}}
 
 .ai-modal{position:fixed;inset:0;background:rgba(0,0,0,.4);z-index:200;display:none;align-items:center;justify-content:center}
 .ai-modal.open{display:flex}
