@@ -30,7 +30,8 @@ body{
   background:var(--bg); color:var(--text); min-height:100vh; overflow-x:hidden;
   padding-bottom:80px; -webkit-font-smoothing:antialiased;
 }
-.container{max-width:720px;margin:0 auto;padding:20px 16px 0}
+.container{max-width:1200px;margin:0 auto;padding:20px 20px 0}
+@media(max-width:768px){.container{padding:14px 16px 0}}
 .topbar{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px}
 .logo{font-size:18px;font-weight:700;letter-spacing:-.3px;color:var(--text)}
 .logo em{font-style:normal;color:var(--gold)}
@@ -47,9 +48,9 @@ body{
 
 .card{background:var(--card);border-radius:var(--radius);padding:18px;margin-bottom:14px;box-shadow:var(--shadow)}
 .card-hd{display:flex;align-items:center;gap:8px;margin-bottom:14px}
-.card-dot{width:8px;height:8px;border-radius:50%}
-.dot-gold{background:var(--gold)}.dot-blue{background:var(--blue)}.dot-purple{background:var(--purple)}.dot-green{background:var(--green)}
-.card-title{font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:1.5px;color:var(--text2)}
+.card-dot{display:none}
+.dot-gold,.dot-blue,.dot-purple,.dot-green{background:none}
+.card-title{font-size:13px;font-weight:700;letter-spacing:.5px;color:var(--text2)}
 
 .stat-row{display:flex;justify-content:space-around;text-align:center;margin:12px 0}
 .stat-num{font-size:28px;font-weight:800;letter-spacing:-1px;color:var(--text)}
@@ -219,7 +220,8 @@ body{
 .okr-item.mini{padding:7px 10px;margin-bottom:0;background:var(--surface2)}
 .okr-linktag{display:inline-block;font-size:10.5px;font-weight:700;color:#7A6B95;background:#F0ECF7;border-radius:6px;padding:1px 7px;margin-right:7px;vertical-align:middle}
 /* ===== 学习规划页（源自 self-learning-planner skill：五步自学法 + 间隔重复 + 反思） ===== */
-#planRoot{max-width:720px;margin:0 auto;padding:14px 16px 96px;color:#3d2e2a;}
+#planRoot{max-width:100%;margin:0;padding:14px 20px 96px;color:#3d2e2a;}
+@media(max-width:768px){#planRoot{padding:14px 16px 96px}}
 #planRoot *{box-sizing:border-box;}
 #planRoot button{font-family:inherit;cursor:pointer;border:none;background:none;color:inherit;}
 #planRoot input,#planRoot textarea,#planRoot select{font-family:inherit;font-size:16px;color:#3d2e2a;outline:none;}
@@ -336,6 +338,8 @@ body{
 .tab-icon{font-size:18px;line-height:1}.tab-icon svg{width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}.ic{width:14px;height:14px;vertical-align:-2px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;margin-right:2px}
 .tab-label{font-size:10px;font-weight:600}
 .page{display:none}
+#learnRoot{max-width:100%;padding:0}
+@media(max-width:768px){#learnRoot{padding:0}}
 .page.active{display:block}
 
 .cl-row{display:flex;align-items:center;gap:10px;padding:8px 0;cursor:pointer}
@@ -706,7 +710,7 @@ body{
 <div class="ai-modal" id="aiModal">
   <div class="ai-card">
     <span class="ai-close" onclick="closeAiModal()">✕</span>
-    <div class="ai-emoji" id="aiEmoji">📊</div>
+    <div class="ai-emoji" id="aiEmoji"></div>
     <div class="ai-title" id="aiTitle">今日学习诊断</div>
     <div class="ai-desc" id="aiDesc">复盘数据分析完毕</div>
     <div class="ai-items" id="aiItems"></div>
@@ -806,11 +810,11 @@ body{
 </div>
 
 <div class="tab-bar">
-  <div class="tab-item active" data-page="dashboard" onclick="switchPage('dashboard')"><div class="tab-icon"><svg viewBox="0 0 24 24"><rect x="3.5" y="3.5" width="7" height="7" rx="1.5"/><rect x="13.5" y="3.5" width="7" height="7" rx="1.5"/><rect x="3.5" y="13.5" width="7" height="7" rx="1.5"/><rect x="13.5" y="13.5" width="7" height="7" rx="1.5"/></svg></div><div class="tab-label">仪表盘</div></div>
-  <div class="tab-item" data-page="learn" onclick="switchPage('learn')"><div class="tab-icon"><svg viewBox="0 0 24 24"><path d="M22 9L12 4 2 9l10 5 10-5z"/><path d="M6 11.5V16c0 1.5 2.7 3 6 3s6-1.5 6-3v-4.5"/></svg></div><div class="tab-label">学习</div><span class="badge-dot" id="tabDotLearn"></span></div>
-  <div class="tab-item" data-page="errors" onclick="switchPage('errors')"><div class="tab-icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7.5v5.5"/><path d="M12 16.5v.4"/></svg></div><div class="tab-label">错题本</div><span class="badge-dot" id="tabDotErr"></span></div>
-  <div class="tab-item" data-page="cards" onclick="switchPage('cards')"><div class="tab-icon"><svg viewBox="0 0 24 24"><rect x="4" y="8" width="13" height="11" rx="2"/><path d="M8 8V6a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2h-2"/></svg></div><div class="tab-label">背记卡</div><span class="badge-dot" id="tabDotCard"></span></div>
-  <div class="tab-item" data-page="info" onclick="switchPage('info')"><div class="tab-icon"><svg viewBox="0 0 24 24"><rect x="5" y="3" width="14" height="18" rx="2"/><path d="M8.5 8h7M8.5 12h7M8.5 16h4"/></svg></div><div class="tab-label">资讯</div></div>
+  <div class="tab-item active" data-page="dashboard" onclick="switchPage('dashboard')"><div class="tab-icon"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg></div><div class="tab-label">仪表盘</div></div>
+  <div class="tab-item" data-page="learn" onclick="switchPage('learn')"><div class="tab-icon"><svg viewBox="0 0 24 24"><path d="M2 4h7a3 3 0 0 1 3 3v14"/><path d="M22 4h-7a3 3 0 0 0-3 3v14"/><path d="M2 4v16h7a3 3 0 0 1 3 0"/><path d="M22 4v16h-7a3 3 0 0 0-3 0"/></svg></div><div class="tab-label">学习</div><span class="badge-dot" id="tabDotLearn"></span></div>
+  <div class="tab-item" data-page="errors" onclick="switchPage('errors')"><div class="tab-icon"><svg viewBox="0 0 24 24"><path d="M14 7l-5 5 5 5"/><path d="M20 7l-5 5 5 5"/></svg></div><div class="tab-label">错题本</div><span class="badge-dot" id="tabDotErr"></span></div>
+  <div class="tab-item" data-page="cards" onclick="switchPage('cards')"><div class="tab-icon"><svg viewBox="0 0 24 24"><rect x="5" y="3" width="11" height="15" rx="1.5"/><rect x="8" y="6" width="11" height="15" rx="1.5"/></svg></div><div class="tab-label">背记卡</div><span class="badge-dot" id="tabDotCard"></span></div>
+  <div class="tab-item" data-page="info" onclick="switchPage('info')"><div class="tab-icon"><svg viewBox="0 0 24 24"><rect x="4" y="5" width="16" height="14" rx="1.5"/><path d="M8 9h8M8 13h8M8 17h5"/></svg></div><div class="tab-label">资讯</div></div>
 </div>
 
 <div class="container">
@@ -920,7 +924,7 @@ body{
   </div>
   <!-- R7: 计划表 xlsx 写回（JSZip 改 cell s 指向绿色 xf） -->
   <div class="card">
-    <div class="card-hd"><div class="card-dot dot-blue"></div><div class="card-title">📤 计划表写回（把"完成"标绿）</div></div>
+    <div class="card-hd"><div class="card-dot dot-blue"></div><div class="card-title">计划表写回（把"完成"标绿）</div></div>
     <div id="planMetaBox"></div>
     <div class="add-row">
       <button class="add-btn" onclick="planWriteDownload()">生成 xlsx 下载</button>
@@ -942,14 +946,14 @@ body{
     <div class="tag-filter-row" id="errTagFilterRow"></div>
     <div style="display:flex;gap:6px;margin-bottom:8px;align-items:center;flex-wrap:wrap">
       <span id="errCountHint" style="font-size:10px;color:var(--text3)"></span>
-      <button class="err-btn" onclick="errBackfill()">🪄 批量回填章节/知识点</button>
+      <button class="err-btn" onclick="errBackfill()">批量回填章节/知识点</button>
     </div>
     <div style="display:flex;gap:6px;margin-bottom:8px;align-items:center;flex-wrap:wrap">
       <select id="impSubject" class="imp-select" title="导入错题归入的科目"></select>
-      <button class="err-btn" onclick="document.getElementById('errImpFile').click()">📥 导入 Excel/CSV</button>
+      <button class="err-btn" onclick="document.getElementById('errImpFile').click()">导入 Excel/CSV</button>
       <input type="file" id="errImpFile" accept=".xlsx,.xls,.csv" style="display:none" onchange="importErrors(event)">
       <!-- F13-4: 导出回 Excel（离线降级 CSV） -->
-      <button class="err-btn" onclick="exportErrors()">📤 导出 Excel</button>
+      <button class="err-btn" onclick="exportErrors()">导出 Excel</button>
       <span style="font-size:10px;color:var(--text3)">列：题目|日期|来源|正确选项|解析|对应薄弱知识点</span>
     </div>
     <!-- F13-3: 本地暂存附件批量上传入口（配置同步后出现） -->
@@ -1479,7 +1483,7 @@ function renderPassStd(){
   el.innerHTML=SUBJECTS.map(function(sb){
     var ev=subjectPassEval(sb);
     var cls = ev.pass===true?'ps-pass':(ev.pass===false?'ps-fail':'ps-unknown');
-    var mark = ev.pass===true?'✅ 达标':(ev.pass===false?'⚠️ 不达标':'❔ 数据不足');
+    var mark = ev.pass===true?'达标':(ev.pass===false?'未达标':'待评估');
     var detail = ev.acc>=0 ? ('本轮正确率 '+ev.acc+'%（阈值 ≥'+ev.threshold+'%）') : '暂无本轮正确率数据';
     return '<div class="ps-row '+cls+'"><div class="ps-name">'+esc(ev.name)+' <span class="ps-goal">'+esc(ev.goal||'')+'</span></div>'
       +'<div class="ps-std">标准：'+esc(ev.std)+'</div>'
@@ -1834,11 +1838,11 @@ function runDiagnosis(rv){
     var v=parsePct(rv[sb.rvField]);
     if(v!==null&&v<80)low.push(sb.name+'('+v+'%)');
   });
-  if(low.length){items.push({ico:'⚠️',text:low.join('、')+' 正确率低于80%，建议明天优先回顾错题本对应科目'});emoji='🚨'}
+  if(low.length){items.push({ico:'',text:low.join('、')+' 正确率低于80%，建议明天优先回顾错题本对应科目'});emoji='注意'}
   // 时间分析
   var tm=parseFloat(rv.time)||0;
-  if(tm>0&&tm<6){items.push({ico:'⏰',text:'今日有效学习时长仅 '+tm+'h，低于6小时警戒线，明天建议加大投入'});if(emoji==='📊')emoji='⚠️'}
-  if(tm>=9){items.push({ico:'🌟',text:'今日有效时长 '+tm+'h，状态不错，注意劳逸结合'});if(emoji==='🚨')emoji='⚠️'}
+  if(tm>0&&tm<6){items.push({ico:'',text:'今日有效学习时长仅 '+tm+'h，低于6小时警戒线，明天建议加大投入'});if(emoji==='诊断')emoji='注意'}
+  if(tm>=9){items.push({ico:'',text:'今日有效时长 '+tm+'h，状态不错，注意劳逸结合'});if(emoji==='注意')emoji='良好'}
   // 进度分析（只比较已开工科目，避免刚配置的新科目天天报落后）
   var started=SUBJECTS.filter(function(sb){return doneCount(S[sb.stateKey]||[],sb.chapters)>0});
   var pool=started.length>=2?started:SUBJECTS;
@@ -1846,16 +1850,16 @@ function runDiagnosis(rv){
   var minPct=Math.min.apply(null,pcts),maxPct=Math.max.apply(null,pcts);
   if(maxPct-minPct>15){
     var slow=pool[pcts.indexOf(minPct)].name;
-    items.push({ico:'📉',text:slow+'进度('+minPct+'%)明显落后，建议明天增加'+slow+'学习时段'});
-    if(emoji==='📊')emoji='💡';
+    items.push({ico:'',text:slow+'进度('+minPct+'%)明显落后，建议明天增加'+slow+'学习时段'});
+    if(emoji==='诊断')emoji='建议';
   }
   // 连续打卡（F3/DEF-14: 统一复盘口径）
   var streak=calcStreak(Object.keys(dailyHours()).sort());
-  if(streak>=7){items.push({ico:'🔥',text:'已连续打卡 '+streak+' 天，稳定输出是最强武器'});if(emoji==='📊')emoji='🔥'}
+  if(streak>=7){items.push({ico:'',text:'已连续打卡 '+streak+' 天，稳定输出是最强武器'});if(emoji==='诊断')emoji='优秀'}
   // 错题积压
   var unreviewed=S.errors.filter(function(e){return!e.mastered}).length;
-  if(unreviewed>10){items.push({ico:'📚',text:'错题本积压 '+unreviewed+' 题未掌握，建议每天安排30分钟专门攻克'});if(emoji==='📊')emoji='💡'}
-  if(items.length===0){items.push({ico:'✅',text:'今日各项指标正常，继续保持节奏'});emoji='✅'}
+  if(unreviewed>10){items.push({ico:'',text:'错题本积压 '+unreviewed+' 题未掌握，建议每天安排30分钟专门攻克'});if(emoji==='诊断')emoji='建议'}
+  if(items.length===0){items.push({ico:'',text:'今日各项指标正常，继续保持节奏'});emoji='良好'}
   return {emoji:emoji,title:title,desc:desc,items:items};
 }
 function showAiModal(diag){
@@ -2266,7 +2270,7 @@ function incMastery(id){
 function filterErrors(type){S.errFilter=type;renderErrors()}
 function filterErrSub(name){S.errSubFilter=name;renderErrors()}
 function renderErrFilters(){
-  var st=[['all','全部'],['review','🔁 待复习'],['mastered','✅ 已掌握']];
+  var st=[['all','全部'],['review','待复习'],['mastered','已掌握']];
   document.getElementById('errStatusFilters').innerHTML=st.map(function(p){
     var on=S.errFilter===p[0];
     return '<button class="err-btn"'+(on?' style="font-weight:700;border-color:var(--gold);color:var(--gold)"':'')+' onclick="filterErrors(\''+p[0]+'\')">'+p[1]+'</button>';
@@ -2374,7 +2378,7 @@ function renderErrors(){
           if(e.answer)html+='<div><b>正确选项：</b><span style="color:var(--green);font-weight:700">'+esc(e.answer)+'</span></div>';
           if(e.analysis)html+='<div><b>解析：</b><span style="color:var(--green)">'+esc(e.analysis)+'</span></div>';
         }else{
-          html+='<div style="margin-top:6px"><button class="err-btn" onclick="event.stopPropagation();revealErrAnswer('+e.id+')">👁 显示答案与解析（先自己做一遍）</button></div>';
+          html+='<div style="margin-top:6px"><button class="err-btn" onclick="event.stopPropagation();revealErrAnswer('+e.id+')">显示答案与解析（先自己做一遍）</button></div>';
         }
       }
       if(atts.length){
@@ -2408,9 +2412,9 @@ function renderErrors(){
     // R2: 三档自评（未掌握时显示 记住/模糊/忘了；已掌握显示取消）
     html+='<div class="err-actions" onclick="event.stopPropagation()">';
     if(!e.mastered){
-      html+='<button class="err-btn" onclick="errSettle('+e.id+',\'good\')">👍 记住</button>'
-          +'<button class="err-btn" onclick="errSettle('+e.id+',\'hard\')">🤔 模糊</button>'
-          +'<button class="err-btn" onclick="errSettle('+e.id+',\'again\')">😣 忘了</button>';
+      html+='<button class="err-btn" onclick="errSettle('+e.id+',\'good\')">记住</button>'
+          +'<button class="err-btn" onclick="errSettle('+e.id+',\'hard\')">模糊</button>'
+          +'<button class="err-btn" onclick="errSettle('+e.id+',\'again\')">忘了</button>';
     }
     html+='<button class="err-btn'+(e.mastered?' master':'')+'" onclick="toggleMastered('+e.id+')">'+(e.mastered?'已掌握 ✓':'标记已掌握')+'</button>'
         +'<button class="err-btn" onclick="editErrFull('+e.id+')"><svg class="ic" viewBox="0 0 24 24"><path d="M4 20l4-1 11-11-3-3L5 16l-1 4z"/><path d="M14 6l3 3"/></svg>编辑全部</button>'
@@ -3803,9 +3807,9 @@ function renderCardStudy(){
     +(S.cardFlip?'<div class="card-back">'+esc(c.back||'')+'</div>':'')
     +'<div class="card-meta"><span class="chip chip-st">'+(c.deck||'')+'</span>'+(c.tag?'<span class="chip chip-kp">'+esc(c.tag)+'</span>':'')+'</div>'
     +'<div class="card-acts"><button class="err-btn" onclick="cardStudyFlip()">'+(S.cardFlip?'🙈 隐藏答案':'👁 显示答案')+'</button>'
-    +'<button class="err-btn" onclick="cardStudyGrade(\'good\')">👍 记住</button>'
-    +'<button class="err-btn" onclick="cardStudyGrade(\'hard\')">🤔 模糊</button>'
-    +'<button class="err-btn" onclick="cardStudyGrade(\'again\')">😣 忘了</button>'
+    +'<button class="err-btn" onclick="cardStudyGrade(\'good\')">记住</button>'
+    +'<button class="err-btn" onclick="cardStudyGrade(\'hard\')">模糊</button>'
+    +'<button class="err-btn" onclick="cardStudyGrade(\'again\')">忘了</button>'
     +'<button class="err-btn" onclick="cardStudySkip()">跳过</button>'
     +'<button class="err-btn" onclick="cardStudyExit()">退出</button></div></div>';
 }
@@ -3819,13 +3823,13 @@ function renderCards(){
   var el=document.getElementById('cardList');
   if(!el)return;
   el.innerHTML=list.map(function(c){
-    var lbl=c.mastered?'<span style="font-size:10px;color:var(--green)">✅ 已掌握</span>':cardDue(c)?'<span style="font-size:10px;color:var(--red)">🔴 待复习</span>':'<span style="font-size:10px;color:var(--text3)">下次 '+esc(c.nextReviewDate)+'</span>';
+    var lbl=c.mastered?'<span style="font-size:10px;color:var(--green);font-weight:700">已掌握</span>':cardDue(c)?'<span style="font-size:10px;color:var(--red);font-weight:700">待复习</span>':'<span style="font-size:10px;color:var(--text3)">下次 '+esc(c.nextReviewDate)+'</span>';
     return '<div class="card-item'+(c.mastered?' mastered':'')+'"><div class="card-front">'+esc(c.front)+'</div>'
       +(c.back?'<div class="card-back">'+esc(c.back)+'</div>':'')
       +'<div class="card-meta"><span class="chip chip-st">'+esc(c.deck||'')+'</span>'+(c.tag?'<span class="chip chip-kp">'+esc(c.tag)+'</span>':'')+lbl+'</div>'
-      +'<div class="card-acts"><button class="err-btn" onclick="cardSettle('+c.id+',\'good\')">👍 记住</button>'
-      +'<button class="err-btn" onclick="cardSettle('+c.id+',\'hard\')">🤔 模糊</button>'
-      +'<button class="err-btn" onclick="cardSettle('+c.id+',\'again\')">😣 忘了</button>'
+      +'<div class="card-acts"><button class="err-btn" onclick="cardSettle('+c.id+',\'good\')">记住</button>'
+      +'<button class="err-btn" onclick="cardSettle('+c.id+',\'hard\')">模糊</button>'
+      +'<button class="err-btn" onclick="cardSettle('+c.id+',\'again\')">忘了</button>'
       +'<button class="err-btn'+(c.mastered?' master':'')+'" onclick="toggleCardMastered('+c.id+')">'+(c.mastered?'已掌握 ✓':'掌握')+'</button>'
       +'<button class="err-btn" onclick="editCard('+c.id+')"><svg class="ic" viewBox="0 0 24 24"><path d="M4 20l4-1 11-11-3-3L5 16l-1 4z"/><path d="M14 6l3 3"/></svg></button>'
       +'<button class="err-btn" onclick="delCard('+c.id+')"><svg class="ic" viewBox="0 0 24 24"><path d="M4 7h16"/><path d="M9 7V4h6v3"/><path d="M6 7l1 13h10l1-13"/></svg></button></div></div>';
@@ -3882,7 +3886,7 @@ function renderQueue(){
     var boxId='qa_'+it.kind+it.id;
     return '<div class="q-body"><div class="q-q">'+esc(qa.q)+'</div>'
       +(qa.subjTopic?'<div class="q-meta" style="color:var(--text2);font-size:10px;margin-top:3px">'+esc(qa.subjTopic)+'</div>':'')
-      +'<div class="q-acts"><button class="err-btn" onclick="queueReveal(\''+it.kind+'\','+it.id+')">👁 看答案</button>'
+      +'<div class="q-acts"><button class="err-btn" onclick="queueReveal(\''+it.kind+'\','+it.id+')">看答案</button>'
       +'<button class="err-btn" onclick="queueGrade(\''+it.kind+'\','+it.id+',\'good\')">👍</button>'
       +'<button class="err-btn" onclick="queueGrade(\''+it.kind+'\','+it.id+',\'hard\')">🤔</button>'
       +'<button class="err-btn" onclick="queueGrade(\''+it.kind+'\','+it.id+',\'again\')">😣</button>'
