@@ -1373,6 +1373,18 @@ function todayFocusHours(){
   var f=todayFocusSec();
   return Math.round(f.sec/360)/10; // 保留 1 位小数
 }
+// P0-2: 有效学习日 = 有复盘/番茄时长的日期 ∪ 有任务打卡计数的日期（连续打卡数据源）
+function studyDayKeys(){
+  var set={};
+  var m=dailyHours();
+  Object.keys(m).forEach(function(d){if((m[d]||0)>0)set[d]=1});
+  var ops=S.dayOps||{};
+  Object.keys(ops).forEach(function(d){
+    var o=ops[d];if(!o)return;
+    for(var k in o){if(o[k]>0){set[d]=1;break}}
+  });
+  return Object.keys(set).sort();
+}
 // DEF-14: 今天还没提交复盘时，从昨天起算连续打卡
 function calcStreak(dates){
   var streak=0,start=dates.indexOf(td())>=0?0:1;
@@ -1383,7 +1395,7 @@ function calcStreak(dates){
   return streak;
 }
 function udStats(){
-  var m=dailyHours(),dates=Object.keys(m).sort();
+  var m=dailyHours(),dates=studyDayKeys(); // P0-2: 打卡也计入连续天数
   var totalH=0;dates.forEach(function(dd){totalH+=m[dd]});
   document.getElementById('statTotal').textContent=totalH.toFixed(1);
   document.getElementById('statAvg').textContent=dates.length?(totalH/dates.length).toFixed(1):'--';
@@ -1393,7 +1405,7 @@ function udStats(){
 }
 // R9: 打卡成长轨迹（Calflow 风格：14天 dots + 里程碑 + 小苗）
 function renderStreak(){
-  var dates=Object.keys(dailyHours()).sort();
+  var dates=studyDayKeys(); // P0-2
   var streak=calcStreak(dates);
   // 近14天 dots
   var dotsEl=document.getElementById('streakDots');
@@ -1662,7 +1674,25 @@ function saveTaskEdit(i){
   sv('w5_tasks',S.tasks);
   S.editingTask=-1;renderTasks();toast('任务已更新');
 }
-function toggleTask(i){if(S.editingTask===i)return;S.tasks[i].done=!S.tasks[i].done;sv('w5_tasks',S.tasks);renderTasks()}
+function toggleTask(i){
+  if(S.editingTask===i)return;
+  var t=S.tasks[i];if(!t)return;
+  t.done=!t.done;
+  // P0-2: 完成任务自动累加"今日完成"对应卡片（按关键词归类，兜底"完成任务"）
+  if(t.done){
+    var txt=(t.text||'');
+    var key='task';
+    if(txt.indexOf('错题')>=0||txt.indexOf('复习错题')>=0)key='review';
+    else if(txt.indexOf('背')>=0||txt.indexOf('单词')>=0||txt.indexOf('卡片')>=0)key='card';
+    else if(txt.indexOf('计划')>=0||txt.indexOf('规划')>=0)key='plan';
+    else if(txt.indexOf('复盘')>=0)key='nl';
+    bumpDayOps(key,1);
+  }
+  sv('w5_tasks',S.tasks);renderTasks();
+  // P0-2: 联动刷新"今日完成"看板 + 连续打卡（仪表盘）
+  if(typeof renderTodayDone==='function')renderTodayDone();
+  if(typeof udStats==='function')udStats();
+}
 function delTask(i){S.tasks.splice(i,1);sv('w5_tasks',S.tasks);renderTasks()}
 function addTask(){
   var ti=document.getElementById('taskInput');if(!ti)return;
@@ -1861,7 +1891,7 @@ function runDiagnosis(rv){
     if(emoji==='诊断')emoji='建议';
   }
   // 连续打卡（F3/DEF-14: 统一复盘口径）
-  var streak=calcStreak(Object.keys(dailyHours()).sort());
+  var streak=calcStreak(studyDayKeys()); // P0-2: 打卡也计入连续天数
   if(streak>=7){items.push({ico:'',text:'已连续打卡 '+streak+' 天，稳定输出是最强武器'});if(emoji==='诊断')emoji='优秀'}
   // 错题积压
   var unreviewed=S.errors.filter(function(e){return!e.mastered}).length;
@@ -3945,8 +3975,8 @@ function bumpDayOps(key,n){
 function renderTodayDone(){
   var el=document.getElementById('todayDoneGrid');if(!el)return;
   var t=td();var ops=S.dayOps[t]||{};
-  var labels={err:'录入错题',review:'复习错题',card:'复习卡片',plan:'完成计划项',nl:'复盘录入'};
-  var keys=['err','review','card','plan','nl'];
+  var labels={err:'录入错题',review:'复习错题',card:'复习卡片',plan:'完成计划项',nl:'复盘录入',task:'完成任务'};
+  var keys=['err','review','card','plan','nl','task'];
   el.innerHTML=keys.map(function(k){
     return '<div class="td-cell"><div class="td-num">'+((ops[k]||0))+'</div><div class="td-lab">'+(labels[k]||k)+'</div></div>';
   }).join('');
@@ -5401,7 +5431,7 @@ function learnStats(){
     S.reviews.forEach(function(r){if(r.date===ds){weekSet[ds]=1;time+=parseFloat(r.time)||0;}});
   }
   var wd=0;for(var k in weekSet)wd++;
-  return {weekDays:wd,weekHours:Math.round(time*10)/10,streak:(typeof calcStreak==='function')?calcStreak(dates):0,total:S.reviews.length};
+  return {weekDays:wd,weekHours:Math.round(time*10)/10,streak:(typeof calcStreak==='function')?calcStreak(studyDayKeys()):0,total:S.reviews.length};
 }
 function renderLearn(){
   var root=document.getElementById('learnRoot');if(!root)return;
