@@ -114,6 +114,7 @@ body{
 .rev-field input,.rev-field textarea{background:var(--bg);border:1px solid var(--border);border-radius:10px;padding:8px 10px;color:var(--text);font-size:12px;outline:none;resize:vertical}
 .rev-field textarea{min-height:50px}
 .rev-full{grid-column:span 2}
+.rev-hint{font-size:11px;color:var(--text3);margin:3px 0 0 2px;font-weight:600}
 .rev-submit{margin-top:12px;text-align:right}
 .rev-history{margin-top:12px;max-height:200px;overflow-y:auto}
 .rev-entry{font-size:11px;padding:5px 0;border-bottom:1px solid var(--border);color:var(--text2)}
@@ -1337,6 +1338,10 @@ function switchPage(name){
 
 // ============ 倒计时 + 统计（F3: 主数据源 = 复盘手填时长 reviews[].time） ============
 function udCd(){var d=Math.ceil((EXAM_DATE-new Date())/(86400000));document.getElementById('cdNum').textContent=d>0?d:'0'}
+// P0-1: 番茄自动回填 + 复盘叠加（每日小时数 = 复盘 time + 番茄分钟/60）
+// 数据源：S.reviews（复盘提交的小时数） + S.tlog（番茄钟秒数，自动写入）
+// 注意：用户选择"叠加"方案（番茄和复盘时长相加），会让原 9.5h 复盘+5h 番茄=14.5h，
+//      此为有意选择，目的是"投入强度"可视化。如需切回"取较大值"或"仅补空白日"，见上方说明。
 function dailyHours(){
   var m={};
   S.reviews.forEach(function(r){
@@ -1344,7 +1349,18 @@ function dailyHours(){
     var v=parseFloat(r.time)||0;
     m[r.date]=(m[r.date]||0)+v;
   });
+  S.tlog.forEach(function(l){
+    if(!l||!l.date)return;
+    m[l.date]=(m[l.date]||0)+((+l.seconds||0)/3600);
+  });
+  // 修浮点
+  Object.keys(m).forEach(function(k){m[k]=Math.round(m[k]*100)/100;});
   return m;
+}
+// P0-1 辅助：今日番茄小时数（用于复盘表单预填）
+function todayFocusHours(){
+  var f=todayFocusSec();
+  return Math.round(f.sec/360)/10; // 保留 1 位小数
 }
 // DEF-14: 今天还没提交复盘时，从昨天起算连续打卡
 function calcStreak(dates){
@@ -1757,13 +1773,12 @@ function logSession(){
 // ============ 复盘 + AI诊断 ============
 function submitReview(){
   var d=td();
-  // F10: 时长为空且今日有番茄记录 → 一键带入
+  // P0-1: 自动预填番茄时长（替代旧的 confirm 询问）；用户可手动修正
   var tEl=document.getElementById('rvTime');
   if(!String(tEl.value).trim()){
     var f=todayFocusSec();
     if(f.sec>0){
-      var h=Math.round(f.sec/360)/10;
-      if(confirm('今日番茄计时 '+h+' h，填入复盘时长？'))tEl.value=String(h);
+      tEl.value=String(todayFocusHours());
     }
   }
   var entry={date:d,time:document.getElementById('rvTime').value,block:document.getElementById('rvBlock').value,done:document.getElementById('rvDone').value,plan:document.getElementById('rvPlan').value,note:document.getElementById('rvNote').value};
@@ -1785,7 +1800,10 @@ function submitReview(){
   toast('复盘已保存');
 }
 function buildRevGrid(){
-  var html='<div class="rev-field"><label>有效时长（h）</label><input type="text" id="rvTime" placeholder="例：9.5"></div>';
+  var f=todayFocusSec();
+  var pre=todayFocusHours();
+  var hint=f.count?('今日 '+f.count+' 个番茄 · 已计 '+pre+' h（自动预填，可手动修正）'):'今日暂无番茄记录（可手动填入学习时长）';
+  var html='<div class="rev-field"><label>有效时长（h）</label><input type="text" id="rvTime" placeholder="例：9.5" value="'+(pre>0?pre:'')+'"><div class="rev-hint">'+hint+'</div></div>';
   SUBJECTS.forEach(function(sb){
     html+='<div class="rev-field"><label>'+esc(sb.name)+'正确率</label><input type="text" id="rv_'+sb.id+'" placeholder="'+esc(sb.ph)+'"></div>';
   });
@@ -5440,7 +5458,7 @@ function renderLearn(){
   h+='<div class="plan-sec"><div class="plan-sec-h"><svg class="icon" viewBox="0 0 24 24"><path d="M12 3l2.5 6.5L21 12l-6.5 2.5L12 21l-2.5-6.5L3 12l6.5-2.5z"/></svg>④ 复盘反思（元认知是自学的老师）</div>'+
     '<div class="learn-stat"><div><b>'+st.weekDays+'</b><span>本周打卡天数</span></div><div><b>'+st.weekHours+'h</b><span>本周总时长</span></div><div><b>'+st.streak+'</b><span>连续打卡</span></div><div><b>'+st.total+'</b><span>累计复盘</span></div></div>'+
     '<div class="learn-rev-form"><div style="font-weight:700;font-size:13px">今日复盘提交</div>'+
-    '<label>有效时长（h）</label><input id="lrvTime" type="number" step="0.1" placeholder="例：9.5">'+
+    (function(){var _f=todayFocusSec(),_pre=todayFocusHours(),_h=_f.count?('今日 '+_f.count+' 个番茄 · 已计 '+_pre+' h（自动预填，可手动修正）'):'今日暂无番茄记录';return '<label>有效时长（h）</label><input id="lrvTime" type="number" step="0.1" placeholder="例：9.5" value="'+(+_pre>0?_pre:'')+'"><div class="rev-hint">'+_h+'</div>'})()+
     SUBJECTS.map(function(sb){return '<label>'+esc(sb.name)+'正确率</label><input id="lrv_'+sb.id+'" placeholder="'+esc(sb.ph||'0-100')+'">';}).join('')+
     '<label>今日完成内容</label><textarea id="lrvDone" placeholder="完成了哪些章节/题目/课程..."></textarea>'+
     '<label>卡点 / 问题</label><textarea id="lrvBlock" placeholder="今天卡住的地方、错题原因..."></textarea>'+
@@ -5494,6 +5512,12 @@ function learnFillReflect(type){var el=document.getElementById('learnReflectIn')
 function learnAddReflection(){var el=document.getElementById('learnReflectIn'),ty=document.getElementById('learnReflectType');var text=el?el.value.trim():'';if(!text){toast('先写点内容再保存');return;}PLAN.reflections.unshift({id:planId(),date:td(),type:ty?ty.value:'每日',text:text});planSave();renderLearn();}
 function learnSubmitReview(){
   var d=td();
+  // P0-1: 自动预填番茄时长
+  var tEl=document.getElementById('lrvTime');
+  if(tEl&&!String(tEl.value).trim()){
+    var f=todayFocusSec();
+    if(f.sec>0)tEl.value=String(todayFocusHours());
+  }
   var entry={date:d,time:document.getElementById('lrvTime').value,block:document.getElementById('lrvBlock').value,done:document.getElementById('lrvDone').value,plan:document.getElementById('lrvPlan').value,note:document.getElementById('lrvNote').value};
   SUBJECTS.forEach(function(sb){
     var el=document.getElementById('lrv_'+sb.id);
