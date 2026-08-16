@@ -198,6 +198,19 @@ body{
 .gd-okr-line b{color:#8B7AA8}
 .gd-okr-sub{font-size:11.5px;color:var(--ink2);margin-top:6px}
 .gd-okr-daily{display:flex;flex-direction:column;gap:6px}
+/* OKR 关联元素样式 */
+.okr-rel{font-size:11.5px;color:#6B6B6B;margin-top:8px;padding-top:7px;border-top:1px dashed var(--line)}
+.okr-band-card{border:1px solid var(--line);border-radius:12px;padding:11px;margin-bottom:10px;background:#FDFBFD}
+.okr-band-top{display:flex;gap:8px;align-items:center}
+.okr-band-subj{flex:1;border:1px solid var(--line);border-radius:9px;padding:8px;font-size:14px;background:var(--surface2)}
+.okr-band-line{width:84px;border:1px solid var(--line);border-radius:9px;padding:8px;font-size:14px;background:var(--surface2)}
+.okr-band-text{width:100%;border:1px solid var(--line);border-radius:9px;padding:8px;font-size:13px;background:var(--surface2);margin-top:8px}
+.okr-band-foot{font-size:11.5px;color:var(--ink2);margin-top:8px;display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.okr-badge{font-size:11px;font-weight:700;padding:3px 9px;border-radius:99px;background:#F0ECF7;color:#7A6B95}
+.okr-badge.ok{background:#E6F0E9;color:#4E8A63}
+.okr-band-shorts{margin-top:9px;display:flex;flex-direction:column;gap:6px;border-top:1px dashed var(--line);padding-top:9px}
+.okr-item.mini{padding:7px 10px;margin-bottom:0;background:var(--surface2)}
+.okr-linktag{display:inline-block;font-size:10.5px;font-weight:700;color:#7A6B95;background:#F0ECF7;border-radius:6px;padding:1px 7px;margin-right:7px;vertical-align:middle}
 
 .ai-modal{position:fixed;inset:0;background:rgba(0,0,0,.4);z-index:200;display:none;align-items:center;justify-content:center}
 .ai-modal.open{display:flex}
@@ -4311,7 +4324,7 @@ function buildSubjectUI(){
   buildCardUI();
 }
 // OKR 全局状态须先于 init 初始化（renderGoalsDash 在 init 中调用）
-var OKR={total:0,dailyKey:'',subjects:[],bands:[],shorts:[],daily:[],seeded:false};
+var OKR={total:0,autoTotal:true,dailyKey:'',subjects:[],bands:[],shorts:[],daily:[],seeded:false};
 buildSubjectUI();
 var tdy=td();
 // 出门清单按天重置勾选（沿用 w5_clr；F12: 只重置 done，不动条目）
@@ -4753,12 +4766,14 @@ function renderGoalsDash(){
     box.innerHTML='<div class="gd-empty">还没设目标。去「目标」页设置考研分数 OKR，每天在这里打卡 —— <a href="javascript:void(0)" onclick="switchPage(\'goals\')">去设置 ›</a></div>';
     return;
   }
-  var cur=okrCurrentTotal(),tot=OKR.total||0,pct=tot?Math.round(cur/tot*100):0;
-  var dh=OKR.daily.filter(function(d){return d.done}).length,dt=OKR.daily.length;
+  var cur=okrCurrentTotal(),tot=okrTotal(),pct=tot?Math.min(100,Math.round(cur/tot*100)):0;
+  var bandDone=OKR.bands.filter(function(b){return okrBandDone(b);}).length,bandTot=OKR.bands.length;
+  var shDone=OKR.shorts.filter(function(s){return s.done;}).length,shTot=OKR.shorts.length;
+  var dh=OKR.daily.filter(function(d){return d.done;}).length,dt=OKR.daily.length;
   var html='<div class="gd-okr-hero">'+
     '<div class="gd-okr-line"><span>总分进度</span><b>'+cur+' / '+tot+' 分</b></div>'+
     '<div class="okr-prog"><i style="width:'+pct+'%"></i></div>'+
-    '<div class="gd-okr-sub">完成度 '+pct+'% · 今日重复 '+dh+'/'+dt+'</div></div>';
+    '<div class="gd-okr-sub">完成度 '+pct+'% · 分数段达成 '+bandDone+'/'+bandTot+' · 短期行动 '+shDone+'/'+shTot+'</div></div>';
   if(dt){
     html+='<div class="gd-okr-daily">';
     OKR.daily.forEach(function(d){
@@ -4874,26 +4889,35 @@ function lgCelebrate(){
 /* ================= OKR 目标（分数大目标 → 科目 → 分数段 → 短期 → 每日） ================= */
 function okrId(){return Date.now().toString(36)+Math.random().toString(36).slice(2,6);}
 function okrLoad(){
-  try{var r=lds('w5_okr',null);if(r)OKR=Object.assign({total:0,dailyKey:'',subjects:[],bands:[],shorts:[],daily:[],seeded:false},r);}catch(e){}
+  try{var r=lds('w5_okr',null);if(r)OKR=Object.assign({total:0,autoTotal:true,dailyKey:'',subjects:[],bands:[],shorts:[],daily:[],seeded:false},r);}catch(e){}
+  if(OKR.autoTotal===undefined)OKR.autoTotal=true;
+  OKR.bands=(OKR.bands||[]).map(function(b){return {id:b.id||okrId(),subjId:b.subjId||'',line:(b.line===undefined?'':b.line),text:b.text||b.label||''};});
+  OKR.shorts=(OKR.shorts||[]).map(function(s){return {id:s.id||okrId(),linkType:s.linkType||'',linkId:s.linkId||'',text:s.text||'',done:!!s.done};});
+  if(!OKR.subjects)OKR.subjects=[];
+  if(!OKR.daily)OKR.daily=[];
   if(!OKR.seeded && OKR.total===0 && !OKR.subjects.length) okrSeed();
+  if(OKR.autoTotal)OKR.total=okrTargetTotal();
   if(OKR.dailyKey!==td()){OKR.daily.forEach(function(d){d.done=false});OKR.dailyKey=td();okrSave();}
 }
 function okrSave(){sv('w5_okr',OKR);}
 function okrSeed(){
-  OKR={total:380,dailyKey:td(),seeded:true,
+  var math=okrId(),eng=okrId(),pol=okrId(),pro=okrId();
+  var bandMath=okrId(),bandPro=okrId();
+  OKR={total:380,autoTotal:true,dailyKey:td(),seeded:true,
     subjects:[
-      {id:okrId(),name:'数学',target:120,current:80,color:'#d4a017'},
-      {id:okrId(),name:'英语',target:75,current:50,color:'#9b6bb0'},
-      {id:okrId(),name:'政治',target:65,current:40,color:'#5a9e6f'},
-      {id:okrId(),name:'专业课',target:120,current:70,color:'#4a90c4'}
+      {id:math,name:'数学',target:120,current:80,color:'#d4a017'},
+      {id:eng,name:'英语',target:75,current:50,color:'#9b6bb0'},
+      {id:pol,name:'政治',target:65,current:40,color:'#5a9e6f'},
+      {id:pro,name:'专业课',target:120,current:70,color:'#4a90c4'}
     ],
     bands:[
-      {id:okrId(),label:'总分 380',text:'四科均衡，无短板'},
-      {id:okrId(),label:'数学 120+',text:'高数错题率<10%，线代力争全对'}
+      {id:bandMath,subjId:math,line:120,text:'高数错题率<10%，线代力争全对'},
+      {id:bandPro,subjId:pro,line:120,text:'专业课知识点无死角'}
     ],
     shorts:[
-      {id:okrId(),text:'本周完成 3 套数学真题',done:false},
-      {id:okrId(),text:'每天 2h 高数 + 1h 线代',done:false}
+      {id:okrId(),linkType:'subj',linkId:math,text:'本周完成 3 套数学真题',done:false},
+      {id:okrId(),linkType:'band',linkId:bandMath,text:'整理高数错题本',done:false},
+      {id:okrId(),linkType:'subj',linkId:eng,text:'每天 2h 真题精读',done:false}
     ],
     daily:[
       {id:okrId(),text:'背 50 个单词',done:false},
@@ -4904,61 +4928,119 @@ function okrSeed(){
   okrSave();
 }
 function okrInit(){okrLoad();}
-function okrCurrentTotal(){return OKR.subjects.reduce(function(s,x){return s+(+x.current||0);},0);}
+function okrSubj(id){return OKR.subjects.find(function(s){return s.id===id});}
+function okrBand(id){return OKR.bands.find(function(b){return b.id===id});}
+function okrSubjName(id){var s=okrSubj(id);return s?s.name:'(未关联)';}
+function okrSubjPct(s){return s.target>0?Math.min(100,Math.round((+s.current||0)/s.target*100)):0;}
+function okrCurrentTotal(){return OKR.subjects.reduce(function(a,x){return a+(+x.current||0);},0);}
+function okrTargetTotal(){return OKR.subjects.reduce(function(a,x){return a+(+x.target||0);},0);}
+function okrTotal(){return OKR.autoTotal?okrTargetTotal():(+OKR.total||0);}
+function okrBandAutoDone(b){var s=okrSubj(b.subjId);if(!s)return false;var ln=+b.line;if(!ln)return false;return (+s.current||0)>=ln;}
+function okrBandDone(b){return b.line?okrBandAutoDone(b):!!b.done;}
+function okrLinkLabel(lt,lid){
+  if(lt==='subj')return '科目：'+okrSubjName(lid);
+  if(lt==='band'){var b=okrBand(lid);return b?('分数段：'+okrSubjName(b.subjId)+(b.line?('≥'+b.line):'')):'(已删除)';}
+  return '未关联';
+}
+function okrShortsOf(lt,lid){return OKR.shorts.filter(function(s){return s.linkType===lt&&s.linkId===lid;});}
 function renderOKR(){
   var root=document.getElementById('okrRoot');if(!root)return;
   okrLoad();
-  var cur=okrCurrentTotal(),tot=OKR.total||0,pct=tot?Math.min(100,Math.round(cur/tot*100)):0;
+  var cur=okrCurrentTotal(),tot=okrTotal(),pct=tot?Math.min(100,Math.round(cur/tot*100)):0;
   var h='';
   h+='<div class="okr-hero">'+
     '<div class="okr-hero-label">考研分数大目标</div>'+
-    '<div class="okr-hero-big"><input type="number" value="'+tot+'" onchange="okrSetTotal(this.value)"> 分</div>'+
+    '<div class="okr-hero-big">'+(OKR.autoTotal
+      ? '<span style="font-size:22px">'+tot+'</span> 分 <span style="font-size:12px;opacity:.7;font-weight:600">（= 各科目标分之和）</span>'
+      : '<input type="number" value="'+tot+'" onchange="okrSetTotal(this.value)"> 分')+'</div>'+
     '<div class="okr-prog"><i style="width:'+pct+'%"></i></div>'+
     '<div class="okr-hero-sub">当前估算总分 <b>'+cur+'</b> / 目标 <b>'+tot+'</b> · 完成度 '+pct+'%</div>'+
+    '<label style="font-size:12px;display:flex;align-items:center;gap:6px;margin-top:8px;color:#5A5A5A;cursor:pointer"><input type="checkbox" '+(OKR.autoTotal?'checked':'')+' onchange="okrSetAutoTotal(this.checked)"> 总分自动 = 各科目标分之和</label>'+
   '</div>';
   h+='<div class="okr-sec"><div class="okr-sec-h"><svg class="icon" viewBox="0 0 24 24"><path d="M4 20V4M4 20h16"/><path d="M8 16l4-5 3 3 4-7"/></svg>各科目标分数<button class="okr-add ghost" onclick="okrAddSubject()">＋ 科目</button></div>';
   if(!OKR.subjects.length)h+='<div style="color:var(--ink2);font-size:13px;padding:6px 0">还没有科目，点右上角添加。</div>';
   OKR.subjects.forEach(function(s){
-    var sp=s.target>0?Math.min(100,Math.round((+s.current||0)/s.target*100)):0;
-    h+='<div class="okr-subj"><div class="okr-subj-head"><span>'+esc(s.name)+'</span><button class="okr-del" onclick="okrDelSubject(\''+s.id+'\')">✕</button></div>'+
-      '<div class="okr-subj-row"><div><label>目标分</label><input type="number" value="'+s.target+'" onchange="okrSetSubj(\''+s.id+'\',\'target\',this.value)"></div>'+
-      '<div><label>当前分</label><input type="number" value="'+s.current+'" onchange="okrSetSubj(\''+s.id+'\',\'current\',this.value)"></div></div>'+
-      '<div class="okr-prog"><i style="width:'+sp+'%"></i></div></div>';
+    var sp=okrSubjPct(s);
+    var relB=OKR.bands.filter(function(b){return b.subjId===s.id;}).length;
+    var sh=okrShortsOf('subj',s.id),shD=sh.filter(function(x){return x.done;}).length;
+    h+='<div class="okr-subj"><div class="okr-subj-head"><span>'+esc(s.name)+'</span><button class="okr-del" onclick="okrDelSubject(\''+s.id+')">✕</button></div>'+
+      '<div class="okr-subj-row"><div><label>目标分</label><input type="number" value="'+s.target+'" onchange="okrSetSubj(\''+s.id+',\'target\',this.value)"></div>'+
+      '<div><label>当前分</label><input type="number" value="'+s.current+'" onchange="okrSetSubj(\''+s.id+',\'current\',this.value)"></div></div>'+
+      '<div class="okr-prog"><i style="width:'+sp+'%"></i></div>'+
+      '<div class="okr-rel">关联：分数段 '+relB+' · 短期行动 '+shD+'/'+sh.length+'</div></div>';
   });
   h+='</div>';
   h+='<div class="okr-sec"><div class="okr-sec-h"><svg class="icon" viewBox="0 0 24 24"><path d="M3 3v18h18"/><path d="M7 14l3-3 3 3 4-5"/></svg>分数段要达到的目标<button class="okr-add" onclick="okrAddBand()">＋ 添加</button></div>';
-  if(!OKR.bands.length)h+='<div style="color:var(--ink2);font-size:13px;padding:6px 0">为各分数段写清要达成的标准。</div>';
+  if(!OKR.bands.length)h+='<div style="color:var(--ink2);font-size:13px;padding:6px 0">关联某科目 + 设分数线，当前分达线即自动达成。</div>';
   OKR.bands.forEach(function(b){
-    h+='<div class="okr-band"><input class="okr-band-lab" value="'+esc(b.label)+'" onchange="okrSetBand(\''+b.id+'\',\'label\',this.value)" placeholder="分数段">'+
-      '<input value="'+esc(b.text)+'" onchange="okrSetBand(\''+b.id+'\',\'text\',this.value)" placeholder="该分数段要达到的目标">'+
-      '<button class="okr-del" onclick="okrDelBand(\''+b.id+'\')">✕</button></div>';
+    var done=okrBandDone(b),s=okrSubj(b.subjId);
+    var badge=done?'<span class="okr-badge ok">已达成 ✓</span>':(b.line&&s?'<span class="okr-badge">还差 '+Math.max(0,(+b.line-(+s.current||0)))+' 分</span>':'<span class="okr-badge">未关联科目</span>');
+    var sh=okrShortsOf('band',b.id),shD=sh.filter(function(x){return x.done;}).length;
+    h+='<div class="okr-band-card">'+
+      '<div class="okr-band-top"><select class="okr-band-subj" onchange="okrSetBand(\''+b.id+',\'subjId\',this.value)">'+
+        '<option value="">— 关联科目 —</option>'+
+        OKR.subjects.map(function(x){return '<option value="'+x.id+'"'+(x.id===b.subjId?' selected':'')+'>'+esc(x.name)+'</option>';}).join('')+
+      '</select>'+
+      '<input class="okr-band-line" type="number" value="'+b.line+'" onchange="okrSetBand(\''+b.id+',\'line\',this.value)" placeholder="分数线">'+
+      '<button class="okr-del" onclick="okrDelBand(\''+b.id+')">✕</button></div>'+
+      '<input class="okr-band-text" value="'+esc(b.text)+'" onchange="okrSetBand(\''+b.id+',\'text\',this.value)" placeholder="该分数段要达到的目标">'+
+      '<div class="okr-band-foot">'+badge+(sh.length?' · 短期行动 '+shD+'/'+sh.length:'')+'</div>';
+    if(sh.length){
+      h+='<div class="okr-band-shorts">';
+      sh.forEach(function(x){h+='<div class="okr-item mini'+(x.done?' done':'')+'" onclick="okrToggleShort(\''+x.id+')"><span class="okr-check">'+(x.done?'✓':'')+'</span><span class="okr-txt">'+esc(x.text)+'</span></div>';});
+      h+='</div>';
+    }
+    h+='</div>';
   });
   h+='</div>';
   h+='<div class="okr-sec"><div class="okr-sec-h"><svg class="icon" viewBox="0 0 24 24"><path d="M5 13l4 4L19 7"/></svg>关联的短期小目标<button class="okr-add" onclick="okrAddShort()">＋ 添加</button></div>';
   OKR.shorts.forEach(function(s){
-    h+='<div class="okr-item'+(s.done?' done':'')+'" onclick="okrToggleShort(\''+s.id+'\')"><span class="okr-check">'+(s.done?'✓':'')+'</span><span class="okr-txt">'+esc(s.text)+'</span><button class="okr-del" onclick="event.stopPropagation();okrDelShort(\''+s.id+'\')">✕</button></div>';
+    h+='<div class="okr-item'+(s.done?' done':'')+'" onclick="okrToggleShort(\''+s.id+')"><span class="okr-check">'+(s.done?'✓':'')+'</span><span class="okr-txt"><span class="okr-linktag">'+esc(okrLinkLabel(s.linkType,s.linkId))+'</span>'+esc(s.text)+'</span><button class="okr-del" onclick="event.stopPropagation();okrDelShort(\''+s.id+')">✕</button></div>';
   });
-  h+='<div class="okr-add-row"><input id="okrShortInput" placeholder="如：本周完成 3 套真题" onkeydown="if(event.keyCode===13)okrAddShort()"><button class="okr-add-btn" onclick="okrAddShort()">＋</button></div></div>';
+  h+='<div class="okr-add-row"><select id="okrShortLink"><option value="">— 关联对象 —</option>'+
+    OKR.subjects.map(function(x){return '<option value="subj:'+x.id+'">科目：'+esc(x.name)+'</option>';}).join('')+
+    OKR.bands.map(function(b){var sn=okrSubjName(b.subjId);return (sn&&sn!=='(未关联)')?'<option value="band:'+b.id+'">分数段：'+esc(sn)+(b.line?('≥'+b.line):'')+'</option>':'';}).join('')+
+    '</select><input id="okrShortInput" placeholder="如：本周完成 3 套真题" onkeydown="if(event.keyCode===13)okrAddShort()"><button class="okr-add-btn" onclick="okrAddShort()">＋</button></div></div>';
   h+='<div class="okr-sec"><div class="okr-sec-h"><svg class="icon" viewBox="0 0 24 24"><path d="M4 7h16M9 7V5a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2M6 7l1 13h10l1-13"/></svg>每天都需要重复的目标<button class="okr-add" onclick="okrAddDaily()">＋ 添加</button></div>';
   OKR.daily.forEach(function(d){
-    h+='<div class="okr-item'+(d.done?' done':'')+'" onclick="okrToggleDaily(\''+d.id+'\')"><span class="okr-check">'+(d.done?'✓':'')+'</span><span class="okr-txt">'+esc(d.text)+'</span><button class="okr-del" onclick="event.stopPropagation();okrDelDaily(\''+d.id+'\')">✕</button></div>';
+    h+='<div class="okr-item'+(d.done?' done':'')+'" onclick="okrToggleDaily(\''+d.id+')"><span class="okr-check">'+(d.done?'✓':'')+'</span><span class="okr-txt">'+esc(d.text)+'</span><button class="okr-del" onclick="event.stopPropagation();okrDelDaily(\''+d.id+')">✕</button></div>';
   });
   h+='<div class="okr-add-row"><input id="okrDailyInput" placeholder="如：背 50 个单词" onkeydown="if(event.keyCode===13)okrAddDaily()"><button class="okr-add-btn" onclick="okrAddDaily()">＋</button></div></div>';
   root.innerHTML=h;
 }
-function okrSetTotal(v){OKR.total=Math.max(0,+v||0);okrSave();renderOKR();renderGoalsDash();}
-function okrAddSubject(){var n=prompt('科目名称','');if(n===null)return;n=n.trim();if(!n){toast('名称不能为空');return;}OKR.subjects.push({id:okrId(),name:n,target:0,current:0,color:'#2D6A4F'});okrSave();renderOKR();}
-function okrDelSubject(id){OKR.subjects=OKR.subjects.filter(function(s){return s.id!==id;});okrSave();renderOKR();renderGoalsDash();}
-function okrSetSubj(id,f,v){var s=OKR.subjects.find(function(x){return x.id===id});if(!s)return;s[f]=+v||0;okrSave();renderOKR();renderGoalsDash();}
-function okrAddBand(){OKR.bands.push({id:okrId(),label:'分数段',text:''});okrSave();renderOKR();}
-function okrDelBand(id){OKR.bands=OKR.bands.filter(function(b){return b.id!==id;});okrSave();renderOKR();}
-function okrSetBand(id,f,v){var b=OKR.bands.find(function(x){return x.id===id});if(!b)return;b[f]=v;okrSave();renderOKR();}
-function okrAddShort(){var el=document.getElementById('okrShortInput'),t=el?el.value.trim():'';if(!t){t=prompt('短期小目标','');if(t===null)return;t=t.trim();}if(!t){toast('内容不能为空');return;}OKR.shorts.push({id:okrId(),text:t,done:false});okrSave();renderOKR();}
+function okrSetTotal(v){OKR.autoTotal=false;OKR.total=Math.max(0,+v||0);okrSave();renderOKR();renderGoalsDash();}
+function okrSetAutoTotal(v){OKR.autoTotal=v;if(v)OKR.total=okrTargetTotal();okrSave();renderOKR();renderGoalsDash();}
+function okrAddSubject(){var n=prompt('科目名称','');if(n===null)return;n=n.trim();if(!n){toast('名称不能为空');return;}OKR.subjects.push({id:okrId(),name:n,target:0,current:0,color:'#B8A8D8'});okrSave();renderOKR();renderGoalsDash();}
+function okrDelSubject(id){
+  var del=OKR.bands.filter(function(b){return b.subjId===id;}).map(function(b){return b.id;});
+  OKR.subjects=OKR.subjects.filter(function(s){return s.id!==id;});
+  OKR.bands=OKR.bands.filter(function(b){return b.subjId!==id;});
+  OKR.shorts=OKR.shorts.filter(function(s){return !((s.linkType==='subj'&&s.linkId===id)||(s.linkType==='band'&&del.indexOf(s.linkId)>=0));});
+  if(OKR.autoTotal)OKR.total=okrTargetTotal();
+  okrSave();renderOKR();renderGoalsDash();
+}
+function okrSetSubj(id,f,v){var s=okrSubj(id);if(!s)return;if(f==='target'||f==='current')s[f]=+v||0;else s[f]=v;if(OKR.autoTotal)OKR.total=okrTargetTotal();okrSave();renderOKR();renderGoalsDash();}
+function okrAddBand(){OKR.bands.push({id:okrId(),subjId:'',line:'',text:''});okrSave();renderOKR();}
+function okrDelBand(id){OKR.bands=OKR.bands.filter(function(b){return b.id!==id;});OKR.shorts=OKR.shorts.filter(function(s){return !(s.linkType==='band'&&s.linkId===id);});okrSave();renderOKR();}
+function okrSetBand(id,f,v){var b=okrBand(id);if(!b)return;b[f]=v;okrSave();renderOKR();}
+function okrAddShort(){
+  var le=document.getElementById('okrShortLink'),ie=document.getElementById('okrShortInput');
+  var link=le?le.value:'',text=ie?ie.value.trim():'';
+  if(!text){toast('请填写短期目标内容');return;}
+  if(!link){toast('请选择关联对象（科目或分数段）');return;}
+  var p=link.split(':');
+  OKR.shorts.push({id:okrId(),linkType:p[0],linkId:p[1],text:text,done:false});
+  okrSave();renderOKR();
+}
 function okrToggleShort(id){var s=OKR.shorts.find(function(x){return x.id===id});if(!s)return;s.done=!s.done;okrSave();renderOKR();}
 function okrDelShort(id){OKR.shorts=OKR.shorts.filter(function(x){return x.id!==id;});okrSave();renderOKR();}
 function okrAddDaily(){var el=document.getElementById('okrDailyInput'),t=el?el.value.trim():'';if(!t){t=prompt('每天重复的目标','');if(t===null)return;t=t.trim();}if(!t){toast('内容不能为空');return;}OKR.daily.push({id:okrId(),text:t,done:false});okrSave();renderOKR();renderGoalsDash();}
 function okrToggleDaily(id){var d=OKR.daily.find(function(x){return x.id===id});if(!d)return;d.done=!d.done;okrSave();renderOKR();renderGoalsDash();}
 function okrDelDaily(id){OKR.daily=OKR.daily.filter(function(x){return x.id!==id;});okrSave();renderOKR();renderGoalsDash();}
+
+
+
+
 function lgInit(){
   lgLoad();
   if(!LG.seeded||!LG.goals.length){lgSeed();}
