@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
+<!-- 本工作台通过 WorkBuddy 资料库能力（library skill）搭建、存储和部署 -->
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no">
@@ -264,6 +265,21 @@ body{
 .plan-tarea{width:100%;border:1px solid #E5D9C2;border-radius:10px;padding:10px;font-size:15px;background:#FDFAF3;resize:vertical;min-height:70px;margin-top:8px;}
 .plan-reflect-item{border:1px solid #EDE3D2;border-radius:10px;padding:9px 11px;margin-top:7px;font-size:13px;background:#FEFCF7;}
 .plan-reflect-date{font-size:11px;color:#a08d70;font-weight:700;}
+/* ===== 学习台（目标+规划+复盘合并） ===== */
+.learn-sec-note{font-size:11.5px;color:#a08d70;font-weight:600;margin-left:auto;padding-left:8px;white-space:nowrap;}
+.learn-subj{border:1px solid #EDE3D2;border-radius:12px;padding:11px;margin-bottom:10px;background:#FEFCF7;}
+.learn-subj-hd{display:flex;align-items:center;justify-content:space-between;gap:8px;font-weight:700;margin-bottom:6px;flex-wrap:wrap;}
+.learn-input-sm{width:62px;border:1px solid #E5D9C2;border-radius:8px;padding:6px;font-size:15px;background:#FDFAF3;text-align:center;}
+.learn-subj-cur{font-size:12px;color:#8a6a3a;font-weight:600;}
+.learn-band-row{display:flex;gap:6px;align-items:center;margin-top:7px;flex-wrap:wrap;}
+.learn-band-row select,.learn-band-row input{flex:1;min-width:70px;border:1px solid #E5D9C2;border-radius:8px;padding:7px;font-size:14px;background:#FDFAF3;}
+.learn-rev-form{border:1px solid #EDE3D2;border-radius:12px;padding:11px;background:#FEFCF7;margin-bottom:10px;}
+.learn-rev-form label{display:block;font-size:11.5px;color:#8a6a3a;font-weight:700;margin:8px 0 4px;}
+.learn-rev-form input,.learn-rev-form textarea,.learn-rev-form select{width:100%;border:1px solid #E5D9C2;border-radius:9px;padding:9px;font-size:15px;background:#FDFAF3;resize:vertical;}
+.learn-stat{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:10px;}
+.learn-stat div{flex:1;min-width:86px;border:1px solid #EDE3D2;border-radius:10px;background:#F7F2E9;padding:8px 10px;text-align:center;}
+.learn-stat b{display:block;font-size:17px;color:#BA7517;}
+.learn-stat span{font-size:10.5px;color:#9a7d5a;font-weight:700;}
 
 .ai-modal{position:fixed;inset:0;background:rgba(0,0,0,.4);z-index:200;display:none;align-items:center;justify-content:center}
 .ai-modal.open{display:flex}
@@ -756,12 +772,10 @@ body{
 
 <div class="tab-bar">
   <div class="tab-item active" data-page="dashboard" onclick="switchPage('dashboard')"><div class="tab-icon"><svg viewBox="0 0 24 24"><rect x="3.5" y="3.5" width="7" height="7" rx="1.5"/><rect x="13.5" y="3.5" width="7" height="7" rx="1.5"/><rect x="3.5" y="13.5" width="7" height="7" rx="1.5"/><rect x="13.5" y="13.5" width="7" height="7" rx="1.5"/></svg></div><div class="tab-label">仪表盘</div></div>
-  <div class="tab-item" data-page="review" onclick="switchPage('review')"><div class="tab-icon"><svg viewBox="0 0 24 24"><path d="M20 11a8 8 0 1 0-2.3 5.7"/><path d="M20 5v6h-6"/></svg></div><div class="tab-label">复盘</div></div>
+  <div class="tab-item" data-page="learn" onclick="switchPage('learn')"><div class="tab-icon"><svg viewBox="0 0 24 24"><path d="M22 9L12 4 2 9l10 5 10-5z"/><path d="M6 11.5V16c0 1.5 2.7 3 6 3s6-1.5 6-3v-4.5"/></svg></div><div class="tab-label">学习</div><span class="badge-dot" id="tabDotLearn"></span></div>
   <div class="tab-item" data-page="errors" onclick="switchPage('errors')"><div class="tab-icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7.5v5.5"/><path d="M12 16.5v.4"/></svg></div><div class="tab-label">错题本</div><span class="badge-dot" id="tabDotErr"></span></div>
   <div class="tab-item" data-page="cards" onclick="switchPage('cards')"><div class="tab-icon"><svg viewBox="0 0 24 24"><rect x="4" y="8" width="13" height="11" rx="2"/><path d="M8 8V6a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2h-2"/></svg></div><div class="tab-label">背记卡</div><span class="badge-dot" id="tabDotCard"></span></div>
   <div class="tab-item" data-page="info" onclick="switchPage('info')"><div class="tab-icon"><svg viewBox="0 0 24 24"><rect x="5" y="3" width="14" height="18" rx="2"/><path d="M8.5 8h7M8.5 12h7M8.5 16h4"/></svg></div><div class="tab-label">资讯</div></div>
-  <div class="tab-item" data-page="goals" onclick="switchPage('goals')"><div class="tab-icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg></div><div class="tab-label">目标</div></div>
-  <div class="tab-item" data-page="plan" onclick="switchPage('plan')"><div class="tab-icon"><svg viewBox="0 0 24 24"><path d="M4 19V5a2 2 0 0 1 2-2h14v16H6a2 2 0 0 0-2 2z"/><path d="M9 7h6M9 10.5h6"/></svg></div><div class="tab-label">规划</div><span class="badge-dot" id="tabDotPlan"></span></div>
 </div>
 
 <div class="container">
@@ -1012,6 +1026,10 @@ body{
 
 <div class="page" id="page-plan">
   <div id="planRoot"></div>
+</div>
+
+<div class="page" id="page-learn">
+  <div id="learnRoot"></div>
 </div>
 
 <!-- R9: 全局快捷计时 FAB（Calflow 一键计时） -->
@@ -1271,17 +1289,16 @@ function toast(m){var t=document.getElementById('toast');t.textContent=m;t.class
 
 // ============ 页面切换 ============
 function switchPage(name){
+  if(name==='goals'||name==='review'||name==='plan')name='learn';
   document.querySelectorAll('.page').forEach(function(p){p.classList.remove('active')});
   document.querySelectorAll('.tab-item').forEach(function(t){t.classList.remove('active')});
   document.getElementById('page-'+name).classList.add('active');
   document.querySelector('.tab-item[data-page="'+name+'"]').classList.add('active');
   if(name==='dashboard'){renderTasks();renderRing();renderChart();renderBar();udStats();renderQueue();renderTodayDone();renderGoalsDash()}
-  if(name==='review'){renderChTags();renderRevHistory();renderPlanMeta()}
   if(name==='errors')renderErrors();
   if(name==='cards')renderCards();
   if(name==='info'){renderEvents();if(S.rssSources===undefined)rssSeedDefaults();renderNews();renderResources();if((S.rssSources||[]).length)rssRefresh(false);}
-  if(name==='goals'){okrInit();renderOKR();}
-  if(name==='plan'){planInit();renderPlan();}
+  if(name==='learn'){learnInit();renderLearn();}
 }
 
 // ============ 倒计时 + 统计（F3: 主数据源 = 复盘手填时长 reviews[].time） ============
@@ -5282,6 +5299,182 @@ function planAddReflection(){
   PLAN.reflections.unshift({id:planId(),date:td(),type:ty?ty.value:'每日',text:text});
   planSave();renderPlan();
 }
+/* ================= 学习台（合并：目标OKR + 学习规划 + 复盘反思，按 self-learning-planner skill 五步法组织） ================= */
+function learnInit(){okrLoad();planLoad();}
+function learnStats(){
+  var dates=S.reviews.map(function(r){return r.date;});
+  var weekSet={},time=0;
+  for(var i=0;i<7;i++){
+    var ds=td(new Date(new Date().getTime()-i*86400000));
+    S.reviews.forEach(function(r){if(r.date===ds){weekSet[ds]=1;time+=parseFloat(r.time)||0;}});
+  }
+  var wd=0;for(var k in weekSet)wd++;
+  return {weekDays:wd,weekHours:Math.round(time*10)/10,streak:(typeof calcStreak==='function')?calcStreak(dates):0,total:S.reviews.length};
+}
+function renderLearn(){
+  var root=document.getElementById('learnRoot');if(!root)return;
+  learnInit();
+  var today=td();
+  var due=PLAN.reviews.filter(function(r){return !r.done&&r.next<=today;});
+  var daily=OKR.daily||[];
+  var dot=document.getElementById('tabDotLearn');
+  if(dot)dot.style.display=(due.length||daily.length)?'block':'none';
+  var h='';
+  h+='<div class="plan-hero"><div class="plan-hero-label">今天要处理</div>';
+  if(!due.length&&!daily.length)h+='<div class="plan-none">今天没有到期复习、没有待办打卡。去下面「设计计划」添加学习计划吧。</div>';
+  due.forEach(function(r){
+    var p=planFind(r.planId),over=r.next<today;
+    h+='<div class="plan-due'+(over?' over':'')+'"><span class="plan-due-tag">'+(over?'逾期':'今天')+'</span>'+
+      '<span class="plan-due-name">'+esc(p?p.name:'(计划已删)')+' · '+esc(r.name)+'</span>'+
+      '<button class="plan-btn-ok" onclick="learnDoReview(\''+r.id+'\')">完成复习</button></div>';
+  });
+  daily.forEach(function(d){
+    h+='<div class="plan-due'+(d.done?'':'')+'" style="'+(d.done?'opacity:.55':'')+'" onclick="learnToggleDaily(\''+d.id+'\')"><span class="plan-due-tag">今日打卡</span>'+
+      '<span class="plan-due-name">'+esc(d.text)+'</span><button class="plan-rev-btn" onclick="event.stopPropagation();learnToggleDaily(\''+d.id+'\')">'+(d.done?'✓ 已打卡':'去打卡')+'</button></div>';
+  });
+  if(PLAN.seeded)h+='<div style="margin-top:10px"><button class="plan-ghost" onclick="learnClearSeed()">清空示例数据</button></div>';
+  h+='</div>';
+  var cur=okrCurrentTotal(),tot=okrTotal(),pct=tot?Math.min(100,Math.round(cur/tot*100)):0;
+  h+='<div class="plan-sec"><div class="plan-sec-h"><svg class="icon" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>① 明确目标 · 科目目标分<span class="learn-sec-note">总分 '+cur+'/'+tot+' · '+pct+'%</span></div>'+
+    '<div class="plan-prog"><i style="width:'+pct+'%"></i></div>';
+  if(!OKR.subjects.length)h+='<div style="color:#a08d70;font-size:13px;padding:6px 0">还没有科目目标，点「＋ 添加科目」开始。</div>';
+  OKR.subjects.forEach(function(s){
+    var sp=okrSubjPct(s);
+    var badges=OKR.bands.filter(function(b){return b.subjId===s.id;}).map(function(b){
+      var dn=okrBandDone(b);
+      return '<span class="okr-badge'+(dn?' ok':'')+'">'+esc(okrSubjName(b.subjId))+'≥'+(b.line||'?')+(dn?' 已达成':' 还差 '+Math.max(0,(+b.line-(+s.current||0)))+' 分')+'</span>';
+    }).join('');
+    h+='<div class="learn-subj"><div class="learn-subj-hd"><span>'+esc(s.name)+'</span>'+
+      '<span style="display:flex;gap:6px;align-items:center"><label class="learn-subj-cur">目标</label><input class="learn-input-sm" type="number" value="'+s.target+'" onchange="learnSetSubj(\''+s.id+'\',\'target\',this.value)">'+
+      '<label class="learn-subj-cur">当前</label><input class="learn-input-sm" type="number" value="'+s.current+'" onchange="learnSetSubj(\''+s.id+'\',\'current\',this.value)">'+
+      '<button class="okr-del" onclick="learnDelSubject(\''+s.id+'\')">✕</button></span></div>'+
+      '<div class="plan-prog"><i style="width:'+sp+'%"></i></div>'+
+      (badges?'<div style="margin-top:6px;display:flex;gap:6px;flex-wrap:wrap">'+badges+'</div>':'')+'</div>';
+  });
+  h+='<div class="plan-add-row"><button class="plan-add-btn" onclick="learnAddSubject()">＋ 添加科目</button></div>'+
+    '<div class="plan-add-row"><select id="learnBandSubj"><option value="">— 分数段关联科目 —</option>'+
+    OKR.subjects.map(function(x){return '<option value="'+x.id+'">'+esc(x.name)+'</option>';}).join('')+
+    '</select><input id="learnBandLine" type="number" placeholder="分数线" style="width:92px"><input id="learnBandText" placeholder="分数段目标描述"><button class="plan-add-btn" onclick="learnAddBand()">＋ 分数段</button></div>';
+  OKR.bands.forEach(function(b){
+    var dn=okrBandDone(b),s=okrSubj(b.subjId);
+    h+='<div class="learn-band-row"><select onchange="learnSetBand(\''+b.id+'\',\'subjId\',this.value)"><option value="">— 科目 —</option>'+
+      OKR.subjects.map(function(x){return '<option value="'+x.id+'"'+(x.id===b.subjId?' selected':'')+'>'+esc(x.name)+'</option>';}).join('')+'</select>'+
+      '<input type="number" value="'+(b.line||'')+'" placeholder="线" style="width:76px" onchange="learnSetBand(\''+b.id+'\',\'line\',this.value)">'+
+      '<span class="okr-badge'+(dn?' ok':'')+'">'+(dn?'已达成 ✓':(s?'还差 '+Math.max(0,(+b.line-(+s.current||0)))+' 分':'未关联科目'))+'</span>'+
+      '<button class="okr-del" onclick="learnDelBand(\''+b.id+'\')">✕</button></div>';
+  });
+  h+='</div>';
+  h+='<div class="plan-sec"><div class="plan-sec-h"><svg class="icon" viewBox="0 0 24 24"><path d="M4 19V5a2 2 0 0 1 2-2h14v16H6a2 2 0 0 0-2 2z"/><path d="M9 7h6M9 10.5h6"/></svg>② 设计计划 · 学习计划（五步法）</div>'+
+    '<div class="plan-add-row"><input id="learnPlanName" placeholder="学习主题，如：高等数学" style="flex:2"><select id="learnPlanType"><option value="academic">学术/概念</option><option value="tech">技术/编程</option><option value="language">语言学习</option><option value="creative">创意/写作</option></select></div>'+
+    '<div class="plan-add-row"><input id="learnPlanGoal" placeholder="目标（SMART）" style="flex:2"><input id="learnPlanDue" type="date"><button class="plan-add-btn" onclick="learnAddPlan()">＋ 添加计划</button></div>';
+  if(!PLAN.plans.length)h+='<div style="color:#a08d70;font-size:13px;padding:6px 0">还没有学习计划，添加一个开始。</div>';
+  PLAN.plans.forEach(function(p){
+    var pct=planPct(p),sd=planStepsDone(p),st=(p.steps||[]).length;
+    var revs=PLAN.reviews.filter(function(r){return r.planId===p.id;});
+    h+='<div class="plan-card"><div class="plan-card-hd"><span>'+esc(p.name)+'<span class="plan-type">'+planTypeLabel(p.type)+'</span></span><button class="okr-del" onclick="learnDelPlan(\''+p.id+'\')">✕</button></div>'+
+      '<div class="plan-strat">'+esc(p.strategy||'')+'</div>'+
+      '<div class="plan-goal">'+esc(p.goal||'')+'</div>'+
+      '<div class="plan-prog"><i style="width:'+pct+'%"></i></div>'+
+      '<div class="plan-meta">完成度 '+sd+'/'+st+' · 复习项 '+revs.length+'</div>';
+    (p.steps||[]).forEach(function(s,i){
+      h+='<div class="plan-step'+(s.d?' done':'')+'" onclick="learnToggleStep(\''+p.id+'\','+i+')"><span class="plan-check">'+(s.d?'✓':'')+'</span><span class="plan-step-t">'+esc(s.t)+'</span></div>';
+    });
+    if((p.resources||[]).length){
+      h+='<div style="font-size:11.5px;font-weight:700;color:#a08d70;margin-top:9px">核心资源（每主题 2-3 个）</div>';
+      (p.resources||[]).forEach(function(r,ri){
+        h+='<div class="plan-res"><span class="plan-res-type">'+esc(r.t||'资源')+'</span><span style="flex:1">'+esc(r.n)+'</span><button class="plan-rev-del" onclick="learnDelResource(\''+p.id+'\','+ri+')">✕</button></div>';
+      });
+    }
+    h+='<div class="plan-add-row"><input id="lresIn'+p.id+'" placeholder="资源名，如：张宇30讲"><select id="lresTy'+p.id+'"><option>主力</option><option>练习</option><option>参考</option><option>社区</option></select><button class="plan-add-btn" onclick="learnAddResource(\''+p.id+'\')">＋ 资源</button></div>'+
+      '<div class="plan-add-row"><input id="lrevIn'+p.id+'" placeholder="添加复习项，如：定积分错题"><button class="plan-add-btn" onclick="learnAddReview(\''+p.id+'\')">＋ 复习</button></div></div>';
+  });
+  h+='</div>';
+  var up=PLAN.reviews.filter(function(r){return !r.done&&r.next>today;});
+  var ddone=PLAN.reviews.filter(function(r){return r.done;});
+  h+='<div class="plan-sec"><div class="plan-sec-h"><svg class="icon" viewBox="0 0 24 24"><path d="M12 3v12M7 10l5 5 5-5"/><path d="M5 21h14"/></svg>③ 间隔重复复习（1→3→7→14→30→60 天）</div>';
+  if(!up.length&&!ddone.length)h+='<div style="color:#a08d70;font-size:13px;padding:6px 0">暂无复习项，在计划卡片里添加。</div>';
+  up.forEach(function(r){
+    var p=planFind(r.planId);
+    h+='<div class="plan-rev"><span class="plan-rev-next">'+planNextLabel(r)+'</span><span class="plan-rev-name">'+esc(p?p.name:'(计划已删)')+' · '+esc(r.name)+'</span><button class="plan-rev-btn" onclick="learnDoReview(\''+r.id+'\')">完成</button><button class="plan-rev-del" onclick="learnDelReview(\''+r.id+'\')">✕</button></div>';
+  });
+  ddone.forEach(function(r){
+    var p=planFind(r.planId);
+    h+='<div class="plan-rev done"><span class="plan-rev-next">已掌握</span><span class="plan-rev-name">'+esc(p?p.name:'(计划已删)')+' · '+esc(r.name)+'</span><button class="plan-rev-del" onclick="learnDelReview(\''+r.id+'\')">✕</button></div>';
+  });
+  h+='</div>';
+  var st=learnStats();
+  h+='<div class="plan-sec"><div class="plan-sec-h"><svg class="icon" viewBox="0 0 24 24"><path d="M12 3l2.5 6.5L21 12l-6.5 2.5L12 21l-2.5-6.5L3 12l6.5-2.5z"/></svg>④ 复盘反思（元认知是自学的老师）</div>'+
+    '<div class="learn-stat"><div><b>'+st.weekDays+'</b><span>本周打卡天数</span></div><div><b>'+st.weekHours+'h</b><span>本周总时长</span></div><div><b>'+st.streak+'</b><span>连续打卡</span></div><div><b>'+st.total+'</b><span>累计复盘</span></div></div>'+
+    '<div class="learn-rev-form"><div style="font-weight:700;font-size:13px">今日复盘提交</div>'+
+    '<label>有效时长（h）</label><input id="lrvTime" type="number" step="0.1" placeholder="例：9.5">'+
+    SUBJECTS.map(function(sb){return '<label>'+esc(sb.name)+'正确率</label><input id="lrv_'+sb.id+'" placeholder="'+esc(sb.ph||'0-100')+'">';}).join('')+
+    '<label>今日完成内容</label><textarea id="lrvDone" placeholder="完成了哪些章节/题目/课程..."></textarea>'+
+    '<label>卡点 / 问题</label><textarea id="lrvBlock" placeholder="今天卡住的地方、错题原因..."></textarea>'+
+    '<label>明日计划</label><textarea id="lrvPlan" placeholder="明天重点补哪里..."></textarea>'+
+    '<label>备注 / 心情</label><textarea id="lrvNote" placeholder="状态、作息、方法调整..."></textarea>'+
+    '<div style="margin-top:8px"><button class="plan-add-btn" onclick="learnSubmitReview()">保存今日复盘</button></div></div>'+
+    '<div style="margin-top:8px"><button class="plan-ghost" onclick="learnFillReflect(\'每日\')">填入每日微反思</button><button class="plan-ghost" onclick="learnFillReflect(\'每周\')">填入每周深反思</button>'+
+    '<div class="plan-tpl">每日 2 问：① 今天哪个学习方法让我感觉进步了？② 今天有什么卡住了？\n每周 3 问：① 本周最令我惊讶的发现？② 本周与之前有什么联系？③ 如果重新开始这周，我会改什么？</div>'+
+    '<textarea class="plan-tarea" id="learnReflectIn" placeholder="记录反思……"></textarea>'+
+    '<div class="plan-add-row"><select id="learnReflectType"><option>每日</option><option>每周</option></select><button class="plan-add-btn" onclick="learnAddReflection()">保存反思</button></div></div>';
+  PLAN.reflections.slice(0,8).forEach(function(r){
+    h+='<div class="plan-reflect-item"><span class="plan-reflect-date">'+planDateLabel(r.date)+' · '+esc(r.type||'')+'</span><div style="margin-top:4px;white-space:pre-wrap">'+esc(r.text)+'</div></div>';
+  });
+  h+='</div>';
+  root.innerHTML=h;
+}
+function learnToggleDaily(id){var d=OKR.daily.find(function(x){return x.id===id;});if(!d)return;d.done=!d.done;okrSave();renderLearn();}
+function learnSetSubj(id,f,v){var s=okrSubj(id);if(!s)return;if(f==='target'||f==='current')s[f]=+v||0;else s[f]=v;if(OKR.autoTotal)OKR.total=okrTargetTotal();okrSave();renderLearn();}
+function learnAddSubject(){var n=prompt('科目名称','');if(n===null)return;n=n.trim();if(!n){toast('名称不能为空');return;}OKR.subjects.push({id:okrId(),name:n,target:0,current:0,color:'#B8A8D8'});okrSave();renderLearn();}
+function learnDelSubject(id){
+  var del=OKR.bands.filter(function(b){return b.subjId===id;}).map(function(b){return b.id;});
+  if(!confirm('删除该科目会连带删除它的分数段和关联短期目标，确定？'))return;
+  OKR.subjects=OKR.subjects.filter(function(s){return s.id!==id;});
+  OKR.bands=OKR.bands.filter(function(b){return b.subjId!==id;});
+  OKR.shorts=OKR.shorts.filter(function(s){return !((s.linkType==='subj'&&s.linkId===id)||(s.linkType==='band'&&del.indexOf(s.linkId)>=0));});
+  if(OKR.autoTotal)OKR.total=okrTargetTotal();
+  okrSave();renderLearn();
+}
+function learnAddBand(){
+  var se=document.getElementById('learnBandSubj'),le=document.getElementById('learnBandLine'),te=document.getElementById('learnBandText');
+  OKR.bands.push({id:okrId(),subjId:se?se.value:'',line:le?le.value:'',text:te?te.value.trim():''});
+  okrSave();renderLearn();
+}
+function learnSetBand(id,f,v){var b=okrBand(id);if(!b)return;b[f]=v;okrSave();renderLearn();}
+function learnDelBand(id){OKR.bands=OKR.bands.filter(function(b){return b.id!==id;});OKR.shorts=OKR.shorts.filter(function(s){return !(s.linkType==='band'&&s.linkId===id);});okrSave();renderLearn();}
+function learnAddPlan(){
+  var n=document.getElementById('learnPlanName'),t=document.getElementById('learnPlanType'),g=document.getElementById('learnPlanGoal'),d=document.getElementById('learnPlanDue');
+  var name=n?n.value.trim():'',type=t?t.value:'academic',goal=g?g.value.trim():'',due=d&&d.value?d.value:planNext(30);
+  if(!name){toast('请填写学习主题');return;}
+  PLAN.plans.unshift({id:planId(),name:name,type:type,strategy:PLAN_TYPES[type]?PLAN_TYPES[type].strategy:'',goal:goal,start:td(),due:due,steps:(PLAN_TYPES[type]?PLAN_TYPES[type].steps:[]).map(function(x){return{t:x,d:false};}),resources:[]});
+  planSave();renderLearn();
+}
+function learnDelPlan(id){if(!confirm('删除计划会连带删除它的复习项，确定？'))return;PLAN.plans=PLAN.plans.filter(function(p){return p.id!==id;});PLAN.reviews=PLAN.reviews.filter(function(r){return r.planId!==id;});planSave();renderLearn();}
+function learnToggleStep(pid,i){var p=planFind(pid);if(!p||!p.steps[i])return;p.steps[i].d=!p.steps[i].d;planSave();renderLearn();}
+function learnAddResource(pid){var p=planFind(pid);if(!p)return;var el=document.getElementById('lresIn'+pid),ty=document.getElementById('lresTy'+pid);var name=el?el.value.trim():'';if(!name){toast('请填写资源名');return;}(p.resources=p.resources||[]).push({n:name,t:ty?ty.value:'主力',u:''});planSave();renderLearn();}
+function learnDelResource(pid,idx){var p=planFind(pid);if(!p)return;p.resources.splice(idx,1);planSave();renderLearn();}
+function learnAddReview(pid){var p=planFind(pid);if(!p)return;var el=document.getElementById('lrevIn'+pid);var name=el?el.value.trim():'';if(!name){toast('请填写复习内容');return;}PLAN.reviews.push({id:planId(),planId:pid,name:name,stage:0,next:planNext(1),done:false});planSave();renderLearn();}
+function learnDoReview(id){var r=PLAN.reviews.find(function(x){return x.id===id;});if(!r)return;if(r.stage>=PLAN_INTERVALS.length-1){r.done=true;}else{r.stage++;r.next=planNext(PLAN_INTERVALS[r.stage]);}planSave();renderLearn();}
+function learnDelReview(id){PLAN.reviews=PLAN.reviews.filter(function(x){return x.id!==id;});planSave();renderLearn();}
+function learnFillReflect(type){var el=document.getElementById('learnReflectIn'),ty=document.getElementById('learnReflectType');if(ty)ty.value=type;var tpl=type==='每周'?'① 本周最令我惊讶的发现是什么？\n② 本周的学习与之前学的有什么联系？\n③ 如果重新开始这周，我会改变什么？':'① 今天哪个学习方法让我感觉进步了？\n② 今天有什么卡住了？（先意识到，不用立刻解决）';if(el){el.value=tpl;el.focus();}}
+function learnAddReflection(){var el=document.getElementById('learnReflectIn'),ty=document.getElementById('learnReflectType');var text=el?el.value.trim():'';if(!text){toast('先写点内容再保存');return;}PLAN.reflections.unshift({id:planId(),date:td(),type:ty?ty.value:'每日',text:text});planSave();renderLearn();}
+function learnSubmitReview(){
+  var d=td();
+  var entry={date:d,time:document.getElementById('lrvTime').value,block:document.getElementById('lrvBlock').value,done:document.getElementById('lrvDone').value,plan:document.getElementById('lrvPlan').value,note:document.getElementById('lrvNote').value};
+  SUBJECTS.forEach(function(sb){
+    var el=document.getElementById('lrv_'+sb.id);
+    entry[sb.rvField]=el?el.value:'';
+    entry[sb.stateKey]=[].concat(S[sb.stateKey]||[]);
+  });
+  if(!String(entry.time).trim()&&!String(entry.done).trim()&&!String(entry.block).trim()&&!String(entry.plan).trim()&&!String(entry.note).trim()){toast('至少填一项再保存');return;}
+  var ex=-1;for(var i=0;i<S.reviews.length;i++){if(S.reviews[i].date===d){ex=i;break}}
+  if(ex>=0){if(!confirm('今天已提交过复盘，覆盖原记录？'))return;S.reviews.splice(ex,1);}
+  S.reviews.unshift(entry);
+  if(S.reviews.length>REV_MAX)S.reviews=S.reviews.slice(0,REV_MAX);
+  sv('w5_rev',S.reviews);
+  renderLearn();toast('复盘已保存');
+}
+function learnClearSeed(){if(!confirm('清空示例计划/复习/反思？（不影响科目目标）'))return;PLAN={seeded:false,plans:[],reviews:[],reflections:[]};planSave();renderLearn();}
 function lgInit(){
   lgLoad();
   if(!LG.seeded||!LG.goals.length){lgSeed();}
