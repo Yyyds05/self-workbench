@@ -123,6 +123,12 @@ body{
 @media(max-width:480px){.rev-grid{grid-template-columns:1fr}.rev-full{grid-column:span 1}}
 
 .err-card{background:var(--card2);border-radius:10px;padding:10px 12px;margin:6px 0;border-left:3px solid var(--red)}
+.err-kp-cloud{margin-bottom:10px;padding:9px 11px;background:#fdf7ec;border-radius:10px;border:1px dashed #e7d8b8}
+.err-kp-title{font-size:11px;font-weight:700;color:var(--text2);margin-bottom:6px;letter-spacing:.3px}
+.err-kp-chip{display:inline-block;border:1px solid #e7d8b8;background:var(--card);border-radius:99px;padding:4px 10px;margin:3px 5px 3px 0;font-size:11.5px;color:var(--text2);cursor:pointer;font-family:inherit;transition:all .15s}
+.err-kp-chip:hover{border-color:var(--gold);color:var(--gold)}
+.err-kp-chip.on{background:var(--gold);color:#fff;border-color:var(--gold);font-weight:700}
+.err-kp-chip.clear{background:transparent;border-color:var(--red);color:var(--red);float:right}
 .err-card.mastered{opacity:.4;border-left-color:var(--green)}
 .err-card.mastered .err-title{text-decoration:line-through}
 .err-title{font-size:13px;font-weight:600}
@@ -941,6 +947,7 @@ body{
     <div class="card-hd"><div class="card-dot dot-gold"></div><div class="card-title">错题本</div></div>
     <div style="display:flex;gap:6px;margin-bottom:6px;flex-wrap:wrap" id="errStatusFilters"></div>
     <div style="display:flex;gap:6px;margin-bottom:8px;flex-wrap:wrap" id="errSubFilters"></div>
+    <div id="errKpCloud"></div>
     <div style="display:flex;gap:6px;margin-bottom:8px;align-items:center;flex-wrap:wrap" id="errChFilterSel"></div>
     <div style="display:flex;gap:6px;margin-bottom:8px;align-items:center;flex-wrap:wrap" id="errQtFilterSel"></div>
     <div class="tag-filter-row" id="errTagFilterRow"></div>
@@ -2318,13 +2325,42 @@ function filterErrCh(v){S.errChFilter=v;renderErrors()}
 function filterErrQt(v){S.errQtFilter=v;renderErrors()}
 // R9: 标签筛选
 function filterErrTag(t){S.errTagFilter=t;renderErrors()}
-function errResetFilters(){S.errFilter='all';S.errSubFilter='all';S.errChFilter='';S.errQtFilter='';S.errTagFilter='';renderErrors()}
+function errResetFilters(){S.errFilter='all';S.errSubFilter='all';S.errChFilter='';S.errQtFilter='';S.errTagFilter='';S.errKpFilter='';renderErrors()}
+// P0-3: 薄弱知识点筛选切换
+function eqToggleKp(kp){
+  S.errKpFilter = (S.errKpFilter===kp ? '' : kp);
+  renderErrors();
+}
 function renderErrors(){
   renderErrFilters();
+  // P0-3: 薄弱知识点聚合（按 kp 字段 count，倒序前 8）
+  var kpMap={};
+  S.errors.forEach(function(e){
+    var k=(e.kp||'').trim();
+    if(!k||e.mastered)return;
+    kpMap[k]=(kpMap[k]||0)+1;
+  });
+  var kpArr=Object.keys(kpMap).map(function(k){return {k:k,n:kpMap[k]}}).sort(function(a,b){return b.n-a.n});
+  var kpTop=kpArr.slice(0,8);
+  if(kpTop.length){
+    var kpHtml='<div class="err-kp-cloud"><div class="err-kp-title">薄弱知识点 · 共 '+kpArr.length+' 项</div>';
+    kpTop.forEach(function(it){
+      var on=S.errKpFilter===it.k;
+      kpHtml+='<button class="err-kp-chip'+(on?' on':'')+'" onclick="eqToggleKp(\''+esc(it.k).replace(/'/g,'\\\'')+'\')">'+esc(it.k)+' · '+it.n+'</button>';
+    });
+    if(S.errKpFilter)kpHtml+='<button class="err-kp-chip clear" onclick="eqToggleKp(\'\')">清空</button>';
+    kpHtml+='</div>';
+    var cloudEl=document.getElementById('errKpCloud');
+    if(cloudEl)cloudEl.innerHTML=kpHtml;
+  }else{
+    var cloudEl2=document.getElementById('errKpCloud');
+    if(cloudEl2)cloudEl2.innerHTML='';
+  }
   var list=S.errors.slice();
   if(S.errSubFilter!=='all')list=list.filter(function(e){return e.subject===S.errSubFilter});
   if(S.errChFilter)list=list.filter(function(e){return e.chapter===S.errChFilter});
   if(S.errQtFilter)list=list.filter(function(e){return e.qtype===S.errQtFilter});
+  if(S.errKpFilter)list=list.filter(function(e){return e.kp===S.errKpFilter}); // P0-3
   if(S.errFilter==='review')list=list.filter(isDue);
   else if(S.errFilter==='mastered')list=list.filter(function(e){return e.mastered});
   // R9: 标签筛选
@@ -5373,16 +5409,28 @@ function renderLearn(){
   var today=td();
   var due=PLAN.reviews.filter(function(r){return !r.done&&r.next<=today;});
   var daily=OKR.daily||[];
+  var rq=buildTodayQueue().slice(0,8); // P0-3: 错题/背记卡到期
   var dot=document.getElementById('tabDotLearn');
-  if(dot)dot.style.display=(due.length||daily.length)?'block':'none';
+  if(dot)dot.style.display=(due.length||daily.length||rq.length)?'block':'none';
   var h='';
   h+='<div class="plan-hero"><div class="plan-hero-label">今天要处理</div>';
-  if(!due.length&&!daily.length)h+='<div class="plan-none">今天没有到期复习、没有待办打卡。去下面「设计计划」添加学习计划吧。</div>';
+  if(!due.length&&!daily.length&&!rq.length)h+='<div class="plan-none">今天没有到期复习、没有待办打卡。去下面「设计计划」添加学习计划吧。</div>';
   due.forEach(function(r){
     var p=planFind(r.planId),over=r.next<today;
     h+='<div class="plan-due'+(over?' over':'')+'"><span class="plan-due-tag">'+(over?'逾期':'今天')+'</span>'+
       '<span class="plan-due-name">'+esc(p?p.name:'(计划已删)')+' · '+esc(r.name)+'</span>'+
       '<button class="plan-btn-ok" onclick="learnDoReview(\''+r.id+'\')">完成复习</button></div>';
+  });
+  // P0-3: 错题/背记卡到期接入学习台"今天要处理"
+  rq.forEach(function(it){
+    var rec=it.kind==='err'?S.errors.find(function(x){return x.id===it.id}):cardFind(it.id);
+    if(!rec)return;
+    var nm=it.kind==='err'?(rec.topic||rec.content||'?'):(rec.front||rec.back||'?');
+    if(nm.length>32)nm=nm.slice(0,32)+'…';
+    var over=it.over>0;
+    h+='<div class="plan-due'+(over?' over':'')+'"><span class="plan-due-tag">'+(over?'逾期':'今天')+'</span>'+
+      '<span class="plan-due-name">['+esc(it.kind==='err'?'错题':'背记卡')+'] '+esc(nm)+'</span>'+
+      '<button class="plan-btn-ok" onclick="learnJumpReview(\''+it.kind+'\','+it.id+')">去复习</button></div>';
   });
   daily.forEach(function(d){
     h+='<div class="plan-due'+(d.done?'':'')+'" style="'+(d.done?'opacity:.55':'')+'" onclick="learnToggleDaily(\''+d.id+'\')"><span class="plan-due-tag">今日打卡</span>'+
@@ -5480,6 +5528,16 @@ function renderLearn(){
   root.innerHTML=h;
 }
 function learnToggleDaily(id){var d=OKR.daily.find(function(x){return x.id===id;});if(!d)return;d.done=!d.done;okrSave();renderLearn();}
+// P0-3: 学习台"今天要处理"点击「去复习」→ 跳对应 Tab 并定位条目
+function learnJumpReview(kind,id){
+  if(kind==='err'){
+    S.errFilter='all';S.errExpand[id]=true;
+    switchPage('errors');renderErrors();
+    setTimeout(function(){var el=document.querySelector('.err-card');if(el)el.scrollIntoView({behavior:'smooth',block:'center'})},50);
+  }else{
+    toggleCardMastered(id);toast('已标记已掌握');
+  }
+}
 function learnSetSubj(id,f,v){var s=okrSubj(id);if(!s)return;if(f==='target'||f==='current')s[f]=+v||0;else s[f]=v;if(OKR.autoTotal)OKR.total=okrTargetTotal();okrSave();renderLearn();}
 function learnAddSubject(){var n=prompt('科目名称','');if(n===null)return;n=n.trim();if(!n){toast('名称不能为空');return;}OKR.subjects.push({id:okrId(),name:n,target:0,current:0,color:'#B8A8D8'});okrSave();renderLearn();}
 function learnDelSubject(id){
