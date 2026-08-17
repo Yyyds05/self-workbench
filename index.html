@@ -123,6 +123,7 @@ body{
 @media(max-width:480px){.rev-grid{grid-template-columns:1fr}.rev-full{grid-column:span 1}}
 
 .err-card{background:var(--card2);border-radius:10px;padding:10px 12px;margin:6px 0;border-left:3px solid var(--red)}
+.err-thumb{width:100%;max-height:200px;object-fit:contain;border-radius:8px;margin-bottom:8px;background:#f5f0ea;display:block;cursor:pointer}
 .err-kp-cloud{margin-bottom:10px;padding:9px 11px;background:#fdf7ec;border-radius:10px;border:1px dashed #e7d8b8}
 .err-kp-title{font-size:11px;font-weight:700;color:var(--text2);margin-bottom:6px;letter-spacing:.3px}
 .err-kp-chip{display:inline-block;border:1px solid #e7d8b8;background:var(--card);border-radius:99px;padding:4px 10px;margin:3px 5px 3px 0;font-size:11.5px;color:var(--text2);cursor:pointer;font-family:inherit;transition:all .15s}
@@ -513,7 +514,7 @@ body{
 .streak-dot{width:11px;height:11px;border-radius:50%;border:1.5px solid var(--border);flex-shrink:0;transition:background .25s}
 .streak-dot.done{background:var(--gold);border-color:var(--gold)}
 .streak-milestones{display:flex;gap:6px;flex-wrap:wrap;margin-left:auto}
-.streak-ms{font-size:9px;padding:2px 7px;border-radius:6px;font-weight:700;border:1.5px solid var(--border);color:var(--text3)}
+.streak-ms{font-size:9px;padding:2px 7px;border-radius:6px;font-weight:700;border:1.5px solid var(--border);color:var(--text3);cursor:help}
 .streak-ms.hit{background:var(--green-bg);border-color:var(--green);color:var(--green)}
 .streak-sprout{font-size:24px;line-height:1}
 .streak-empty{font-size:12px;color:var(--text3);padding:4px 0}
@@ -1494,7 +1495,10 @@ function renderStreak(){
       msEl.innerHTML='';
     }else{
       var milestones=[{n:7,t:'7天'},{n:21,t:'21天'},{n:30,t:'30天'},{n:60,t:'60天'},{n:100,t:'100天'}];
-      msEl.innerHTML=milestones.map(function(m){return '<span class="streak-ms'+(streak>=m.n?' hit':'')+'">'+m.t+'</span>'}).join('');
+      msEl.innerHTML=milestones.map(function(m){
+        var hit=streak>=m.n;
+        return '<span class="streak-ms'+(hit?' hit':'')+'" title="'+(hit?'已达成':'还差 '+(m.n-streak)+' 天达成')+'连续打卡 '+m.t+' 里程碑">'+m.t+(hit?' ✓':'')+'</span>';
+      }).join('');
     }
   }
   var sp=document.getElementById('streakSprout');
@@ -2196,6 +2200,8 @@ function addError(){
   var anaFiles=anaInput?anaInput.files:null;
   // R7.4: 题目（content）变可选，但 topic（错因）和附件至少一个，否则提示
   if(!t && !c && !(files&&files.length) && !(anaFiles&&anaFiles.length)){toast('请填错因或上传题目图片（三选一）');return;}
+  // 拍了照片且没填文字 → 自动把照片当题目（不再强求文字题目）
+  if(!c && (files&&files.length))c='📷 题目';
   var chSel=document.getElementById('errChapter');
   var chapter=chSel?chSel.value:'';
   if(!chapter)chapter=errGuessChapter(s,c); // 自动推断章节
@@ -2458,7 +2464,7 @@ function renderErrors(){
   var kpArr=Object.keys(kpMap).map(function(k){return {k:k,n:kpMap[k]}}).sort(function(a,b){return b.n-a.n});
   var kpTop=kpArr.slice(0,8);
   if(kpTop.length){
-    var kpHtml='<div class="err-kp-cloud"><div class="err-kp-title">薄弱知识点 · 共 '+kpArr.length+' 项</div>';
+    var kpHtml='<div class="err-kp-cloud"><div class="err-kp-title">薄弱知识点聚合（你录错题时填的「错因」会自动聚到这里）· 共 '+kpArr.length+' 项</div>';
     kpTop.forEach(function(it){
       var on=S.errKpFilter===it.k;
       kpHtml+='<button class="err-kp-chip'+(on?' on':'')+'" onclick="eqToggleKp(\''+esc(it.k).replace(/'/g,'\\\'')+'\')">'+esc(it.k)+' · '+it.n+'</button>';
@@ -2495,7 +2501,7 @@ function renderErrors(){
     var atts=e.attachments||[];
     var chips='';
     if(e.chapter)chips+='<span class="chip chip-ch">'+esc(e.chapter)+'</span>';
-    if(e.kp)chips+='<span class="chip chip-kp">'+esc(e.kp)+'</span>';
+    if(e.kp)chips+='<span class="chip chip-kp" title="你录入时填的错因，会自动聚合">'+esc(e.kp)+'</span>';
     if(e.qtype)chips+='<span class="chip chip-qt">'+esc(e.qtype)+'</span>';
     if(e.cause)chips+='<span class="chip chip-cause">'+esc(chenhanCauseLabel(e.cause))+'</span>';
     // R9: 标签 chips
@@ -2506,8 +2512,13 @@ function renderErrors(){
     // R7.3: 折叠态错因摘要仅 ≤40 字时显示，否则折叠态不展示（错因完整内容在展开区）
     var topicBrief=(e.content && e.topic && e.topic.length<=40)?e.topic:'';
     // R7.4: 附件存在时优先显示图片（图片就是题目），文字题目退居补充
+    var firstImg='';
+    if(atts.length && (atts[0].data||'').indexOf('data:image')===0){
+      firstImg='<img class="err-thumb" src="'+esc(atts[0].data)+'" onclick="event.stopPropagation();toggleErrExpand('+e.id+')" title="点开看大图">';
+    }
     var html='<div class="err-card'+(e.mastered?' mastered':'')+'" onclick="toggleErrExpand('+e.id+')" style="cursor:pointer">'
-      +'<div class="err-title" style="color:var(--text)">'+(atts.length?'📎 ':'')+esc(qtext)
+      +(firstImg)+
+      '<div class="err-title" style="color:var(--text)">'+(atts.length?'📎 ':'')+esc(qtext)
       +(lbl?' <span style="font-size:10px;color:var(--red);font-weight:400">'+esc(lbl)+'</span>':'')
       +(atts.length>1?' <span style="font-size:10px;color:var(--blue);font-weight:400">'+atts.length+'张</span>':'')
       +' <span style="font-size:10px;color:var(--text3);font-weight:400;float:right">'+(open?'▲ 收起':'▼ 展开')+'</span></div>'
@@ -3467,8 +3478,15 @@ function renderNews(){
  if(!useful.length){d.innerHTML='<div class="info-empty">当前过滤条件下没有资讯。可 <span class="info-toggle" onclick="toggleNewsOfficial()">关闭官方过滤</span> 查看全部</div>';return}
  d.innerHTML='<div class="info-meta">'+esc(meta)+toggle+'</div>'+useful.slice(0,80).map(function(n){
    var src=srcMap[n.src]||n.src||'';
-   var desc=n.desc?'<div class="news-desc" onclick="event.stopPropagation()">'+esc(n.desc)+'</div>':'';
-   return'<div class="info-row"><div class="info-head"><span class="info-date">'+esc(n.date)+'</span><span class="info-text"><a href="'+esc(n.url)+'" target="_blank" rel="noopener">'+esc(n.title)+'</a>'+(src?' <span style="color:var(--text3);font-size:10px">['+esc(src)+']</span>':'')+'</span></div>'+desc+'</div>';
+   var official=newsIsOfficial(n);
+   var descRaw=(n.desc||'').replace(/\s+/g,' ').trim();
+   if(descRaw.length>200)descRaw=descRaw.slice(0,200)+'…';
+   var desc=descRaw?'<div class="news-desc" onclick="event.stopPropagation()">'+esc(descRaw)+'</div>':'';
+   // 关键节点/官方源：标题纯文字不渲染链接（用户不要链接）
+   var titleTag=official
+     ? '<b>'+esc(n.title)+'</b>'+(n.url?' <span style="color:var(--text3);font-size:10px">（详情见原站）</span>':'')
+     : '<a href="'+esc(n.url)+'" target="_blank" rel="noopener">'+esc(n.title)+'</a>';
+   return'<div class="info-row'+(official?' info-official':'')+'"><div class="info-head"><span class="info-date">'+(official?'📌 ':'')+esc(n.date)+'</span><span class="info-text">'+titleTag+(src?' <span style="color:var(--text3);font-size:10px">['+esc(src)+']</span>':'')+'</span></div>'+desc+'</div>';
  }).join('')
 }
 function __toggleNews(){window.__showAllNews=!window.__showAllNews;renderNews()}
@@ -5631,7 +5649,7 @@ function renderLearn(){
   PLAN.plans.forEach(function(p){
     var pct=planPct(p),sd=planStepsDone(p),st=(p.steps||[]).length;
     var revs=PLAN.reviews.filter(function(r){return r.planId===p.id;});
-    h+='<div class="plan-card"><div class="plan-card-hd"><span>'+esc(p.name)+'<span class="plan-type">'+planTypeLabel(p.type)+'</span></span><button class="okr-del" onclick="learnDelPlan(\''+p.id+'\')">✕</button></div>'+
+    h+='<div class="plan-card"><div class="plan-card-hd"><span>'+esc(p.name)+'<span class="plan-type">'+planTypeLabel(p.type)+'</span></span><button class="okr-del" title="编辑计划" onclick="learnEditPlan(\''+p.id+'\')">✎</button><button class="okr-del" onclick="learnDelPlan(\''+p.id+'\')">✕</button></div>'+
       '<div class="plan-strat">'+esc(p.strategy||'')+'</div>'+
       '<div class="plan-goal">'+esc(p.goal||'')+'</div>'+
       '<div class="plan-prog"><i style="width:'+pct+'%"></i></div>'+
@@ -5642,10 +5660,11 @@ function renderLearn(){
     if((p.resources||[]).length){
       h+='<div style="font-size:11.5px;font-weight:700;color:#a08d70;margin-top:9px">核心资源（每主题 2-3 个）</div>';
       (p.resources||[]).forEach(function(r,ri){
-        h+='<div class="plan-res"><span class="plan-res-type">'+esc(r.t||'资源')+'</span><span style="flex:1">'+esc(r.n)+'</span><button class="plan-rev-del" onclick="learnDelResource(\''+p.id+'\','+ri+')">✕</button></div>';
+        h+='<div class="plan-res"><span class="plan-res-type">'+esc(r.t||'资源')+'</span><span style="flex:1">'+esc(r.n)+'</span><button class="plan-rev-del" title="编辑资源" onclick="learnEditResource(\''+p.id+'\','+ri+')">✎</button><button class="plan-rev-del" onclick="learnDelResource(\''+p.id+','+ri+'\')">✕</button></div>';
       });
     }
-    h+='<div class="plan-add-row"><input id="lresIn'+p.id+'" placeholder="资源名，如：张宇30讲"><select id="lresTy'+p.id+'"><option>主力</option><option>练习</option><option>参考</option><option>社区</option></select><button class="plan-add-btn" onclick="learnAddResource(\''+p.id+'\')">＋ 资源</button></div>'+
+    h+='<div style="font-size:10.5px;color:#a08d70;margin-top:6px">提示：策略是按学习类型自动推荐的，可点 ✎ 改名/改目标、点 ✕ 删除重建一个完全自定义的</div>'+
+      '<div class="plan-add-row"><input id="lresIn'+p.id+'" placeholder="资源名，如：张宇30讲"><select id="lresTy'+p.id+'"><option>主力</option><option>练习</option><option>参考</option><option>社区</option></select><button class="plan-add-btn" onclick="learnAddResource(\''+p.id+'\')">＋ 资源</button></div>'+
       '<div class="plan-add-row"><input id="lrevIn'+p.id+'" placeholder="添加复习项，如：定积分错题"><button class="plan-add-btn" onclick="learnAddReview(\''+p.id+'\')">＋ 复习</button></div></div>';
   });
   h+='</div>';
@@ -5720,6 +5739,22 @@ function learnAddPlan(){
   planSave();renderLearn();
 }
 function learnDelPlan(id){if(!confirm('删除计划会连带删除它的复习项，确定？'))return;PLAN.plans=PLAN.plans.filter(function(p){return p.id!==id;});PLAN.reviews=PLAN.reviews.filter(function(r){return r.planId!==id;});planSave();renderLearn();}
+function learnEditPlan(id){
+  var p=planFind(id);if(!p)return;
+  var n=prompt('修改计划名',p.name||'');if(n===null)return;n=n.trim();if(!n){toast('名称不能为空');return;}
+  var g=prompt('修改目标（SMART）',p.goal||'');if(g===null)g=p.goal||'';
+  p.name=n;p.goal=g;planSave();renderLearn();toast('计划已更新');
+}
+function learnEditResource(pid,idx){
+  var p=planFind(pid);if(!p)return;var r=p.resources[idx];if(!r)return;
+  var n=prompt('资源名',r.n||'');if(n===null)return;n=n.trim();if(!n){toast('资源名不能为空');return;}
+  r.n=n;planSave();renderLearn();toast('资源已更新');
+}
+function learnEditReviewText(id){
+  var r=PLAN.reviews.find(function(x){return x.id===id;});if(!r)return;
+  var n=prompt('修改复习项',r.name||'');if(n===null)return;n=n.trim();if(!n){toast('复习项不能为空');return;}
+  r.name=n;planSave();renderLearn();
+}
 function learnToggleStep(pid,i){var p=planFind(pid);if(!p||!p.steps[i])return;p.steps[i].d=!p.steps[i].d;planSave();renderLearn();}
 function learnAddResource(pid){var p=planFind(pid);if(!p)return;var el=document.getElementById('lresIn'+pid),ty=document.getElementById('lresTy'+pid);var name=el?el.value.trim():'';if(!name){toast('请填写资源名');return;}(p.resources=p.resources||[]).push({n:name,t:ty?ty.value:'主力',u:''});planSave();renderLearn();}
 function learnDelResource(pid,idx){var p=planFind(pid);if(!p)return;p.resources.splice(idx,1);planSave();renderLearn();}
