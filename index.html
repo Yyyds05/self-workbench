@@ -13,8 +13,8 @@
 <style>
 :root{
   --bg:#faf7f2; --card:#fff; --card2:#f5f0ea; --shadow:0 2px 12px rgba(60,40,20,.06);
-  --text:#3d2e2a; --text2:#8c7a72; --text3:#b8a99e; --border:#e8e0d8;
-  --gold:#d4a017; --gold-bg:#fdf3e0; --blue:#4a90c4; --blue-bg:#e8f2fa;
+  --text:#3d2e2a; --text2:#7a6a5f; --text3:#8a7a6d; --border:#e8e0d8;
+  --gold:#b8860b; --gold-bg:#fdf3e0; --blue:#4a90c4; --blue-bg:#e8f2fa;
   --purple:#9b6bb0; --purple-bg:#f3edf8; --green:#5a9e6f; --green-bg:#e8f4eb;
   --red:#c75b5b; --red-bg:#fce9e9; --pink-bg:#fff5f0;
   /* v3.5 状态色板（统一标签语义：逾期/今天/已完成/信息） */
@@ -36,11 +36,16 @@ body{
 .logo{font-size:18px;font-weight:700;letter-spacing:-.3px;color:var(--text)}
 .logo em{font-style:normal;color:var(--gold)}
 .top-actions{display:flex;gap:6px}
+.top-more{position:relative}
+.top-more-btn{font-size:16px;line-height:1;padding:8px 12px}
+.top-more-menu{display:none;position:absolute;right:0;top:calc(100% + 6px);background:var(--card);border:1px solid var(--border);border-radius:12px;box-shadow:0 6px 24px rgba(60,40,20,.12);padding:6px;z-index:99;min-width:150px;flex-direction:column;gap:4px}
+.top-more-menu.open{display:flex}
+.top-more-menu .btn-sm{width:100%;text-align:left;white-space:nowrap}
 .btn{background:var(--card);border:1px solid var(--border);color:var(--text2);padding:8px 14px;border-radius:10px;cursor:pointer;font-size:12px;font-weight:600;transition:all .15s;box-shadow:var(--shadow)}
 .btn:hover{background:var(--card2);color:var(--text)}
 .btn-gold{background:var(--gold);color:#fff;border:none}
 .btn-gold:hover{background:#c08d14}
-.btn-sm{padding:5px 10px;font-size:10px}
+.btn-sm{padding:8px 12px;font-size:12px}
 .countdown-hero{text-align:center;padding:20px 0 12px}
 .cd-label{font-size:12px;color:var(--text3);text-transform:uppercase;letter-spacing:2px;margin-bottom:6px}
 .cd-num{font-size:80px;font-weight:900;letter-spacing:-6px;line-height:1;color:var(--gold)}
@@ -138,7 +143,7 @@ body{
 .dot-row .mdot{width:8px;height:8px;border-radius:50%;background:var(--border)}
 .dot-row .mdot.filled{background:var(--gold)}
 .err-actions{display:flex;gap:6px;margin-top:6px}
-.err-btn{padding:4px 10px;border-radius:6px;border:1px solid var(--border);background:var(--bg);font-size:10px;cursor:pointer;color:var(--text2);transition:.15s}
+.err-btn{padding:6px 12px;border-radius:8px;border:1px solid var(--border);background:var(--bg);font-size:12px;cursor:pointer;color:var(--text2);transition:.15s}
 .err-btn:hover{border-color:var(--gold);color:var(--gold)}
 .err-btn.master{background:var(--green-bg);border-color:var(--green);color:var(--green)}
 .err-btn.master:hover{background:var(--green);color:#fff}
@@ -151,6 +156,10 @@ body{
 .eq-head .eq-badge{font-size:10px;font-weight:700;color:var(--gold);background:var(--gold-bg,#fff8e8);border:1px solid var(--gold);border-radius:20px;padding:2px 9px}
 .eq-subj{margin-bottom:10px}
 .eq-lbl{display:block;font-size:11px;font-weight:700;color:var(--text2);margin-bottom:5px}
+.eq-subj-pills{display:flex;gap:6px;flex-wrap:wrap}
+.eq-pill{font-size:12px;font-weight:600;padding:7px 14px;border-radius:99px;border:1px solid var(--border);background:var(--card);color:var(--text2);cursor:pointer;transition:all .15s}
+.eq-pill:hover{border-color:var(--gold);color:var(--gold)}
+.eq-pill.on{background:var(--gold);color:#fff;border-color:var(--gold);font-weight:700}
 .eq select{width:100%;background:var(--bg);border:1px solid var(--border);border-radius:10px;padding:11px;color:var(--text);font-size:16px;outline:none}
 .eq input[type=text]{width:100%;background:var(--bg);border:1px solid var(--border);border-radius:10px;padding:11px;color:var(--text);font-size:16px;outline:none;margin-bottom:10px}
 .eq-shots{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px}
@@ -388,6 +397,9 @@ body{
 .info-text{flex:1}.info-text a{color:var(--blue);text-decoration:none}
 .info-text.major{color:var(--gold);font-weight:600}
 .info-date.major{color:var(--gold);font-weight:600}
+.ev-urgent{display:inline-block;font-size:10px;font-weight:700;color:#fff;background:var(--red);border-radius:99px;padding:2px 8px;margin-left:6px}
+.ev-past{opacity:.45}
+.ev-past-tag{font-size:10px;color:var(--text3);margin-left:6px}
 .info-empty{color:var(--text3);font-size:12px;text-align:center;padding:16px 0}
 .info-meta{font-size:10px;color:var(--text3);margin-bottom:5px;padding-left:2px}
 .info-toggle{color:var(--blue);cursor:pointer;margin-left:4px;border-bottom:1px dashed var(--blue);user-select:none}
@@ -867,15 +879,19 @@ body{
   <div class="logo">小羊的<em>考研工作台</em></div>
   <div class="top-actions">
     <button class="btn btn-gold" onclick="exportData()">备份</button>
-    <button class="btn" onclick="document.getElementById('importFile').click()">导入</button>
-    <input type="file" id="importFile" accept=".json" style="display:none" onchange="importData(event)">
-    <button class="btn" onclick="document.getElementById('planFile').click()">导入计划表</button>
-    <input type="file" id="planFile" accept=".xlsx,.xls,.csv" style="display:none" onchange="importPlan(event)">
-    <!-- F11: 番茄To do 等 App 的专注数据导入 -->
-    <button class="btn" onclick="document.getElementById('focusFile').click()">导入专注数据</button>
-    <input type="file" id="focusFile" accept=".xlsx,.xls,.csv" style="display:none" onchange="importFocus(event)">
     <button class="btn" id="btnSync" onclick="openSyncModal()"><svg class="ic" viewBox="0 0 24 24"><path d="M7 18a4 4 0 0 1 0-8 5 5 0 0 1 9.6-1.5A3.5 3.5 0 0 1 17 18H7z"/></svg>同步</button>
-    <button class="btn" onclick="exportICS()" title="导出考试节点到日历，可导入苹果日历"><svg class="ic" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M8 2v4M16 2v4M3 10h18"/></svg>导出日历</button>
+    <div class="top-more" id="topMore">
+      <button class="btn top-more-btn" onclick="topMoreToggle()" title="更多工具">⋮</button>
+      <div class="top-more-menu" id="topMoreMenu">
+        <button class="btn btn-sm" onclick="topMoreClose();document.getElementById('importFile').click()">导入</button>
+        <input type="file" id="importFile" accept=".json" style="display:none" onchange="importData(event)">
+        <button class="btn btn-sm" onclick="topMoreClose();document.getElementById('planFile').click()">导入计划表</button>
+        <input type="file" id="planFile" accept=".xlsx,.xls,.csv" style="display:none" onchange="importPlan(event)">
+        <button class="btn btn-sm" onclick="topMoreClose();document.getElementById('focusFile').click()">导入专注数据</button>
+        <input type="file" id="focusFile" accept=".xlsx,.xls,.csv" style="display:none" onchange="importFocus(event)">
+        <button class="btn btn-sm" onclick="topMoreClose();exportICS()" title="导出考试节点到日历，可导入苹果日历">导出日历</button>
+      </div>
+    </div>
   </div>
 </div>
 
@@ -926,10 +942,7 @@ body{
   <div class="card">
     <div class="card-hd"><div class="card-dot dot-gold"></div><div class="card-title">科目进度</div></div>
     <div class="rings-row" id="ringsRow"></div>
-  </div>
-  <div class="card">
-    <div class="card-hd"><div class="card-dot dot-red"></div><div class="card-title">达标判定（陈汉标准）</div></div>
-    <div id="passStdBox"></div>
+    <div id="passStdBox" style="margin-top:10px;border-top:1px dashed var(--border);padding-top:8px"></div>
   </div>
   <div class="card">
     <div class="card-hd"><div class="card-dot dot-blue"></div><div class="card-title">学习趋势</div>
@@ -990,11 +1003,11 @@ body{
     <div style="display:flex;gap:6px;margin-bottom:8px;align-items:center;flex-wrap:wrap" id="errChFilterSel"></div>
     <div style="display:flex;gap:6px;margin-bottom:8px;align-items:center;flex-wrap:wrap" id="errQtFilterSel"></div>
     <div class="tag-filter-row" id="errTagFilterRow"></div>
-    <div style="display:flex;gap:6px;margin-bottom:8px;align-items:center;flex-wrap:wrap">
+    <div style="display:flex;gap:6px;margin-bottom:8px;align-items:center;flex-wrap:wrap" id="errOpsRow1">
       <span id="errCountHint" style="font-size:10px;color:var(--text3)"></span>
       <button class="err-btn" onclick="errBackfill()">批量回填章节/知识点</button>
     </div>
-    <div style="display:flex;gap:6px;margin-bottom:8px;align-items:center;flex-wrap:wrap">
+    <div style="display:flex;gap:6px;margin-bottom:8px;align-items:center;flex-wrap:wrap" id="errOpsRow2">
       <select id="impSubject" class="imp-select" title="导入错题归入的科目"></select>
       <button class="err-btn" onclick="document.getElementById('errImpFile').click()">导入 Excel/CSV</button>
       <input type="file" id="errImpFile" accept=".xlsx,.xls,.csv" style="display:none" onchange="importErrors(event)">
@@ -1009,7 +1022,8 @@ body{
       <div class="eq-head"><span class="eq-badge">快速录入</span>拍题目 + 拍解析，关联科目，一键入册</div>
       <div class="eq-subj">
         <label class="eq-lbl">科目</label>
-        <select id="errSubject" onchange="syncErrChapterList()"></select>
+        <div class="eq-subj-pills" id="errSubjPills"></div>
+        <select id="errSubject" style="display:none" onchange="syncErrChapterList()"></select>
       </div>
       <div class="eq-shots">
         <label class="eq-shot">
@@ -1397,6 +1411,55 @@ var S={
   // R12: 今日完成计数器（按天存 w5_dayops）
   dayOps:lds('w5_dayops',{})
 };
+// #3: 首次打开预置示例数据（含逾期项），有 `w5_seeded` 则跳过，避免覆盖用户数据
+(function(){
+  try{
+    if(localStorage.getItem('w5_seeded'))return;
+    var now=new Date();
+    function ds(off){var d=new Date(now);d.setDate(d.getDate()+off);return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');}
+    // 复盘：昨天 9.5h（有番茄叠加效果）+ 前天 6.5h + 三天前 8h（含各科正确率）
+    if(!S.reviews.length){
+      S.reviews=[
+        {date:ds(-1),time:'9.5',block:'定积分应用第 6 章卡在旋转体体积',done:'高数严选题 2 节 + 408 计组第一章 + 背单词 150',plan:'攻克中值定理证明题，408 开始数据结构第二章',note:'状态不错',math:'85%','408':'70%',eng:'4/5',pol:'70%',mathDone:[],c408Done:[],engDone:[],polDone:[]},
+        {date:ds(-2),time:'6.5',block:'级数敛散性判断总出错',done:'高数第二章 + 英语阅读 2 篇精翻',plan:'复习级数 + 408 计组存储系统',note:'效率一般',math:'80%','408':'65%',eng:'3/5',pol:'60%',mathDone:[],c408Done:[],engDone:[],polDone:[]},
+        {date:ds(-3),time:'8',block:'无',done:'408 第一章 + 政治马原前两节 + 单词 200',plan:'继续 408 计组',note:'',math:'82%','408':'72%',eng:'4/5',pol:'68%',mathDone:[],c408Done:[],engDone:[],polDone:[]}
+      ];
+      sv('w5_rev',S.reviews);
+    }
+    // 错题：1 条逾期（next 在 3 天前）+ 1 条明天到期
+    if(!S.errors.length){
+      var e1=schedInit(REVIEW_INTERVALS,ds(-3));
+      var e2=schedInit(REVIEW_INTERVALS,ds(0));
+      S.errors=[
+        {id:Date.now()-200,v:2,subject:'math',chapter:'Ch3 中值定理',topic:'拉格朗日中值定理构造辅助函数',kp:'中值定理',qtype:'证明',cause:'method',content:'证明 f(x) 在 [a,b] 上满足拉格朗日中值定理条件，证明存在 ξ 使 f\'(ξ)=[f(b)-f(a)]/(b-a)',answer:'构造 F(x)=f(x)-kx',analysis:'关键是构造辅助函数后验证端点值相等',date:ds(-3),mastery:1,mastered:false,lastReviewed:ds(-3),stage:e1.stage,nextReviewDate:e1.nextReviewDate,reviewLog:[],lastResult:'',tags:['证明题']},
+        {id:Date.now()-100,v:2,subject:'408',chapter:'计组·存储',topic:'Cache 映射方式辨析',kp:'计组·存储',qtype:'选择',cause:'base',content:'某 Cache 采用直接映射，主存块号 8 映射到 Cache 第几块？',answer:'块号 mod Cache块数',analysis:'直接映射：块号 mod 块数',date:ds(0),mastery:1,mastered:false,lastReviewed:ds(0),stage:e2.stage,nextReviewDate:e2.nextReviewDate,reviewLog:[],lastResult:'',tags:[]}
+      ];
+      sv('w5_err',S.errors);
+    }
+    // 背记卡：2 张（1 张到期）
+    if(!S.cards.length){
+      var c1=schedInit(REVIEW_INTERVALS,ds(-3));
+      var c2=schedInit(REVIEW_INTERVALS,ds(0));
+      S.cards=[
+        {id:Date.now()-300,v:2,deck:'公式速记',tag:'高数',front:'泰勒展开公式',back:'f(x)=Σ f⁽ⁿ⁾(x₀)/n! · (x-x₀)ⁿ',stage:c1.stage,nextReviewDate:c1.nextReviewDate,mastered:false,lastResult:'',reviewLog:[]},
+        {id:Date.now()-250,v:2,deck:'408',tag:'计组',front:'Cache 写回策略：Write Back',back:'写回：只写 Cache，替换时回写主存',stage:c2.stage,nextReviewDate:c2.nextReviewDate,mastered:false,lastResult:'',reviewLog:[]}
+      ];
+      sv('w5_cards',S.cards);
+    }
+    // 今日任务：1 条已完成（打卡联动演示）
+    if(!S.tasks.length){S.tasks=DEFAULT_TASKS.map(function(t){return JSON.parse(JSON.stringify(t));});}
+    if(S.tasks.length&&!S.tasks.some(function(t){return t.done;})){S.tasks[1].done=true;}
+    sv('w5_tasks',S.tasks);
+    // 资讯：预置 DEFAULT_NEWS（官方过滤下也能看到内容）
+    if(!(S.rssItems||[]).length){
+      S.rssItems=(DEFAULT_NEWS||[]).map(function(n,i){
+        return {date:n.date,title:n.text,url:n.url||'',src:'研招网 · 考研资讯',desc:'',ts:Date.now()-i*86400000};
+      });
+      sv('wb_rss_items',S.rssItems);
+    }
+    localStorage.setItem('w5_seeded','1');
+  }catch(e){console.warn('seed demo data fail',e);}
+})();
 // DEF-01: 交集口径 —— done 里不属于当前章节表的"幽灵条目"只在计算层过滤，存储原样保留
 function calcPct(done,list){
   if(!list||!list.length)return 0;
@@ -1539,6 +1602,10 @@ function udBackup(){
   else{el.className='backup-hint';el.textContent='距上次备份 '+n+' 天';}
 }
 setInterval(function(){udCd();udStats()},60000);
+// #15: 页面切后台时暂停 60s 仪表盘刷新（番茄计时保留），回来立即刷新
+document.addEventListener('visibilitychange',function(){
+  if(document.visibilityState==='visible'){udCd();udStats();}
+});
 
 // ============ 环形进度（F1: 动态 N 环） ============
 function drawRing(canvasId,pct,color,trackColor){
@@ -1606,15 +1673,14 @@ function subjectPassEval(sb){
 }
 function renderPassStd(){
   var el=document.getElementById('passStdBox');if(!el)return;
-  el.innerHTML=SUBJECTS.map(function(sb){
+  el.innerHTML='<div style="font-size:10px;font-weight:700;color:var(--text3);margin-bottom:6px">达标判定（陈汉标准）</div>'+SUBJECTS.map(function(sb){
     var ev=subjectPassEval(sb);
     var cls = ev.pass===true?'ps-pass':(ev.pass===false?'ps-fail':'ps-unknown');
     var mark = ev.pass===true?'达标':(ev.pass===false?'未达标':'待评估');
-    var detail = ev.acc>=0 ? ('本轮正确率 '+ev.acc+'%（阈值 ≥'+ev.threshold+'%）') : '暂无本轮正确率数据';
+    var detail = ev.acc>=0 ? ('正确率 '+ev.acc+'%（阈 ≥'+ev.threshold+'%）') : '暂无正确率';
     return '<div class="ps-row '+cls+'"><div class="ps-name">'+esc(ev.name)+' <span class="ps-goal">'+esc(ev.goal||'')+'</span></div>'
-      +'<div class="ps-std">标准：'+esc(ev.std)+'</div>'
       +'<div class="ps-mark">'+mark+' · '+detail+'</div>'
-      +'<div class="ps-fail">不达标动作：'+esc(ev.fail)+'</div></div>';
+      +'<div class="ps-fail">'+esc(ev.fail)+'</div></div>';
   }).join('');
 }
 
@@ -1810,8 +1876,16 @@ function addTask(){
 
 // ============ 番茄计时（DEF-02: 时间戳驱动单心跳；DEF-07: 先结算旧科目再切换）
 // F10: 自定义时长（w5_ptlen，5~180 分钟）+ 全屏专注模式 + 统计去向可视化 ============
-function setPtlen(v){
-  var n;
+function topMoreToggle(){
+  var m=document.getElementById('topMoreMenu');
+  if(m){var open=m.classList.contains('open');m.classList.toggle('open',!open);}
+}
+function topMoreClose(){
+  var m=document.getElementById('topMoreMenu');
+  if(m)m.classList.remove('open');
+}
+document.addEventListener('click',function(e){if(!e.target.closest('#topMore'))topMoreClose();});
+function setPtlen(v){  var n;
   if(v==='custom'){
     var inp=prompt('自定义番茄时长（5~180 分钟）',String(S.ptlen));
     if(inp===null){syncPtlenSel();return}
@@ -2035,7 +2109,7 @@ function errSettle(id,result){
   sv('w5_err',S.errors);
   bumpDayOps('review',1);
   renderErrors();renderQueue();renderTodayDone();updateTabDots();
-  toast(result==='good'?'👍 已记住，下次 '+item.nextReviewDate:(result==='hard'?'🤔 模糊，再练一次':'😣 忘了，重新开始复习'));
+  toast(result==='good'?'已记住，下次 '+item.nextReviewDate:(result==='hard'?'模糊，再练一次':'忘了，重新开始复习'));
 }
 // ============================================================
 // F13-3: 附件体系
@@ -2491,6 +2565,10 @@ function renderErrFilters(){
   }
   var hint=document.getElementById('errCountHint');
   if(hint)hint.textContent='共 '+S.errors.length+' 题，待复习 '+S.errors.filter(isDue).length+' 题';
+  // #8: 错题为空时隐藏批量/导入/导出操作（只留引导）
+  var op1=document.getElementById('errOpsRow1'),op2=document.getElementById('errOpsRow2');
+  if(op1)op1.style.display=(list.length?'flex':'none');
+  if(op2)op2.style.display=(list.length?'flex':'none');
   // R9: 标签筛选行
   var tagRow=document.getElementById('errTagFilterRow');
   if(tagRow){
@@ -2729,6 +2807,13 @@ function delErrAtt(idx){
 }
 function delError(id){
   if(!confirm('确定删除这条错题？删除后不可恢复'))return;
+  // #16: 同时清理本地暂存附件（IndexedDB），避免残留
+  var item=S.errors.find(function(e){return e.id===id});
+  if(item&&item.attachments){
+    item.attachments.forEach(function(a){
+      if(a&&a.local&&a.key){try{idbDel(a.key);}catch(e){}}
+    });
+  }
   S.errors=S.errors.filter(function(e){return e.id!==id});
   sv('w5_err',S.errors);renderErrors();updateTabDots();toast('已删除错题');
 }
@@ -3544,7 +3629,24 @@ function clReset(){S.checklist.items.forEach(function(it){it.done=false});sv('w5
 
 // ============ 事件/资讯/资源 ============
 function renderEvents(){
-  document.getElementById('eventsList').innerHTML=S.events.map(function(e){return'<div class="info-row"><span class="info-date'+(e.major?' major':'')+'">'+esc(e.date)+'</span><span class="info-text'+(e.major?' major':'')+'">'+esc(e.text)+'</span></div>'}).join('')
+  var today=new Date();
+  function evDays(str){
+    // 支持 "09.24-27" / "10.05-25" / "12.13左右" / "12.19-21"
+    var m=str.match(/(\d{2})\.(\d{2,4})/);
+    if(!m)return null;
+    var mm=+m[1]-1,dd=+m[2];
+    var d=new Date(today.getFullYear(),mm,dd);
+    if(d<today)return null; // 已过不算
+    return Math.ceil((d-today)/86400000);
+  }
+  document.getElementById('eventsList').innerHTML=S.events.map(function(e){
+    var days=evDays(e.date);
+    var urgent=days!==null&&days<=7;
+    var past=days===null;
+    return'<div class="info-row'+(past?' ev-past':'')+'"><span class="info-date'+(e.major?' major':'')+'">'+esc(e.date)+'</span><span class="info-text'+(e.major?' major':'')+'">'+esc(e.text)+'</span>'+
+      (urgent?'<span class="ev-urgent">还剩 '+days+' 天</span>':'')+
+      (past?'<span class="ev-past-tag">已过</span>':'')+'</div>';
+  }).join('')
 }
 // 资讯噪声过滤：广告/推广/纯营销 + 与「考试资讯」无关的择校方法类软文隐藏
 // 精准过滤，避免误伤官方公告、报名时间、大纲、分数线、调剂等真实考试资讯
@@ -3562,7 +3664,7 @@ function renderNews(){
  var items=S.rssItems||[],srcMap={};
  (S.rssSources||[]).forEach(function(s){srcMap[s.id]=s.name});
  var d=document.getElementById('newsList');
- if(!items.length){d.innerHTML='<div class="info-empty">暂无资讯。已自动对接研招网、中国教育在线等官方站<br>点右上角 <b>↻</b> 刷新拉取<br><span style="font-size:11px;color:var(--text3)">若所有源显示 ✗，可直达 <a href="https://yz.chsi.com.cn/kyzx/" target="_blank" style="color:var(--blue)">研招网考研资讯</a> 查看最新公告</span></div>';return}
+ if(!items.length){d.innerHTML='<div class="info-empty">'+(window.__rssLoading>0?'正在拉取官方站资讯…':'暂无资讯。已自动对接研招网、中国教育在线等官方站')+'<br>点右上角 <b>↻</b> 刷新拉取<br><span style="font-size:11px;color:var(--text3)">若所有源显示 ✗，可直达 <a href="https://yz.chsi.com.cn/kyzx/" target="_blank" style="color:var(--blue)">研招网考研资讯</a> 查看最新公告</span></div>';return}
  // R12: 时间过滤 —— 隐藏超过 90 天的旧条目（避免显示多年前的历史数据）
  var cutoff=Date.now()-90*86400000;
  var fresh=items.filter(function(n){return!n.ts||n.ts>cutoff});
@@ -3879,11 +3981,14 @@ function parseRSS(xml){
 // R14: 优先加载同域预生成的 news.json（由 gen_news.py / GitHub Actions 服务端抓取研招网等官方站生成，无 CORS、国内稳）
 // 失败再回退浏览器直连代理（rssRefreshProxy），尽力而为
 function rssRefresh(manual,singleUrl){
+ // #4: 拉取中状态提示
+ window.__rssLoading=(window.__rssLoading||0)+1;
+ try{var nl=document.getElementById('newsList');if(nl&&!S.rssItems.length)nl.innerHTML='<div class="info-empty">正在拉取官方站资讯…（约几秒）</div>';}catch(e){}
  var base=location.pathname.replace(/index\.html$/,'');
  fetch(base+'news.json',{cache:"no-store"})
    .then(function(r){if(!r.ok)throw new Error("HTTP "+r.status);return r.json()})
-   .then(function(data){rssApplyNewsJson(data,manual);})
-   .catch(function(){rssRefreshProxy(manual,singleUrl);});
+   .then(function(data){window.__rssLoading=Math.max(0,(window.__rssLoading||1)-1);rssApplyNewsJson(data,manual);})
+   .catch(function(){window.__rssLoading=Math.max(0,(window.__rssLoading||1)-1);rssRefreshProxy(manual,singleUrl);});
 }
 function rssApplyNewsJson(data,manual){
  var presetUrls=(data.sources||[]).map(function(s){return s.url});
@@ -4082,7 +4187,7 @@ function cardSettle(id,result){
   sv('w5_cards',S.cards);
   bumpDayOps('card',1);
   renderCards();renderCardStudy();renderQueue();updateTabDots();
-  toast(result==='good'?'👍 已记住':result==='hard'?'🤔 模糊，再练':'😣 忘了，重来');
+  toast(result==='good'?'已记住':result==='hard'?'模糊，再练':'忘了，重来');
 }
 function toggleCardMastered(id){
   var c=cardFind(id);if(!c)return;
@@ -4218,9 +4323,9 @@ function renderQueue(){
     return '<div class="q-body"><div class="q-q">'+esc(qa.q)+'</div>'
       +(qa.subjTopic?'<div class="q-meta" style="color:var(--text2);font-size:10px;margin-top:3px">'+esc(qa.subjTopic)+'</div>':'')
       +'<div class="q-acts"><button class="err-btn" onclick="queueReveal(\''+it.kind+'\','+it.id+')">看答案</button>'
-      +'<button class="err-btn" onclick="queueGrade(\''+it.kind+'\','+it.id+',\'good\')">👍</button>'
-      +'<button class="err-btn" onclick="queueGrade(\''+it.kind+'\','+it.id+',\'hard\')">🤔</button>'
-      +'<button class="err-btn" onclick="queueGrade(\''+it.kind+'\','+it.id+',\'again\')">😣</button>'
+      +'<button class="err-btn" onclick="queueGrade(\''+it.kind+'\','+it.id+',\'good\')" style="color:var(--green)">记住</button>'
+      +'<button class="err-btn" onclick="queueGrade(\''+it.kind+'\','+it.id+',\'hard\')" style="color:var(--status-today)">模糊</button>'
+      +'<button class="err-btn" onclick="queueGrade(\''+it.kind+'\','+it.id+',\'again\')" style="color:var(--red)">忘了</button>'
       +'<button class="err-btn" onclick="queueSkip()">跳过</button></div>'
       +'<div id="'+boxId+'" class="q-a" style="display:none"></div></div>';
   }).join('');
@@ -4779,12 +4884,27 @@ function buildSubjectUI(){
   var ts=document.getElementById('taskSubject');if(ts)ts.innerHTML=SUBJECTS.map(function(sb){return '<option value="'+sb.id+'">'+esc(sb.name)+'</option>'}).join('')+'<option value="other">其他</option>';
   document.getElementById('errSubject').innerHTML=SUBJECTS.map(function(sb){return '<option>'+esc(sb.name)+'</option>'}).join('');
   document.getElementById('impSubject').innerHTML=SUBJECTS.map(function(sb){return '<option'+(sb.id==='408'?' selected':'')+'>'+esc(sb.name)+'</option>'}).join('');
+  // #9: 快速录入科目改 pill 按钮组（select 隐藏保留兼容）
+  var pillBox=document.getElementById('errSubjPills');
+  if(pillBox){
+    pillBox.innerHTML=SUBJECTS.map(function(sb,i){
+      return '<button type="button" class="eq-pill'+(i===0?' on':'')+'" data-subj="'+esc(sb.name)+'" onclick="setErrSubj(this)">'+esc(sb.name)+'</button>';
+    }).join('');
+  }
   buildRevGrid();
   // R1/R4: 录入表单下拉初始化
   syncErrChapterList();
   buildQtypeSel();
   buildCauseSel();   // R18: 错因下拉（陈汉五类）
   buildCardUI();
+}
+// #9: pill 选科目 → 同步隐藏 select + 高亮
+function setErrSubj(btn){
+  var sel=document.getElementById('errSubject');
+  if(sel)sel.value=btn.getAttribute('data-subj');
+  var box=document.getElementById('errSubjPills');
+  if(box)box.querySelectorAll('.eq-pill').forEach(function(p){p.classList.toggle('on',p===btn);});
+  syncErrChapterList();
 }
 // OKR 全局状态须先于 init 初始化（renderGoalsDash 在 init 中调用）
 var OKR={total:0,autoTotal:true,dailyKey:'',subjects:[],bands:[],shorts:[],daily:[],seeded:false};
@@ -4816,6 +4936,8 @@ try{renderGoalsDash();}catch(e){console.error('renderGoalsDash error',e);}   // 
 var _ts=lds('w5_tstart',null);
 if(_ts&&Date.now()-_ts<3*3600000){S.tstart=_ts;S.trun=setInterval(tick,1000);tick();}
 else if(_ts){localStorage.removeItem('w5_tstart');}
+// #1: 刷新后确保专注 overlay 关闭（避免 S.trun 残留导致首屏显示"专注中"）
+try{if(!S.trun){document.getElementById('focusOverlay').classList.remove('open');}}catch(e){}
 window.addEventListener('resize',function(){if(document.getElementById('page-dashboard').classList.contains('active')){renderChart();renderBar()}});
 // F6: 同步模块初始化 —— 读设置；自动同步开启且配置齐全时加载后拉取一次
 ghLoad();
