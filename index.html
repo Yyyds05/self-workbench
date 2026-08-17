@@ -162,6 +162,13 @@ body{
 .eq-prev{display:none;flex-wrap:wrap;gap:4px;justify-content:center;margin-top:6px}
 .eq-prev.has{display:flex}
 .eq-prev img{width:46px;height:46px;object-fit:cover;border-radius:8px;border:1px solid var(--border)}
+.eq-prev-item{position:relative;width:46px;height:46px}
+.eq-prev-item img{width:46px;height:46px;object-fit:cover;border-radius:8px;border:1px solid var(--border)}
+.eq-prev-crop{position:absolute;right:-5px;top:-5px;width:18px;height:18px;border-radius:50%;background:#d4a017;color:#fff;border:none;font-size:10px;line-height:1;cursor:pointer;display:flex;align-items:center;justify-content:center;padding:0}
+.ee-att-btn{display:inline-block;font-size:11px;font-weight:600;color:var(--blue);border:1px solid var(--blue);border-radius:8px;padding:5px 10px;cursor:pointer;background:var(--card);margin:2px 4px 2px 0}
+.ee-att-btn:hover{background:var(--blue-bg)}
+.ee-att-row{display:flex;align-items:center;gap:6px;font-size:11.5px;padding:4px 6px;border-bottom:1px dashed var(--border)}
+.ee-att-del{font-size:12px;color:var(--red);cursor:pointer;background:none;border:none;padding:2px 6px}
 .eq-prev-chip{font-size:10px;background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:4px 6px;color:var(--text2);max-width:120px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .eq-prev-more{font-size:11px;color:var(--text2);align-self:center}
 .eq-add{width:100%;padding:13px;border-radius:12px;background:var(--gold);color:#fff;font-size:15px;font-weight:700;margin-top:2px;cursor:pointer}
@@ -781,6 +788,17 @@ body{
         </select></div>
       </div>
       <div class="sync-field"><label>标签（逗号分隔）</label><input type="text" id="eeTags" placeholder="如：计算差,概念不清"></div>
+      <div class="sync-field">
+        <label>题目图片 / 解析图片（可拍照、可多选、可裁剪）</label>
+        <div style="display:flex;gap:6px;flex-wrap:wrap">
+          <label class="ee-att-btn"><input type="file" id="eeAttQ" accept="image/*" multiple hidden onchange="eePreview(this,'eePrevQ')"><span>＋ 题目图</span></label>
+          <label class="ee-att-btn"><input type="file" id="eeAttA" accept="image/*" multiple hidden onchange="eePreview(this,'eePrevA')"><span>＋ 解析图</span></label>
+        </div>
+        <div class="eq-prev has" id="eePrevQ" style="display:flex"></div>
+        <div class="eq-prev has" id="eePrevA" style="display:flex"></div>
+        <div id="eeAttList" style="margin-top:6px"></div>
+        <div style="font-size:10.5px;color:var(--text3);margin-top:4px">已有图片可直接 ✂️ 裁剪 / ✕ 删除</div>
+      </div>
     <div class="sync-actions">
       <button class="btn" onclick="errEditClose()">取消</button>
       <button class="btn btn-gold" onclick="errEditSave()">保存</button>
@@ -995,14 +1013,14 @@ body{
       </div>
       <div class="eq-shots">
         <label class="eq-shot">
-          <input type="file" id="errAtt" accept="image/*,.pdf" multiple capture="environment" hidden onchange="eqPreview(this,'eqPrevQ')">
+          <input type="file" id="errAtt" accept="image/*,.pdf" multiple hidden onchange="eqPreview(this,'eqPrevQ')">
           <div class="eq-shot-ico">📸</div>
           <b>题目</b>
           <span>拍照 / 相册</span>
           <div class="eq-prev" id="eqPrevQ"></div>
         </label>
         <label class="eq-shot">
-          <input type="file" id="errAttAna" accept="image/*" multiple capture="environment" hidden onchange="eqPreview(this,'eqPrevA')">
+          <input type="file" id="errAttAna" accept="image/*" multiple hidden onchange="eqPreview(this,'eqPrevA')">
           <div class="eq-shot-ico">📸</div>
           <b>解析</b>
           <span>拍照 / 相册</span>
@@ -2125,33 +2143,44 @@ function u8ToBase64(u8){
   return btoa(bin);
 }
 // 处理录入时选择的附件文件 → Promise<attachments[]>（含 GH 引用或 IDB 暂存引用）
-function processAttachments(errId,files,kind){
+function processAttachments(errId,files,kind,cropMap){
   ghLoad();
   var list=Array.prototype.slice.call(files||[]);
   if(!list.length)return Promise.resolve([]);
   var out=[];
   var chain=Promise.resolve();
-  list.forEach(function(f){
+  list.forEach(function(f,idx){
     chain=chain.then(function(){
       var isPdf=/\.pdf$/i.test(f.name)||f.type==='application/pdf';
       var safe=safeFileName(f.name);
+      // 裁剪覆盖：预览阶段裁剪过的图，直接用裁剪结果（跳过压缩）
+      var crop=cropMap&&cropMap[idx]?cropMap[idx]:null;
       if(ghReady()){
         var path='attachments/'+errId+'_'+safe;
-        var p=isPdf?fileToBase64(f):compressImage(f).then(function(r){return r.base64});
+        var p;
+        if(crop){
+          p=Promise.resolve(String(crop).replace(/^data:image\/[^;]+;base64,/,''));
+        }else{
+          p=isPdf?fileToBase64(f):compressImage(f).then(function(r){return r.base64});
+        }
         return p.then(function(b64){return ghPutAttachment(path,b64)})
           .then(function(){out.push({name:f.name,path:path,kind:kind||'q'})})
           .catch(function(e){toast('附件 '+f.name+' 上传失败：'+e.message)});
       }
       // 未配置同步：仅小图暂存 IndexedDB
       if(isPdf){toast('PDF 附件需先配置 GitHub 同步，已跳过 '+f.name);return}
-      return compressImage(f).then(function(r){
+      var doSave=function(r){
         if(r.base64.length*0.75>500*1024){toast(f.name+' 压缩后仍超 500KB，请先配置 GitHub 同步');return}
         var key=errId+'_'+safe;
         return idbPut(key,{base64:r.base64,mime:r.mime,name:f.name,errId:errId}).then(function(){
           out.push({name:f.name,local:1,key:key,kind:kind||'q'});
           toast(f.name+' 已本地暂存（配置同步后可上传）');
         });
-      }).catch(function(e){toast('附件 '+f.name+' 处理失败：'+e.message)});
+      };
+      if(crop){
+        return doSave({base64:String(crop).replace(/^data:image\/[^;]+;base64,/,''),mime:'image/jpeg'});
+      }
+      return compressImage(f).then(doSave).catch(function(e){toast('附件 '+f.name+' 处理失败：'+e.message)});
     });
   });
   return chain.then(function(){return out});
@@ -2234,8 +2263,11 @@ function addError(){
   eqResetPreviews();
   if(!((files&&files.length)||(anaFiles&&anaFiles.length))){ if(attInput)attInput.value=''; if(anaInput)anaInput.value=''; }
   if((files&&files.length)||(anaFiles&&anaFiles.length)){
-    var pr1=processAttachments(id,files||[],'q');
-    var pr2=processAttachments(id,anaFiles||[],'a');
+    // 预览裁剪结果按输入框+索引收集
+    var cropQ=eqCollectCrops('eqPrevQ');
+    var cropA=eqCollectCrops('eqPrevA');
+    var pr1=processAttachments(id,files||[],'q',cropQ);
+    var pr2=processAttachments(id,anaFiles||[],'a',cropA);
     Promise.all([pr1,pr2]).then(function(res){
       if(attInput)attInput.value='';
       if(anaInput)anaInput.value='';
@@ -2256,18 +2288,48 @@ function eqPreview(input, prevId){
   var files=Array.prototype.slice.call(input.files||[]);
   if(!files.length)return;
   box.classList.add('has');
-  files.slice(0,4).forEach(function(f){
+  files.slice(0,4).forEach(function(f,idx){
     if(/\.pdf$/i.test(f.name)||f.type==='application/pdf'){
       var c=document.createElement('div'); c.className='eq-prev-chip'; c.textContent='📄 '+f.name; box.appendChild(c); return;
     }
     var r=new FileReader();
-    r.onload=function(){ var i=document.createElement('img'); i.src=r.result; box.appendChild(i); };
+    r.onload=(function(i){
+      return function(){
+        var wrap=document.createElement('div'); wrap.className='eq-prev-item';
+        var im=document.createElement('img'); im.src=r.result;
+        var btn=document.createElement('button'); btn.type='button'; btn.className='eq-prev-crop'; btn.textContent='✂️'; btn.title='裁剪这张图';
+        btn.onclick=function(){ eqCropPreview(prevId,i,im.src); };
+        wrap.appendChild(im); wrap.appendChild(btn); box.appendChild(wrap);
+      };
+    })(idx);
     r.readAsDataURL(f);
   });
   if(files.length>4){ var m=document.createElement('div'); m.className='eq-prev-more'; m.textContent='+'+(files.length-4); box.appendChild(m); }
 }
+// 预览裁剪（未保存的图）：复用裁剪弹窗，结果记入 __eqCrops，保存时生效
+function eqCropPreview(prevId,idx,src){
+  CROP.mode='preview';CROP.prevId=prevId;CROP.previewIdx=idx;
+  var modal=document.getElementById('imgCropModal');
+  var img=document.getElementById('imgCropImg');
+  img.onload=function(){cropInit();};
+  img.src=src;
+  modal.style.display='flex';
+}
 function eqResetPreviews(){
   ['eqPrevQ','eqPrevA'].forEach(function(id){ var b=document.getElementById(id); if(b){ b.innerHTML=''; b.classList.remove('has'); } });
+  if(window.__eqCrops)window.__eqCrops={};
+}
+// 预览裁剪收集：返回 {索引:dataURL}，保存时传给 processAttachments
+function eqCollectCrops(prevId){
+  var out={};
+  if(!window.__eqCrops)return out;
+  Object.keys(window.__eqCrops).forEach(function(k){
+    if(k.indexOf(prevId+'_')===0){
+      var idx=+k.slice(prevId.length+1);
+      if(!isNaN(idx))out[idx]=window.__eqCrops[k];
+    }
+  });
+  return out;
 }
 // F13-3: 附件查看（GH → fetch raw → blob；IDB → base64 → blob）
 var ATT_URL_CACHE={};
@@ -2602,6 +2664,12 @@ function editErrFull(id){
   set('eeQtype',item.qtype||'');
   set('eeCause',item.cause||'');
   document.getElementById('errEditModal').style.display='flex';
+  renderErrAttList();
+  var qIn=document.getElementById('eeAttQ'),aIn=document.getElementById('eeAttA');
+  if(qIn)qIn.value='';if(aIn)aIn.value='';
+  if(window.__eqCrops)window.__eqCrops={};
+  var pq=document.getElementById('eePrevQ'),pa=document.getElementById('eePrevA');
+  if(pq)pq.innerHTML='';if(pa)pa.innerHTML='';
 }
 function errEditSave(){
   var item=S.errors.find(function(e){return e.id===EE_ID});if(!item)return;
@@ -2620,8 +2688,45 @@ function errEditSave(){
   var tv=val('eeTags');
   item.tags=tv?tv.split(/[,，]/).map(function(s){return s.trim()}).filter(Boolean):(item.tags||[]);
   sv('w5_err',S.errors);errEditClose();renderErrors();updateTabDots();toast('✓ 已保存');
+  // 编辑时新拍的题目图/解析图 → 异步追加附件（裁剪结果已含在预览数据里）
+  var qIn=document.getElementById('eeAttQ'),aIn=document.getElementById('eeAttA');
+  var qf=qIn&&qIn.files&&qIn.files.length?qIn.files:null;
+  var af=aIn&&aIn.files&&aIn.files.length?aIn.files:null;
+  if(!qf&&!af)return;
+  var cq=eqCollectCrops('eePrevQ'),ca=eqCollectCrops('eePrevA');
+  var pr1=qf?processAttachments(EE_ID,qf,'q',cq):Promise.resolve([]);
+  var pr2=af?processAttachments(EE_ID,af,'a',ca):Promise.resolve([]);
+  Promise.all([pr1,pr2]).then(function(res){
+    var all=res[0].concat(res[1]);
+    if(!all.length)return;
+    item.attachments=(item.attachments||[]).concat(all);
+    sv('w5_err',S.errors);
+    if(qIn)qIn.value='';if(aIn)aIn.value='';
+    renderErrors();toast('已追加 '+all.length+' 张图片');
+  });
 }
 function errEditClose(){document.getElementById('errEditModal').style.display='none'}
+function eePreview(input,prevId){eqPreview(input,prevId);}
+// 编辑弹窗：渲染已有附件列表（缩略/裁剪/删除）
+function renderErrAttList(){
+  var box=document.getElementById('eeAttList');if(!box)return;
+  var item=S.errors.find(function(e){return e.id===EE_ID});
+  if(!item||!item.attachments||!item.attachments.length){box.innerHTML='<div style="font-size:11px;color:var(--text3)">暂无图片</div>';return;}
+  box.innerHTML=item.attachments.map(function(a,i){
+    var nm=(a.name||('附件'+(i+1)));
+    return '<div class="ee-att-row"><span style="flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">'+(i+1)+'. '+esc(nm)+'</span>'+
+      '<button class="ee-att-btn" onclick="imgCropOpen(\''+EE_ID+'\','+i+')" title="裁剪">✂️</button>'+
+      '<button class="ee-att-del" onclick="delErrAtt('+i+')" title="删除">✕</button></div>';
+  }).join('');
+}
+function delErrAtt(idx){
+  var item=S.errors.find(function(e){return e.id===EE_ID});
+  if(!item||!item.attachments||!item.attachments[idx])return;
+  if(!confirm('删除这张附件？'))return;
+  item.attachments.splice(idx,1);
+  sv('w5_err',S.errors);
+  renderErrAttList();toast('已删除');
+}
 function delError(id){
   if(!confirm('确定删除这条错题？删除后不可恢复'))return;
   S.errors=S.errors.filter(function(e){return e.id!==id});
@@ -3515,14 +3620,37 @@ var CROP={errId:0,idx:0,img:null,box:null,mode:'',sx:0,sy:0,bx:0,by:0,bw:0,bh:0,
 function imgCropOpen(errId,idx){
   var item=S.errors.find(function(e){return e.id===errId});if(!item||!item.attachments||!item.attachments[idx])return;
   var att=item.attachments[idx];
-  var src=att.data||'';
-  if(!src||src.indexOf('data:')!==0){toast('该附件暂不支持裁剪（仅本地 base64 图）');return;}
-  CROP.errId=errId;CROP.idx=idx;
+  CROP.errId=errId;CROP.idx=idx;CROP.mode='saved';
   var modal=document.getElementById('imgCropModal');
   var img=document.getElementById('imgCropImg');
-  img.onload=function(){cropInit();};
-  img.src=src;
-  modal.style.display='flex';
+  function start(src){
+    img.onload=function(){cropInit();};
+    img.src=src;
+    modal.style.display='flex';
+  }
+  // 1) 直接 base64
+  if(att.data&&att.data.indexOf('data:')===0){start(att.data);return;}
+  // 2) 本地 IndexedDB 附件
+  if(att.local){
+    idbGet(att.key).then(function(v){
+      if(!v){toast('本地附件不存在（可能已被浏览器清理）');return;}
+      start('data:'+(v.mime||'image/jpeg')+';base64,'+v.base64);
+    }).catch(function(e){toast('读取附件失败：'+e.message);});
+    return;
+  }
+  // 3) GitHub 仓库附件
+  ghLoad();
+  if(!ghReady()){toast('附件在 GitHub 仓库中，请先配置同步');return;}
+  fetch(ghAttApiUrl(att.path)+'?ref='+encodeURIComponent(GH.branch),
+        {headers:Object.assign({},ghHeaders(),{'Accept':'application/vnd.github.raw+json'}),cache:'no-store'})
+  .then(function(r){if(!r.ok)throw new Error(ghErrMsg(r.status));return r.arrayBuffer();})
+  .then(function(buf){
+    var bytes=new Uint8Array(buf),bin='';
+    var CHUNK=0x8000;
+    for(var i=0;i<bytes.length;i+=CHUNK)bin+=String.fromCharCode.apply(null,bytes.subarray(i,i+CHUNK));
+    start('data:image/jpeg;base64,'+btoa(bin));
+  })
+  .catch(function(e){toast('附件加载失败：'+e.message);});
 }
 function cropInit(){
   var img=document.getElementById('imgCropImg');
@@ -3603,6 +3731,19 @@ function imgCropApply(){
   var ctx=c.getContext('2d');
   ctx.drawImage(img,sx,sy,sw,sh,0,0,c.width,c.height);
   var url=c.toDataURL('image/jpeg',0.88);
+  // 预览裁剪模式（未保存的图）：结果记入 __eqCrops，保存时生效
+  if(CROP.mode==='preview'){
+    if(!window.__eqCrops)window.__eqCrops={};
+    window.__eqCrops[CROP.prevId+'_'+CROP.previewIdx]=url;
+    var box2=document.getElementById(CROP.prevId);
+    if(box2){
+      var items=box2.querySelectorAll('.eq-prev-item');
+      if(items[CROP.previewIdx]){var im2=items[CROP.previewIdx].querySelector('img');if(im2)im2.src=url;}
+    }
+    imgCropClose();
+    toast('✓ 已裁剪（保存错题时生效）');
+    return;
+  }
   var item=S.errors.find(function(e){return e.id===CROP.errId});
   if(item&&item.attachments&&item.attachments[CROP.idx])item.attachments[CROP.idx].data=url;
   sv('w5_err',S.errors);
